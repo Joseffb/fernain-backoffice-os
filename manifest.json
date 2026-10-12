@@ -1,0 +1,414 @@
+{
+  "schema": "AutomatedBackofficePublicManifest/v1",
+  "title": "Automated Backoffice for Google Workspace",
+  "entries": [
+    {
+      "path": "README.md",
+      "bytes": 1908,
+      "sha256": "da84d4a25eff344d3b4ebab46ff6270892d3a0fc0525a20b0e709bae82632852",
+      "kind": "documentation"
+    },
+    {
+      "path": "cloud/cloud_entrypoint.js",
+      "bytes": 14555,
+      "sha256": "c67c8e62002d50f649ed01dd5ef40c0ac70a0b06474cbdcfdb9ec0060727a2ff",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "cloud/finance_cloud_caller.js",
+      "bytes": 5202,
+      "sha256": "07b76bedf52529de716f82995d4ddac98602f13d1cbcba47895f39c1a2d61523",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "cloud/finance_connected_host.js",
+      "bytes": 30507,
+      "sha256": "fe490be6fb641b33782a63912d1b79c9427a14bb2bfbed6aa36036a4bd339e07",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "cloud/guard_trace.js",
+      "bytes": 12450,
+      "sha256": "7ef3fdc352823ea8d4e164fc64d5e890676262553db46355d2f94dec624e8f8f",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "cloud/studio_step.js",
+      "bytes": 3891,
+      "sha256": "9c679ee1002c81cc5517076236d3b6b7a5e19d1966d0b70151f61510667cd963",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "config/registry.sample.json",
+      "bytes": 292,
+      "sha256": "b5c494a0ad6dfaeeb924e4f520ec6c4dbb951975b8caf9a04d5f0cbade6943b8",
+      "kind": "sample_config"
+    },
+    {
+      "path": "department-prompts/engineering.json",
+      "bytes": 4353,
+      "sha256": "f2f0829f355b5f236ece8c25df4d2b3a2ae252cd761d28417e314e44939a4b8c",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "department-prompts/executive.json",
+      "bytes": 4396,
+      "sha256": "0e19ffea0bba526aa67df668c170bb1e54237b89f0ce058fd5ab84936359343e",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "department-prompts/finance.json",
+      "bytes": 4065,
+      "sha256": "62203dd576ce27909af388943d1aa9cc9213ef04a4a4c4a5ffdad312733106f1",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "department-prompts/fundraising.json",
+      "bytes": 4376,
+      "sha256": "4a52f50562ad5a703480f50538fad15aec4ae65c05816913f32b3b1cdf5bb6ea",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "department-prompts/legal.json",
+      "bytes": 605,
+      "sha256": "cb7c79084c7698d39a180e7b5900d44c8657101936ef2317b349fc7cb27dca0f",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "department-prompts/marketing.json",
+      "bytes": 4334,
+      "sha256": "0004915b91541a7fec17c25a6d79e9ac8937d63d176d32a8b4d658171d0c2cdd",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "department-prompts/sales.json",
+      "bytes": 4352,
+      "sha256": "70e2c27dc3b6a88fe0e31a69a9c3a28b9a343a2eb18b189f1564bc945207a562",
+      "kind": "department_prompt_reference"
+    },
+    {
+      "path": "docs/department-gems.md",
+      "bytes": 916,
+      "sha256": "ee4537a1c5983a23da855ddc7865d4aed98b2cd0c2e016f838b79da9335acacc",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/drive-system.md",
+      "bytes": 1582,
+      "sha256": "ee666903ad17bc3b72d9ab7f9a4c375d61cb57a8aa27a02b92514b774ab98b60",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/lead-workflows.md",
+      "bytes": 2035,
+      "sha256": "d23204004928209b425a5013575caea06a4f5e205be62a8df697e52406e86481",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/portal.md",
+      "bytes": 1243,
+      "sha256": "12b99bab398cb1986908d5a25e54c69e144371811c15af5315b15fc000b87ea0",
+      "kind": "documentation"
+    },
+    {
+      "path": "docs/setup.md",
+      "bytes": 1857,
+      "sha256": "eca072e6d1666203b1cf98fac8b25233efd485c32836ec4991012a3689b4af33",
+      "kind": "documentation"
+    },
+    {
+      "path": "finance/class_admission.py",
+      "bytes": 3618,
+      "sha256": "9e404aee24e1c8591a17bddb288e3aa4947ffa832a953461d44cd0d781606da1",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/connected_plan.py",
+      "bytes": 25074,
+      "sha256": "124cd08081abcaae2db6f852d7ebbeb6a5f347e7bd44c15025f4c5918d36717b",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/continuation_grant.py",
+      "bytes": 4528,
+      "sha256": "d154658bfee09ce32f1d8b8892bce480788592d8323f6a75e4f12564e871c72d",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_coordinator.js",
+      "bytes": 37961,
+      "sha256": "ccb378c7da7439fb399d7a53394bd1a14735706db5010b1fb965b85177100f4f",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_docs_claim.py",
+      "bytes": 22821,
+      "sha256": "b618d1fc05c426b0c15c97607b6f3cbd985044442b735ec57de8cfd398a804df",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_parent_adapter.js",
+      "bytes": 2586,
+      "sha256": "21081b6bfd2d3cf49750bfadc3dff705490c316d2065bdc0f53ffea3aff24582",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_rejected_upload_recovery.py",
+      "bytes": 3655,
+      "sha256": "0bc0a614514e85bb47a32a791278d64f4a956a2fd01f98e5dada08c975a3b872",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_source_reader.js",
+      "bytes": 3794,
+      "sha256": "aebb52e329f3e592fe1ba4a9db1fd8d83d230820b73c678c4ea8daed758939b4",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_source_reader_native.js",
+      "bytes": 3868,
+      "sha256": "2defa405964f30c3fad2c47d0b131997955835b0802d13a4d846a010ccadfab2",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/finance_source_reader_pdf.js",
+      "bytes": 8323,
+      "sha256": "8a3c08814d93ba680a4abb2b73c6696cdee919cb47a4875f59d0226aad7b348a",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/guard.py",
+      "bytes": 3208,
+      "sha256": "15f9728e35ad35d681682c237d9761102e9c07e1cc38cda87ff000df4549920a",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/intake_provenance.py",
+      "bytes": 4777,
+      "sha256": "07b290ee7ee8f84f70cebed06f015356cfebd4adb11c425ea573530336aca450",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/native_gemini_review.py",
+      "bytes": 8302,
+      "sha256": "453354e74c7af5821dc0543cfcc85a418d38b5b3aa0e7eb2107a2dcf4e4d9607",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/native_source_extract.py",
+      "bytes": 9267,
+      "sha256": "b7fb15b32997a0f25e27f12ca82d607963a79324fcd39583458f10710e433f8c",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/pdf_source_extract.py",
+      "bytes": 15971,
+      "sha256": "6f4e43bc879800f511793b17170e176759b17f071885c242af2d07362ac244dc",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "finance/processor.py",
+      "bytes": 87973,
+      "sha256": "39ebb5b733aefc4ddb293c69b1b0e1d12a90c4bc47fa520d32a774345042705c",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/host/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/host/legal_docs_claim.py",
+      "bytes": 38273,
+      "sha256": "6d090715a7ba6be29297ee4d14ed28105a4dce30ef8d363edc68fc8981eca71f",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/host/legal_docs_host.py",
+      "bytes": 4859,
+      "sha256": "2f16c1ccec84bfdec14b698c97fa60f486be92abc6696638847406afcb370d99",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/host/legal_parent_plan.py",
+      "bytes": 5567,
+      "sha256": "e82683b2a53d1ad6b1a3b98989e751b94e93e444199ed237293747b62918c864",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/host/legal_successor_runtime.py",
+      "bytes": 10360,
+      "sha256": "b8b7d8307fe1d2a8e7e5b5aa5131129c8b919a743c385fab3caec7ec8039157c",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/host/legal_successor_writer.py",
+      "bytes": 17285,
+      "sha256": "1cde9a97c1ce79b0eb14221934f69f174c6088ca3b2e6fb3145dfa08a986fad8",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/legal_manual_readers.js",
+      "bytes": 4855,
+      "sha256": "2ac6ce83b31162773eb275e97ab42bed0d7cd9b9a1d9d16c0cf04ef3d4b8989d",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/legal_parent_adapter.js",
+      "bytes": 9813,
+      "sha256": "7681dbf6569d2e8f891e7d85ce6740ce9f45345c708bcd56b13d1fc04bdb31ec",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/legal_review.py",
+      "bytes": 31652,
+      "sha256": "fe01e93dad5994dbb72751b0d59c64450b61b41dad0c63376650bf86db71e712",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "legal/manual_reader_checks.py",
+      "bytes": 3382,
+      "sha256": "e72e385a106090b660d250b0875503a506ccf71e7bb2bb479de5a83654d16d36",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/boundary.py",
+      "bytes": 27453,
+      "sha256": "788885cad844698b33927fbf9108ac617a0a0a3ae2aaf534fb2c4bf138c5c596",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/canonical/template-v3.html",
+      "bytes": 5028,
+      "sha256": "e96e1375dd86265b37ce4bf53cc01016caa7cd79b2dbda46e69a760e2334175b",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/canonical/template.txt",
+      "bytes": 274,
+      "sha256": "288a40fb734585dc031e4805c8b634634b86a267ba638aeba6245e7a9a830e11",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/docs_claim.py",
+      "bytes": 29054,
+      "sha256": "8541401ed1560099f73598ff2cf8ac483e979f4c8b2f73a46b01544b542dc12c",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/docs_parent_adapter.js",
+      "bytes": 6631,
+      "sha256": "867de69a97e8693c6da54994f955c8386edd302ba0e3354a65639fca844cf218",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/owner_bridge.py",
+      "bytes": 3783,
+      "sha256": "8800eb09f1d384baf5a4797b120d3c5c8ab837b6f9453b02c48e2f0d46043fb5",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/owner_intake.py",
+      "bytes": 28239,
+      "sha256": "e7f29578dd0d0a9da3599e9b05662994c99ed6733aa4e034dd3e290b64bfe6f3",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/owner_parent_adapter.js",
+      "bytes": 2817,
+      "sha256": "f30714fca69ebe35d52388f24ff1ae3a08fcd6c800f3e9cfe343f01541456dd9",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/parent_adapter.js",
+      "bytes": 2216,
+      "sha256": "0a12700d7e11b825bd4d7b718ad5f25d4f10bfe372f41db0af25f26ba30fa607",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "owner-mail/parent_bridge.py",
+      "bytes": 9367,
+      "sha256": "5b06be8db25a15f1b6be7dbc8a987081a1ba559abbfe28eda894b7256e3e38c0",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "portal/Code.gs",
+      "bytes": 9383,
+      "sha256": "d01a06442c3cf2ff50fcb3ec5f757ef173df15d5c2093ec5d6ab8cf34bce5e25",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "portal/Departments.gs",
+      "bytes": 23382,
+      "sha256": "6411c57dab89d000ee7fbee8926b6c6de752eece92f63b65f9836a99d5032cb7",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "portal/Index.html",
+      "bytes": 84575,
+      "sha256": "7ba8bb23e1133c007319f7017c568f4c60b0338ccef6db2aaab1d26eda1d167d",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "portal/home-embed.html",
+      "bytes": 71154,
+      "sha256": "11275ae788e6011a33b3e2886cb59aced8075163c2fb8311e5f1a8a1749b7166",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "preparation/domain_adapter.py",
+      "bytes": 7017,
+      "sha256": "78dec31efb80071d7cff8c9b2be2e2679afd970633fa124ac592038243b019a4",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "preparation/parent_host.py",
+      "bytes": 1668,
+      "sha256": "4d81933cf36f639b1c13dbcee4e568fb3e278698227660b620202ad3088fb0be",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/NativeArchiveReconciliationV1.gs",
+      "bytes": 2281,
+      "sha256": "d91a58c10328aa3cdf761270b691061ff198864e48d78ab743e26e59950c90f6",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/NativeArchiveV2.gs",
+      "bytes": 130831,
+      "sha256": "8d89d03279c26a432d92f44fee630ea25a67a3896af9922393217cdc3a9fbc05",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/NativePublicSourceV1.gs",
+      "bytes": 85533,
+      "sha256": "2f941e7d7617e6420bfa5ec473713561a5c1bf9153304953d2819560643d448a",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/NativeRuntimeIntegrationV1.gs",
+      "bytes": 344392,
+      "sha256": "c37cab74a6411e6cf25608f1cc0db066453767a328f5b07dfe522a3c71b878cc",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/NativeServicesV1.gs",
+      "bytes": 311463,
+      "sha256": "20a264be9018e34c4627061a45af340a76e20a3873bc807e08c1921229076da2",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/NativeUnindexedArchiveInspectionV1.gs",
+      "bytes": 269,
+      "sha256": "875a40759c846f37b4ffd9927b58c83e1e2efe744e60e40a6ceae6bbbdba4e6d",
+      "kind": "sanitized_source"
+    },
+    {
+      "path": "sales/PureSalesGuardsV1.gs",
+      "bytes": 16460,
+      "sha256": "aa8b6e1b3732f5c2c7ef882775f78c6b8257d6aebbb21dab62caf1a0d189572f",
+      "kind": "sanitized_source"
+    }
+  ]
+}

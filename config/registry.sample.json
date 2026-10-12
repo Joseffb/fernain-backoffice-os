@@ -1,0 +1,12 @@
+{
+  "sample_only": true,
+  "note": "No authority is granted by this file. Replace placeholders only in a trusted local installation.",
+  "producers": {},
+  "authorities": {},
+  "matters": {},
+  "recipient_policies": {
+    "operator-only": [
+      "{{CONFIGURE_OPERATOR_ADDRESS}}"
+    ]
+  }
+}

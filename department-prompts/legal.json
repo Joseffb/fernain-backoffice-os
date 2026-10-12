@@ -1,0 +1,15 @@
+{
+  "department": "Legal",
+  "purpose": "Private legal intake, evidence organization, contract preparation and human review; no autonomous legal decisions",
+  "forbidden": [
+    "Sign or accept agreements",
+    "Make legal determinations or commitments",
+    "File or submit legal materials",
+    "Spend or pay",
+    "Contact customers or other external parties",
+    "Expand source access, permissions or credentials",
+    "Copy substantive legal matters outside Legal",
+    "Model-controlled recipients, destinations or configuration writes"
+  ],
+  "artifact_kind": "department_prompt_reference_only"
+}

@@ -1,0 +1,1757 @@
+/* BEGIN exact module native-unattended-runtime/NativeSourceBridge.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Concrete same-project bridge for the native registered public-source producer.
+ * Large source bytes/DNS/full27 canonical capture are split into exact hashed
+ * canonical Evidence chunks. Full Evidence/policy snapshots stay in memory and
+ * are never recursively embedded into their own journal. No model/event URLs.
+ */
+var FERN_NATIVE_VALIDATION_PHASE_V1='OTHER',FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1=null;
+function fernainNativeFiniteErrorCategoryV1(e){
+ function ownValue(o,k){var d=o&&typeof o==='object'&&Object.getOwnPropertyDescriptor(o,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')?d.value:undefined;}
+ var m=ownValue(e,'message'),c=ownValue(e,'code');
+ if(typeof m==='string'){
+  // Finite, payload-free labels for archive/trace boundaries; never log raw errors.
+  var boundaryHolds={
+  "HOLD: exact VERIFIED storage control required": "ARCHIVE_TERMINAL_CONTROL",
+  "HOLD: VERIFIED direct ACTIVE postcondition missing": "ARCHIVE_TERMINAL_DIRECT_ADMISSION",
+  "HOLD: VERIFIED canonical ACTIVE postcondition missing": "ARCHIVE_TERMINAL_CANONICAL_ADMISSION",
+  "HOLD: VERIFIED durable admission changed": "ARCHIVE_TERMINAL_ADMISSION_CHANGED",
+  "HOLD: VERIFIED canonical locator/original changed": "ARCHIVE_TERMINAL_LOCATOR_CHANGED",
+  "HOLD: VERIFIED independent durable postcondition changed; KEEP": "ARCHIVE_TERMINAL_POSTCONDITION",
+  "HOLD: VERIFIED fresh orphan receipt missing": "ARCHIVE_TERMINAL_ORPHAN_MISSING",
+  "HOLD: VERIFIED terminal root changed after final proof; KEEP": "ARCHIVE_TERMINAL_ROOT_CHANGED",
+  "HOLD: private completion proof epoch/deadline changed": "ARCHIVE_COMPLETION_FRESHNESS",
+  "HOLD: private completion receipt missing/duplicate physical coverage": "ARCHIVE_COMPLETION_COVERAGE",
+  "HOLD: private completion exact dense typed/display width missing": "ARCHIVE_COMPLETION_SHAPE",
+  "HOLD: fresh orphan mutation receipt unavailable": "ARCHIVE_ORPHAN_FRESHNESS",
+  "HOLD: fresh orphan DTO source event changed BEFORE fence": "ARCHIVE_ORPHAN_EVENT_BEFORE_FENCE",
+  "HOLD: fresh orphan DTO source event changed AFTER fence": "ARCHIVE_ORPHAN_EVENT_AFTER_FENCE",
+  "HOLD: fresh orphan source event changed during exact bytes checks": "ARCHIVE_ORPHAN_EVENT_DURING_HASH",
+  "HOLD: preserved archive slot exact bytes/header changed; KEEP": "ARCHIVE_ORPHAN_BYTES_CHANGED",
+  "HOLD: same-event terminal orphan stamp missing after validation": "ARCHIVE_TERMINAL_EVENT_MISSING",
+  "HOLD: same-event independent terminal/orphan completion missing": "ARCHIVE_TERMINAL_EVENT_FRESHNESS",
+  "HOLD: same-event terminal orphan stamp missing before scalar mint": "ARCHIVE_TERMINAL_MINT_EVENT_MISSING",
+  "HOLD: same-event terminal orphan scalar mint changed": "ARCHIVE_TERMINAL_MINT_CHANGED",
+  "HOLD: validated storage authority changed before scalar acknowledgment": "ARCHIVE_TERMINAL_AUTHORITY_CHANGED",
+  "HOLD: validated terminal root changed before scalar acknowledgment": "ARCHIVE_TERMINAL_ACK_ROOT_CHANGED",
+  "HOLD: validated terminal control changed before scalar acknowledgment": "ARCHIVE_TERMINAL_ACK_CONTROL_CHANGED",
+  "HOLD: Properties total capacity; never evict markers": "TRACE_PROPERTY_CAPACITY",
+  "HOLD: Properties value capacity; never evict markers": "TRACE_PROPERTY_VALUE_CAPACITY",
+  "HOLD: no physical blank Evidence26 capacity": "TRACE_CANONICAL_CAPACITY",
+  "HOLD: owned Sheets GET finalization unsettled; KEEP": "SHEETS_METER_FINALIZATION_UNSETTLED",
+  "HOLD: owned Sheets GET final CAS preimage changed; KEEP": "SHEETS_METER_FINALIZATION_PREIMAGE",
+  "HOLD: Sheets GET final completion acknowledgment uncertain; KEEP": "SHEETS_METER_FINALIZATION_ACK"
+};
+  if(Object.prototype.hasOwnProperty.call(boundaryHolds,m))return boundaryHolds[m];
+  var receiptHolds={
+   "HOLD: Gmail receipt DTO native data exceeds structural budget": "GMAIL_RECEIPT_DTO_STRUCTURE",
+   "HOLD: Gmail receipt DTO native number is non-finite": "GMAIL_RECEIPT_DTO_NONFINITE",
+   "HOLD: Gmail receipt DTO native data contains unsupported values": "GMAIL_RECEIPT_DTO_TYPE",
+   "HOLD: Gmail receipt DTO native data contains symbol fields": "GMAIL_RECEIPT_DTO_SYMBOL",
+   "HOLD: Gmail receipt DTO native array is sparse": "GMAIL_RECEIPT_DTO_SPARSE",
+   "HOLD: Gmail receipt DTO native accessor field prohibited": "GMAIL_RECEIPT_DTO_ACCESSOR",
+   "HOLD: Gmail receipt DTO inherited native field prohibited": "GMAIL_RECEIPT_DTO_INHERITED",
+   "HOLD: Gmail receipt DTO native error": "GMAIL_RECEIPT_DTO_ERROR",
+   "HOLD: Gmail receipt DTO synchronous native schema node missing": "GMAIL_RECEIPT_DTO_NODE",
+   "HOLD: Gmail receipt DTO native array sparse or extra fields prohibited": "GMAIL_RECEIPT_DTO_ARRAY",
+   "HOLD: Gmail receipt DTO native schema scalar invalid": "GMAIL_RECEIPT_DTO_SCALAR",
+   "HOLD: Gmail receipt DTO fixed schema kind required": "GMAIL_RECEIPT_DTO_KIND",
+   "HOLD: Gmail message native data exceeds structural budget": "GMAIL_MESSAGE_STRUCTURE",
+   "HOLD: Gmail message native number is non-finite": "GMAIL_MESSAGE_NONFINITE",
+   "HOLD: Gmail message native data contains unsupported values": "GMAIL_MESSAGE_TYPE",
+   "HOLD: Gmail message native data contains symbol fields": "GMAIL_MESSAGE_SYMBOL",
+   "HOLD: Gmail message native array is sparse": "GMAIL_MESSAGE_SPARSE",
+   "HOLD: Gmail message native accessor field prohibited": "GMAIL_MESSAGE_ACCESSOR",
+   "HOLD: Gmail message inherited native field prohibited": "GMAIL_MESSAGE_INHERITED",
+   "HOLD: Gmail message native error": "GMAIL_MESSAGE_ERROR",
+   "HOLD: Gmail message synchronous native result missing": "GMAIL_MESSAGE_SYNC",
+   "HOLD: Gmail full thread native data exceeds structural budget": "GMAIL_THREAD_STRUCTURE",
+   "HOLD: Gmail full thread native number is non-finite": "GMAIL_THREAD_NONFINITE",
+   "HOLD: Gmail full thread native data contains unsupported values": "GMAIL_THREAD_TYPE",
+   "HOLD: Gmail full thread native data contains symbol fields": "GMAIL_THREAD_SYMBOL",
+   "HOLD: Gmail full thread native array is sparse": "GMAIL_THREAD_SPARSE",
+   "HOLD: Gmail full thread native accessor field prohibited": "GMAIL_THREAD_ACCESSOR",
+   "HOLD: Gmail full thread inherited native field prohibited": "GMAIL_THREAD_INHERITED",
+   "HOLD: Gmail full thread native error": "GMAIL_THREAD_ERROR",
+   "HOLD: Gmail full thread synchronous native result missing": "GMAIL_THREAD_SYNC",
+   "HOLD: Gmail message identity own native fields missing": "GMAIL_MESSAGE_IDENTITY_FIELDS",
+   "HOLD: Gmail full/metadata own native fields missing": "GMAIL_MESSAGE_PAYLOAD_FIELDS",
+   "HOLD: native MIME payload own native fields missing": "GMAIL_MIME_PAYLOAD_FIELDS",
+   "HOLD: native MIME header own native fields missing": "GMAIL_MIME_HEADER_FIELDS",
+   "HOLD: Gmail full thread own native fields missing": "GMAIL_THREAD_FIELDS",
+   "HOLD: native MIME inherited native field prohibited": "GMAIL_MIME_INHERITED",
+   "HOLD: native MIME body inherited native field prohibited": "GMAIL_MIME_BODY_INHERITED",
+   "HOLD: native thenable accessor prohibited": "NATIVE_THENABLE_ACCESSOR",
+   "HOLD: native prototype depth exceeds budget": "NATIVE_PROTOTYPE_DEPTH",
+   "HOLD: Gmail message id required": "GMAIL_MESSAGE_ID_REQUIRED",
+   "HOLD: Gmail thread id required": "GMAIL_THREAD_ID_REQUIRED",
+   "HOLD: native Gmail message/thread identity mismatch": "GMAIL_MESSAGE_IDENTITY",
+   "HOLD: native Gmail label coverage missing": "GMAIL_MESSAGE_LABEL_COVERAGE",
+   "HOLD: native internalDate type invalid": "GMAIL_MESSAGE_DATE_TYPE",
+   "HOLD: native internalDate invalid": "GMAIL_MESSAGE_DATE",
+   "HOLD: native Gmail full/metadata payload missing": "GMAIL_MESSAGE_PAYLOAD",
+   "HOLD: native MIME structure invalid/unbounded": "GMAIL_MIME_STRUCTURE",
+   "HOLD: native MIME partId invalid": "GMAIL_MIME_PART_ID",
+   "HOLD: native MIME filename invalid": "GMAIL_MIME_FILENAME",
+   "HOLD: native MIME headers missing": "GMAIL_MIME_HEADERS",
+   "HOLD: native MIME header invalid": "GMAIL_MIME_HEADER",
+   "HOLD: native MIME body invalid": "GMAIL_MIME_BODY",
+   "HOLD: native MIME body size invalid": "GMAIL_MIME_BODY_SIZE",
+   "HOLD: native attachmentId invalid": "GMAIL_MIME_ATTACHMENT_ID",
+   "HOLD: native full MIME body content omitted": "GMAIL_MIME_BODY_CONTENT",
+   "HOLD: native full MIME body missing": "GMAIL_MIME_BODY_MISSING",
+   "HOLD: native MIME parts invalid": "GMAIL_MIME_PARTS",
+   "HOLD: native MIME bytes are not valid UTF-8": "GMAIL_MIME_UTF8",
+   "HOLD: native MIME base64url invalid": "GMAIL_MIME_BASE64URL",
+   "HOLD: native header value missing": "GMAIL_HEADER_VALUE",
+   "HOLD: unsupported native encoded-header charset": "GMAIL_HEADER_CHARSET",
+   "HOLD: native encoded-header base64 invalid": "GMAIL_HEADER_BASE64",
+   "HOLD: native encoded-header Q escape invalid": "GMAIL_HEADER_Q_ESCAPE",
+   "HOLD: native encoded-header Q byte invalid": "GMAIL_HEADER_Q_BYTE",
+   "HOLD: native US-ASCII encoded header invalid": "GMAIL_HEADER_ASCII",
+   "HOLD: native complete thread identity/message count invalid": "GMAIL_THREAD_IDENTITY_COUNT",
+   "HOLD: native thread message identity duplicated/mismatched": "GMAIL_THREAD_MESSAGE_IDENTITY",
+   "HOLD: native thread historyId invalid": "GMAIL_THREAD_HISTORY_ID"
+};
+  if(Object.prototype.hasOwnProperty.call(receiptHolds,m))return receiptHolds[m];
+  var snapshotHolds={'HOLD: native fixed Sheets JSON request unavailable':'SHEETS_JSON_REQUEST_UNAVAILABLE','HOLD: native fixed Sheets JSON HTTP rejected':'SHEETS_JSON_HTTP_REJECTED','HOLD: native fixed Sheets JSON response unavailable':'SHEETS_JSON_RESPONSE_UNAVAILABLE','HOLD: native fixed Sheets JSON response invalid':'SHEETS_JSON_INVALID','HOLD: native full typed snapshot payload exceeds bound':'SNAPSHOT_RESPONSE_CAPACITY','HOLD: native typed snapshot response window exceeds bound':'SNAPSHOT_WINDOW_CAPACITY','HOLD: native typed snapshot response Unicode invalid':'SNAPSHOT_RESPONSE_UTF8','HOLD: native full physical snapshot exceeds 12000-row bound':'SNAPSHOT_ROW_CAPACITY','HOLD: native full physical snapshot exceeds 24-range bound':'SNAPSHOT_RANGE_CAPACITY','HOLD: Sheets full typed snapshot native data exceeds structural budget':'SNAPSHOT_STRUCTURAL_CAPACITY'};
+  if(Object.prototype.hasOwnProperty.call(snapshotHolds,m))return snapshotHolds[m];
+  if(/Quota exceeded for quota metric ['"]Read requests['"]/.test(m))return 'SHEETS_READ_QUOTA';
+  if(/Quota exceeded for quota metric ['"]Write requests['"]/.test(m))return 'SHEETS_WRITE_QUOTA';
+  if(/(?:^|: )Argument too large(?::|$)/.test(m))return 'NATIVE_ARGUMENT_CAPACITY';
+  if(/(?:^|: )Service invoked too many times/.test(m))return 'NATIVE_SERVICE_QUOTA';
+  if(/(?:^|: )Exceeded maximum execution time/.test(m))return 'NATIVE_EXECUTION_LIMIT';
+  if(/(?:^|: )URI malformed(?:$|\.)/.test(m))return 'NATIVE_UTF8_ARGUMENT';
+  if(/API call to sheets\.spreadsheets\.get failed with error:/.test(m))return 'SHEETS_GET_EXCEPTION';
+  if(/^HOLD: native run budget exhausted or insufficient remaining time$/.test(m))return 'RUN_BUDGET';
+ }
+ return c==='CURRENT_SALES_VALIDATION_HOLD'?'VALIDATION_HOLD':'NATIVE_EXCEPTION';
+}
+// Capture exception diagnostics only; never source, storage or send authority.
+function fernainNativeSourceRetentionExceptionObservationV1_(phase,error){
+  if(phase!=='SOURCE_RETENTION'&&phase!=='TRACE_ARCHIVE_PRESERVATION_FENCE')return null;
+  var value={schema:'BackofficeNativeSourceRetentionExceptionObservation/v1',phase:phase,
+    name:'UNAVAILABLE',message:'REDACTED_UNCLASSIFIED',frames:[],observationOnly:true,
+    modelAuthority:false,sourceAuthority:false,sendAuthority:false};
+  try{
+    function data(object,key){var d=object&&typeof object==='object'&&Object.getOwnPropertyDescriptor(object,key);return d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='string'?d.value:null;}
+    var names=['Error','EvalError','RangeError','ReferenceError','SyntaxError','TypeError','URIError','Exception'],name=data(error,'name'),prototype=error;
+    for(var i=0;name===null&&i<2&&prototype&&typeof prototype==='object';i++){prototype=Object.getPrototypeOf(prototype);name=data(prototype,'name');}
+    if(names.indexOf(name)>=0)value.name=name;
+    var message=data(error,'message');
+    if(message!==null&&message.length<=320){
+      var identifier='[A-Za-z_$][A-Za-z0-9_$]{0,79}',qualified=identifier+'(?:\\.'+identifier+'){0,4}';
+      if(new RegExp('^'+identifier+' is not defined$').test(message)||
+        new RegExp('^'+qualified+' is not a function$').test(message)||
+        new RegExp('^Cannot read properties of (undefined|null) \\(reading [\\\x27\\\x22]'+identifier+'[\\\x27\\\x22]\\)$').test(message)||
+        /^(Maximum call stack size exceeded|Invalid array length|Invalid string length|URI malformed)\.?$/.test(message))value.message=message;
+    }
+    var stack=data(error,'stack');
+    if(stack!==null){stack=stack.slice(0,4096);var lines=stack.split('\n').slice(0,13);
+      lines.forEach(function(line){if(value.frames.length>=8||line.length>200)return;
+        var match=/^\s*at\s+(?:([A-Za-z_$][A-Za-z0-9_$.]{0,79})\s+\()?((?:NativeServicesV1|NativeRuntimeIntegrationV1|NativeArchiveV2)(?:\.gs)?):(\d{1,7})(?::(\d{1,7}))?\)?\s*$/.exec(line);
+        if(match)value.frames.push({functionName:match[1]||'ANONYMOUS',file:match[2],line:Number(match[3]),column:match[4]?Number(match[4]):null});
+      });
+    }
+  }catch(ignore){value.inspectionIncomplete=true;}
+  try{Logger.log('FERNAIN_SOURCE_RETENTION_EXCEPTION_V1:'+JSON.stringify(value));}catch(ignore){}
+  return value;
+}
+
+// Failure observation only. These fields never supply source or send authority.
+function fernainNativeCaptureTraceProjectionV1_(out,phase,diagnostic){
+  var v={schema:'BackofficeCaptureTracePriorProjection/v1',phase:'UNAVAILABLE',status:'UNAVAILABLE',reasonCode:'UNAVAILABLE',stage:'UNAVAILABLE',sourceLocatorPresent:false,diagnostic:{phase:'UNAVAILABLE',category:'UNAVAILABLE',assertionReason:'UNAVAILABLE'},observationOnly:true,sourceAuthority:false,sendAuthority:false};
+  try{
+    function data(o,k){var d=o&&typeof o==='object'&&Object.getOwnPropertyDescriptor(o,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')?d.value:undefined;}
+    function finite(x){return typeof x==='string'&&/^[A-Z][A-Z0-9_]{0,63}$/.test(x)?x:'UNAVAILABLE';}
+    var status=data(out,'status'),reason=data(out,'reasonCode');v.phase=finite(phase);v.status=['PUBLIC_SOURCE_RETAINED','EMPTY_POOL','HOLD'].indexOf(status)>=0?status:'OTHER';v.reasonCode=reason===undefined?'NONE':['NATIVE_VALIDATION_HOLD','NATIVE_RUNTIME_EXCEPTION','NATIVE_ARCHIVE_PRESERVATION_HOLD'].indexOf(reason)>=0?reason:'OTHER';v.stage=finite(data(out,'stage'));
+    var locator=data(out,'sourceLocator');v.sourceLocatorPresent=locator!==undefined&&locator!==null;
+    v.diagnostic.phase=finite(data(diagnostic,'phase'));v.diagnostic.category=finite(data(diagnostic,'category'));
+    var assertion=data(diagnostic,'assertionReason');if(typeof assertion==='string'&&assertion.length<=400&&/^[\x20-\x7e]+$/.test(assertion)&&!/(?:https?:|@|Bearer\s|password|secret|token=)/i.test(assertion))v.diagnostic.assertionReason=assertion;
+  }catch(ignore){v.inspectionIncomplete=true;}return v;
+}
+function fernainNativeCaptureTraceFenceObservationV1_(prior,error){
+  var v={schema:'BackofficeCaptureTraceFenceObservation/v1',prior:prior,guard:{code:'UNAVAILABLE',category:'UNAVAILABLE',assertionReason:'UNAVAILABLE'},budgetOperands:'UNAVAILABLE_NOT_SAMPLED_AT_THIS_BOUNDARY',observationOnly:true,sourceAuthority:false,sendAuthority:false};
+  try{
+    function text(o,k){var d=o&&typeof o==='object'&&Object.getOwnPropertyDescriptor(o,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='string'?d.value:null;}
+    var code=text(error,'code'),message=text(error,'message');if(code==='CURRENT_SALES_VALIDATION_HOLD')v.guard.code=code;
+    v.guard.category=fernainNativeFiniteErrorCategoryV1(error);
+    if(code==='CURRENT_SALES_VALIDATION_HOLD'&&message&&message.indexOf('HOLD: ')===0){var reason=message.slice(6);if(reason.length>0&&reason.length<=400&&/^[\x20-\x7e]+$/.test(reason)&&!/(?:https?:|@|Bearer\s|password|secret|token=)/i.test(reason))v.guard.assertionReason=reason;}
+  }catch(ignore){v.inspectionIncomplete=true;}
+  try{Logger.log('FERNAIN_CAPTURE_TRACE_FENCE_V1:'+JSON.stringify(v));}catch(ignore){}return v;
+}
+
+function fernainNativeHoldDiagnostic(phase,error,source){
+ try{
+  function ownText(value,key){var d=value&&typeof value==='object'&&Object.getOwnPropertyDescriptor(value,key);return d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='string'?d.value:null;}
+  var messages=["Admin audit complete pagination exceeds finite budget","Admin audit duplicate activity","Admin audit event budget exhausted","Admin audit identity/window unavailable","Admin audit page budget exhausted","Admin audit page exceeds requested bound","Admin audit pagination token invalid/repeated","Admin audit unavailable","Admin event parameter name missing","Admin scope parameter unsupported","GLOBAL_CAMPAIGN_PACING_HOLD; minimum3minutes after settled attempt, no burst/catchup; unresolved or legacy fence requires verified reconciliation","approved monitored profile and exact baseline required","audit retention cannot cover original baseline","bounded native source retention exceeded","canonical changed while public source captured","canonical changed while source evidence persisted","canonical external writer exclusion unavailable","complete reviewed family history terms missing","duplicate Admin scope parameter","exact native registered source missing/ambiguous","exact project/owner config missing","exact raw Organization HYPERLINK/native display changed","exact registered source metadata native preimage unavailable","exact retained Executive/root delegation OFF baseline missing","exact row/LeadID handle required","explicit listed candidate changed/ineligible","explicit native sole-writer cutover required","fresh native account coverage missing","fresh native aliases/vacation coverage unavailable","fresh native settings or explicitly approved monitored policy unsupported","full typed27/26 snapshot missing","held canonical source persistence writer missing","held native source context missing","independently verified incoming route permanently fenced","listed candidate stale/ineligible/replayed","native SEND config missing","native audit source retention bound exceeded","native global halt acknowledgement/readback missing","native policy accessor prohibited","native policy array required","native policy evidence DTO required","native policy evidence depth exceeded","native policy nonfinite evidence","native policy object required","native policy runtime budget unavailable","native policy sparse/accessor array prohibited","native policy symbolic evidence prohibited","native producer registry instance unavailable","native prototype depth exceeds budget","native registered handle bound exceeded","native registered handle identity missing/ambiguous","native registry adapter invalid","native registry definition/version changed","native registry full read schema changed","native registry pointer preimage changed","native registry snapshot unavailable","native retained source manifest stale/incomplete","native run budget exhausted or insufficient remaining time","native semantic coverage/conflict/unknown","native source Evidence identity mismatch","native source candidate unregistered","native source capture candidate HOLD","native source chunk count exceeds budget","native source chunk identity/content mismatch","native source chunk order/row invalid","native source complete raw bytes root mismatch","native source encoded root mismatch","native source exact approved body mismatch","native source exact eligible canonical row missing","native source full ledger transport changed","native source full typed/display ledger unavailable","native source full-byte binding candidate HOLD","native source full26 chunk preimage changed","native source handle missing","native source registry incomplete","native source retention identity mismatch","native source truth unsupported/not effect eligible","native source/canonical full27 preimage changed","native thenable accessor prohibited","native usage basis chunk budget exhausted","native usage basis exceeds finite retention bound","nonseed registry requires retained native read","permanent no-resend/replay fence","reconstructable native provider source basis missing/changed","reconstructable native usage basis missing","reconstructed source route/body binding mismatch","registered baseline Evidence row missing","registered evidence coordinates missing","registered full26 baseline native Evidence changed","retained GWSMO ON / external SMTP gateway OFF baseline missing","retained complete native baseline hash mismatch","retained native registry evidence missing","retained native source/policy binding failed","retained registered native producer changed","source full27 canonical preimage changed","source metadata changed on native read","source retention base64 invalid","standing owner exact source scope missing","unknown Admin audit event","unregistered exact native source candidate","versioned native source registration missing"],phases=["OTHER","LOCK","CONFIG","HALT_CHECK","CAPTURE_CLEANUP","ACTION","TRACE_PERSISTENCE","PREPARE_SNAPSHOT","PREPARE_CANDIDATES","PREPARE_HANDLE","PREPARE_PACING","PREPARE_CUTOVER","PREPARE_EVIDENCE_ALLOCATION","SOURCE_BRIDGE_CONTEXT","SOURCE_BRIDGE_REGISTRY","SOURCE_BRIDGE_EXISTING_EVIDENCE","SOURCE_CAPTURE","SOURCE_CAPTURE_BUDGET","SOURCE_CANONICAL_READ","SOURCE_CANONICAL_DIGEST","SOURCE_LEDGER_DIGEST","SOURCE_BIND","SOURCE_RETENTION","SOURCE_CHUNK_WRITE","SOURCE_METADATA_WRITE","NATIVE_ENTRY_HANDLE","NATIVE_SOURCE_PRODUCER","NATIVE_ENTRY_METADATA_READ","NATIVE_ENTRY_PREIMAGE","NATIVE_ENTRY_REFRESH","POLICY_BINDING","POLICY_FENCES","PROVIDER_POLICY","PROVIDER_BASIS","SOURCE_PROOF","SOURCE_PROOF_VALIDATION","OWNER_SCOPE","SEMANTIC_REVIEW","SEMANTIC_VALIDATION","PROVIDER_SETTINGS","ACCOUNT_HISTORY_USAGE","POLICY_ASSEMBLY","FINAL_PREFLIGHT","USAGE_RETENTION","CAPTURE_RECORD"],reasons=["ACTUAL_CONNECTION_PUBLIC_IP_AND_PINNING_UNAVAILABLE","ALREADY_SENT_OR_SOURCE_STATUS_INELIGIBLE_HOLD","ASCII_NAME_HOLD","BOTH_NATIVE_DNS_HOSTS_HOLD","BOTH_PRIMARY_SOURCES_REQUIRED_HOLD","BOUND_REPLAY_CONTEXT_SECURITY_HOLD","BYTE_HASH_SERVICE_HOLD","CANONICAL_CELL_HOLD","CANONICAL_ORGANIZATION_DISPLAY_HOLD","CANONICAL_ORGANIZATION_FORMULA_DISPLAY_HOLD","CANONICAL_ROW_HOLD","CANONICAL_TAB_HOLD","CAPTURE_FETCH_OR_TIME_BOUND_HOLD","CAPTURE_FRESHNESS_HOLD","CLOCK_HOLD","CONTENT_LENGTH_AMBIGUOUS_HOLD","CONTENT_LENGTH_MISMATCH_HOLD","CONTENT_TYPE_AMBIGUOUS_HOLD","DENSE_ACCESSOR_FREE_BYTES_HOLD","DNS_ADDRESS_UNKNOWN_HOLD","DNS_AMBIGUOUS_CNAME_HOLD","DNS_ANSWER_HOLD","DNS_A_AAAA_CNAME_MISMATCH_HOLD","DNS_BINDING_INCOMPLETE_OR_LOOP_HOLD","DNS_CAPTURE_ORDER_BINDING_HOLD","DNS_CHANGED_DURING_CAPTURE_HOLD","DNS_CLOCK_OR_FRESHNESS_HOLD","DNS_CNAME_BOUND_HOLD","DNS_CNAME_LOOP_HOLD","DNS_CNAME_LOOP_OR_BOUND_HOLD","DNS_COMPLETE_A_AAAA_BINDING_HOLD","DNS_COMPLETE_RECORDS_HOLD","DNS_CONTENT_TYPE_HOLD","DNS_DUPLICATE_RECORD_HOLD","DNS_ECS_MISMATCH_HOLD","DNS_FRESHNESS_HOLD","DNS_INCOMPLETE_OR_STATUS_HOLD","DNS_NAME_HOLD","DNS_NONPUBLIC_OR_UNKNOWN_ADDRESS_HOLD","DNS_PARSED_PREIMAGE_HOLD","DNS_PROVENANCE_HOLD","DNS_QUERY_BINDING_HOLD","DNS_QUESTION_HOLD","DNS_QUESTION_MISMATCH_HOLD","DNS_RECORD_HOLD","DNS_RECORD_PREIMAGE_HOLD","DNS_RESPONSE_BYTES_PREIMAGE_HOLD","DNS_RESPONSE_OBJECT_HOLD","DNS_UNEXPECTED_SECTION_HOLD","DNS_UNKNOWN_FIELDS_HOLD","DNS_UNRELATED_ANSWER_HOLD","EMPTY_BYTES_HOLD","EXACT_COMPLETE_POLICY_RANGES_HOLD","EXACT_HTTPS_URL_HOLD","EXACT_STAFF_SECTION_HOLD","EXACT_UNIQUE_PERSON_HEADING_HOLD","EXACT_WITNESSED_MAILTO_HOLD","EXACT_WORKFLOW_HEADING_HOLD","EXACT_WORKFLOW_SEARCH_CONTROL_HOLD","EXACT_WORKFLOW_SELECT_HOLD","FULL_27_CELL_PREIMAGE_HOLD","FULL_CANONICAL_DATA_HOLD","FULL_CANONICAL_ROW_HOLD","FULL_CANONICAL_SHEETS_HOLD","FULL_NATIVE_CANONICAL_HOLD","FULL_NATIVE_POLICY_EVIDENCE_REQUIRED_HOLD","FULL_PACKET_ACCESSOR_FREE_OBJECT_HOLD","FULL_PACKET_COMPLEXITY_HOLD","FULL_PACKET_DENSE_ARRAY_HOLD","FULL_PACKET_NUMBER_HOLD","FULL_PACKET_SIZE_HOLD","FULL_POLICY_GMAIL_COVERAGE_HOLD","FULL_POLICY_PACKET_REQUIRED_HOLD","HIDDEN_OR_ACTIVE_EVIDENCE_HOLD","HTML_ATTRIBUTE_HOLD","HTML_BOUND_HOLD","HTML_COMMENT_HOLD","HTML_COMPLEXITY_HOLD","HTML_DOCTYPE_HOLD","HTML_DUPLICATE_ATTRIBUTE_HOLD","HTML_ENTITY_HOLD","HTML_RAW_BLOCK_HOLD","HTML_TAG_HOLD","HTML_UNCLOSED_TREE_HOLD","HTML_UNSUPPORTED_IMPLIED_OR_MISMATCHED_CLOSURE_HOLD","NATIVE_CAPTURE_ORDER_HOLD","NATIVE_CAPTURE_PROVENANCE_HOLD","NATIVE_DNS_FULL_BINDING_HOLD","NATIVE_FULL_POLICY_TARGET_OR_PREIMAGE_HOLD","NATIVE_RESPONSE_METHODS_HOLD","NATIVE_SERVICES_HOLD","NATIVE_SOURCE_CAPTURE_HOLD","NON_200_OR_REDIRECT_HOLD","PLAIN_TEXT_LAYOUT_NOT_REGISTERED_HOLD","POLICY_COVERAGE_HOLD","POLICY_EXISTING_CONVERSATION_HOLD","POLICY_GMAIL_IDS_HOLD","POLICY_NATIVE_READ_OR_FRESHNESS_HOLD","POLICY_ROW_HOLD","POLICY_VALUES_HOLD","POLICY_VALUES_MISSING_HOLD","POLICY_VALUE_HOLD","RAW_BYTES_TEXT_DIGEST_MISMATCH_HOLD","RAW_CELL_PREIMAGE_HOLD","REDIRECT_OR_PARTIAL_HEADERS_HOLD","REGISTRY_CANONICAL_IDENTITY_DUPLICATE_HOLD","REGISTRY_DEFINITION_HOLD","REGISTRY_SOURCE_PAIR_DISTINCT_HOLD","RESPONSE_HEADERS_HOLD","RETAINED_SOURCE_MATERIAL_HOLD","SCALAR_UTF8_HOLD","SCRIPT_OWNED_REGISTRY_DEFINITION_HOLD","SCRIPT_OWNED_REGISTRY_ENTRIES_HOLD","SCRIPT_OWNED_REGISTRY_HANDLE_HOLD","SCRIPT_OWNED_REGISTRY_LOADER_REQUIRED_HOLD","SCRIPT_OWNED_REGISTRY_LOAD_HOLD","SCRIPT_OWNED_REGISTRY_SCHEMA_HOLD","SCRIPT_OWNED_REGISTRY_STALE_HOLD","SIGNED_INTEGER_BYTES_HOLD","SOURCE_BINDING_HOLD","SOURCE_CANONICAL_IDENTITY_MISMATCH_HOLD","SOURCE_EXACT_SELECTION_PREIMAGE_HOLD","SOURCE_KIND_HOLD","SOURCE_KIND_MISMATCH_HOLD","SOURCE_MATERIAL_PROVENANCE_HOLD","SOURCE_RESPONSE_PREIMAGE_HOLD","SOURCE_TEXT_BOUND_HOLD","SOURCE_URL_REGISTRY_MISMATCH","SOURCE_UTF8_CONTENT_TYPE_HOLD","STAFF_BLOCK_BOUND_HOLD","STAFF_ROLE_MAIL_ATOMS_HOLD","STRICT_UTF8_HOLD","SUPPORTED_WORKFLOW_CONTAINER_HOLD","UNREGISTERED_CANONICAL_HANDLE_CANDIDATE_LOCAL_HOLD","WORKFLOW_CONTROL_CONTAINER_HOLD","WORKFLOW_FORM_DESTINATION_HOLD"],names=["native adapter arguments","native adapter evidence","copy","Sheets metadata","Sheets typed chunk","Sheets full typed snapshot","snapshot configuration","canonical write plans","canonical batchUpdate","Gmail account profile","Gmail profile","Gmail settings account","Gmail labels","Gmail native sendAs settings","Gmail native vacation settings","Gmail paginated search","Gmail message","Gmail full thread","account-usage binding","account-usage configuration","ephemeral capture","Admin audit","Admin audit page","native policy evidence"],suffixes=["native data exceeds structural budget","native number is non-finite","native data contains unsupported values","native data contains symbol fields","native array is sparse","native accessor field prohibited","synchronous native result missing","native error","own native fields missing","inherited native field prohibited"];
+  messages=messages.concat(["Gem proposal differs from independently approved exact content/source/route","Gemini exact advisory envelope required","JSON object required","Properties total capacity; never evict markers","Properties value capacity; never evict markers","accountSent authoritative reference missing","accountSent coverage/conflict/unknown","accountSent freshness unknown or expired","advisory proposal missing","apiRecipientsPerMessage additional applicable provider headroom unknown","apiRecipientsPerMessage applicability unknown","apiRecipientsPerMessage applicable provider coverage unknown","apiRecipientsPerMessage provider 20% headroom","apiRecipientsPerMessage.reserved usage/reservation unknown","apiRecipientsPerMessage.used usage/reservation unknown","asynchronous native adapter unsupported","automation24 usage/reservation unknown","bounded JSON missing","bounded current SEND mode required","campaign/account/automation rolling quota","campaign/automation/unknown usage inconsistent with complete account coverage","campaign60 usage/reservation unknown","canonical destination binding missing","canonical individual route does not match current trusted source","canonicalEvidence authoritative reference missing","canonicalEvidence coverage/conflict/unknown","canonicalEvidence freshness unknown or expired","canonicalProspects authoritative reference missing","canonicalProspects coverage/conflict/unknown","canonicalProspects freshness unknown or expired","capture ID missing","capture expired/consumed/missing or preparation trace/archive unacknowledged","complete SENT reconciliation ids required","complete account/automation usage required","complete bounded row required","connected Gmail account and label binding authoritative reference missing","connected Gmail account and label binding freshness unknown or expired","current route/source/observation mismatch","ephemeral capture cleanup unverified","exact Product AA/LeadID/individual binding required","exact canonical contact cell missing","exact connected Gmail account/Label_5 binding required","exact email required","exact independently verified source required","exact owner effect scope missing or changed","exact staged source metadata/manifest changed","externalRecipients24 additional applicable provider headroom unknown","externalRecipients24 applicability unknown","externalRecipients24 applicable provider coverage unknown","externalRecipients24 provider 20% headroom","externalRecipients24.reserved usage/reservation unknown","externalRecipients24.used usage/reservation unknown","externalUnique24 additional applicable provider headroom unknown","externalUnique24 applicability unknown","externalUnique24 applicable provider coverage unknown","externalUnique24 provider 20% headroom","externalUnique24.reserved usage/reservation unknown","externalUnique24.used usage/reservation unknown","familyHistory authoritative reference missing","familyHistory coverage/conflict/unknown","familyHistory freshness unknown or expired","fresh native provider/account policy authoritative reference missing","fresh native provider/account policy freshness unknown or expired","full native canonical snapshot authoritative reference missing","full native canonical snapshot freshness unknown or expired","gmailHistory authoritative reference missing","gmailHistory coverage/conflict/unknown","gmailHistory freshness unknown or expired","header/greeting injection","independent trust boundary missing","independently registered native source authoritative reference missing","independently registered native source freshness unknown or expired","individual route and observation source authoritative reference missing","individual route and observation source freshness unknown or expired","live canonical row not eligible","messages24 additional applicable provider headroom unknown","messages24 applicability unknown","messages24 applicable provider coverage unknown","messages24 provider 20% headroom","messages24.reserved usage/reservation unknown","messages24.used usage/reservation unknown","native Organization formula/display binding authoritative reference missing","native Organization formula/display binding freshness unknown or expired","native property acknowledgement/readback missing","native runtime halted","native semantic suppression/family review authoritative reference missing","native semantic suppression/family review freshness unknown or expired","native sole-writer cutover authoritative reference missing","native sole-writer cutover freshness unknown or expired","native source changed since Ask Gemini preparation","native source truth authoritative reference missing","native source truth freshness unknown or expired","no physical blank Evidence26 capacity","organizationHistory authoritative reference missing","organizationHistory coverage/conflict/unknown","organizationHistory freshness unknown or expired","packet identity missing","preflight authoritative reference missing","preflight freshness unknown or expired","preparation provider/usage archive manifest changed","preparation trace raw preimage changed","proposal contains extra effects/authority","provider account message usage inconsistent","provider limits and usage authoritative reference missing","provider limits and usage freshness unknown or expired","provider tier/coverage unknown","provider usage belongs to a different or unknown account","recipients24 additional applicable provider headroom unknown","recipients24 applicability unknown","recipients24 applicable provider coverage unknown","recipients24 provider 20% headroom","recipients24.reserved usage/reservation unknown","recipients24.used usage/reservation unknown","registered native adapter missing: cutoverAdapter","registered native adapter missing: providerPolicyAdapter","registered native adapter missing: semanticReviewAdapter","registered native adapter missing: sourceProducerAdapter","registered native adapter missing: sourceProofAdapter","reservations authoritative reference missing","reservations coverage/conflict/unknown","reservations freshness unknown or expired","reservedAccount24 usage/reservation unknown","reservedAutomation24 usage/reservation unknown","reservedCampaign60 usage/reservation unknown","single individual email required; no guessed or multi-recipient route","source/body/full typed canonical changed","staged source trace full26 preimage changed","suppression authoritative reference missing","suppression coverage/conflict/unknown","suppression freshness unknown or expired","totalAccount24 usage/reservation unknown","trusted company missing","trusted first missing","trusted name missing","trusted native registered candidate handles authoritative reference missing","trusted native registered candidate handles freshness unknown or expired","trusted observation missing","trusted organizationKey missing","trusted packet missing","trusted role missing","trusted subject missing","uniqueRecipients24 additional applicable provider headroom unknown","uniqueRecipients24 applicability unknown","uniqueRecipients24 applicable provider coverage unknown","uniqueRecipients24 provider 20% headroom","uniqueRecipients24.reserved usage/reservation unknown","uniqueRecipients24.used usage/reservation unknown","unknownAutomation24 usage/reservation unknown","usage authoritative reference missing","usage belongs to a different or unknown account","usage freshness unknown or expired"]);phases=phases.concat(["CONSUME_CAPTURE","CONSUME_MODEL_INPUT","CONSUME_ENVELOPE","CONSUME_SOURCE_PREIMAGE","CONSUME_CAPTURE_HASHES","CONSUME_PROPOSAL","CONSUME_PRE_EFFECT_BUDGET"]);
+  messages=messages.concat(["native source bytepack JSON array invalid","native source bytepack JSON key invalid","native source bytepack JSON number invalid","native source bytepack JSON structure exceeded","native source bytepack JSON value invalid","native source bytepack base64 bound invalid","native source bytepack base64 byte count invalid","native source bytepack base64 canonical bits invalid","native source bytepack byte array shape invalid","native source bytepack byte codec mismatch","native source bytepack byte hash invalid","native source bytepack byte representation invalid","native source bytepack codec unavailable","native source bytepack diagnostic chunk invalid","native source bytepack diagnostic encoded bound exceeded","native source bytepack diagnostic exact configuration required","native source bytepack diagnostic exact project required","native source bytepack diagnostic held lock required","native source bytepack diagnostic historical root changed","native source bytepack diagnostic identity invalid","native source bytepack diagnostic reader unavailable","native source bytepack diagnostic retained identity changed","native source bytepack diagnostic roundtrip changed","native source bytepack diagnostic row invalid","native source bytepack diagnostic rows incomplete","native source bytepack manifest invalid","native source bytepack object shape invalid","native source bytepack own data required","native source bytepack raw response preimage invalid","native source bytepack response text changed","native source bytepack restored size invalid","native source bytepack schema invalid","native source bytepack source envelope invalid","native source bytepack strict UTF8 invalid","native source bytepack symbolic data prohibited","native source bytepack text codec mismatch","native source bytepack transport schema invalid","native source bytepack transport size invalid"]);
+  messages=messages.concat(["native source immutable manifest invalid","native source immutable reference schema invalid","native source immutable reference invalid","native source immutable origin invalid","native source immutable read group budget exceeded","native source immutable full26 rows incomplete","native source immutable full26 preimage changed","native source immutable journal invalid","native source immutable origin/content mismatch","native source immutable historical encoded root changed","native source immutable metadata preimage changed","native source immutable acknowledgement mapping invalid","native source fixed replacement invalid","native source fixed replacement chunk hash mismatch","native source CAPACITY_HOLD measured snapshot capacity unavailable","native source CAPACITY_HOLD measured snapshot capacity invalid","native source CAPACITY_HOLD chunk journal bound exceeded","native source CAPACITY_HOLD metadata journal bound exceeded","native source CAPACITY_HOLD physical coverage invalid","native source CAPACITY_HOLD bounded retention growth exceeds snapshot capacity","native source CAPACITY_HOLD destination display proof unavailable","native source CAPACITY_HOLD destination display proof invalid","native source CAPACITY_HOLD destination text display is not identity/default"]);
+  phases=phases.concat(['SOURCE_RETENTION_WRITE','ARCHIVE_PRESERVATION_FENCE','TRACE_ARCHIVE_PRESERVATION_FENCE','SHEETS_GET_FINALIZATION']);
+  var message=ownText(error,'message'),index=messages.indexOf(message);
+  if(index<0&&message&&message.indexOf('HOLD: ')===0)index=messages.indexOf(message.slice(6));
+  var category=index>=0?'H'+String(index).padStart(4,'0'):'OTHER',normalized=message&&message.indexOf('HOLD: ')===0?message.slice(6):message;
+  if(category==='OTHER'&&normalized){for(var n=0;n<names.length;n++){var prefix=names[n]+' ';if(normalized.indexOf(prefix)===0){var suffixIndex=suffixes.indexOf(normalized.slice(prefix.length));if(suffixIndex>=0){category='D'+String(n).padStart(2,'0')+'S'+String(suffixIndex).padStart(2,'0');break;}}}}
+  var finiteBoundary=fernainNativeFiniteErrorCategoryV1(error);
+  if(/^(ARCHIVE_|TRACE_|SHEETS_METER_)/.test(finiteBoundary))category=finiteBoundary;
+  else if(category==='OTHER')category=finiteBoundary;
+  var value={phase:phases.indexOf(phase)>=0?phase:'OTHER',category:category};
+  if((value.phase==='SOURCE_RETENTION'||value.phase==='SOURCE_RETENTION_WRITE')&&finiteBoundary==='VALIDATION_HOLD'&&ownText(error,'code')==='CURRENT_SALES_VALIDATION_HOLD'&&typeof normalized==='string'&&normalized.length>0&&normalized.length<=400&&/^[\x20-\x7e]+$/.test(normalized))value.assertionReason=normalized;
+  if(arguments.length===3){var outcome=ownText(source,'outcome'),reason=ownText(source,'reason_code');value.sourceOutcome=['HOLD','NATIVE_SOURCE_CAPTURED_PREPARATION_ONLY','BOUND_NATIVE_SOURCE_CONTEXT_POLICY_PENDING','BOUND_REPLAY_CONTEXT_SECURITY_HOLD'].indexOf(outcome)>=0?outcome:'OTHER';value.sourceReasonCode=reasons.indexOf(reason)>=0?reason:'OTHER';}
+  if(arguments.length!==3&&FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1&&FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1.phase===value.phase&&FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1.category===value.category){var previousOutcome=ownText(FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1,'sourceOutcome'),previousReason=ownText(FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1,'sourceReasonCode');if(['HOLD','NATIVE_SOURCE_CAPTURED_PREPARATION_ONLY','BOUND_NATIVE_SOURCE_CONTEXT_POLICY_PENDING','BOUND_REPLAY_CONTEXT_SECURITY_HOLD','OTHER'].indexOf(previousOutcome)>=0)value.sourceOutcome=previousOutcome;if(reasons.indexOf(previousReason)>=0||previousReason==='OTHER')value.sourceReasonCode=previousReason;}
+  FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1=value;Logger.log('FERNAIN_NATIVE_VALIDATION_V1:'+JSON.stringify(value));
+ }catch(ignore){}
+}
+var BackofficeNativeSourceBridgeV1=(function(){
+ 'use strict';
+ function hold(ok,why){fernHold(ok,why);}
+ function copy(x){return JSON.parse(JSON.stringify(x));}
+ function same(a,b){return JSON.stringify(a)===JSON.stringify(b);}
+ function raw(row){return row.map(function(v){return Object.keys(v).length?Object.values(v)[0]:'';});}
+ function create(options){
+  var producerModule=options.producerModule;
+  function context(){var c=options.context();hold(c&&c.services&&c.config&&c.readSnapshot,'held native source context missing');return c;}
+  function hash(s,x){return s.sha(typeof x==='string'?x:JSON.stringify(x));}
+  function stamp(s){return new Date(s.now()).toISOString();}
+  // Lossless transport only: the producer retains normalized unsigned octets.
+  // Rehydrate both fixed paths before the original JSON root and source validators.
+  var PACK_SCHEMA='BackofficeNativeSourceBytepack/v1',MAX_RETAINED=6000000,MAX_RESPONSE=524288;
+  function ownData(o,k){var d=o&&typeof o==='object'&&Object.getOwnPropertyDescriptor(o,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable,'native source bytepack own data required');return d.value;}
+  function dataObject(o){hold(o&&typeof o==='object'&&!Array.isArray(o)&&(Object.getPrototypeOf(o)===Object.prototype||Object.getPrototypeOf(o)===null)&&Object.getOwnPropertySymbols(o).length===0,'native source bytepack object shape invalid');return o;}
+  function exactObject(o,keys){dataObject(o);hold(Object.getOwnPropertyNames(o).length===keys.length&&keys.every(function(k){return Object.prototype.hasOwnProperty.call(o,k); }),'native source bytepack schema invalid');keys.forEach(function(k){ownData(o,k);});return o;}
+  function denseBytes(s,a,signed){hold(Array.isArray(a)&&Object.getPrototypeOf(a)===Array.prototype&&a.length>0&&a.length<=MAX_RESPONSE&&Object.getOwnPropertySymbols(a).length===0&&Object.getOwnPropertyNames(a).length===a.length+1,'native source bytepack byte array shape invalid');for(var i=0;i<a.length;i++){if(i%4096===0)s.checkBudget(1000);var v=ownData(a,String(i));hold(Number.isInteger(v)&&!Object.is(v,-0)&&v>=(signed?-128:0)&&v<=(signed?127:255),'native source bytepack byte representation invalid');}return a;}
+  function jsonData(s,value){var nodes=0,path=new Set();function visit(v,depth){hold(++nodes<=MAX_RETAINED&&depth<=64,'native source bytepack JSON structure exceeded');if(nodes%4096===0)s.checkBudget(1000);if(v===null||typeof v==='string'||typeof v==='boolean')return;if(typeof v==='number'){hold(Number.isFinite(v)&&!Object.is(v,-0),'native source bytepack JSON number invalid');return;}hold(v&&typeof v==='object'&&!path.has(v),'native source bytepack JSON value invalid');path.add(v);hold(Object.getOwnPropertySymbols(v).length===0,'native source bytepack symbolic data prohibited');var keys=Object.getOwnPropertyNames(v);if(Array.isArray(v)){hold(Object.getPrototypeOf(v)===Array.prototype&&v.length<=MAX_RETAINED&&keys.length===v.length+1,'native source bytepack JSON array invalid');for(var i=0;i<v.length;i++)visit(ownData(v,String(i)),depth+1);}else{dataObject(v);keys.forEach(function(k){hold(k!=='__proto__'&&k!=='constructor'&&k!=='prototype','native source bytepack JSON key invalid');visit(ownData(v,k),depth+1);});}path.delete(v);}s.checkBudget(1000);visit(value,0);s.checkBudget(1000);}
+  function sourcePacket(r,slot){dataObject(r);var bundle=dataObject(ownData(r,'bundle'));return dataObject(ownData(bundle,slot));}
+  function strictText(s,bytes){var out=[];for(var i=0;i<bytes.length;i++){if(i%4096===0)s.checkBudget(1000);var c=bytes[i],n=c<128?0:c>=194&&c<=223?1:c>=224&&c<=239?2:c>=240&&c<=244?3:-1;hold(n>=0&&i+n<bytes.length&&c!==0,'native source bytepack strict UTF8 invalid');var cp=n?c&((1<<(6-n))-1):c;for(var j=1;j<=n;j++){var z=bytes[i+j];hold(z>=128&&z<=191,'native source bytepack strict UTF8 invalid');cp=cp*64+(z&63);}hold(!(n===1&&cp<128||n===2&&(cp<2048||cp>=55296&&cp<=57343)||n===3&&(cp<65536||cp>1114111)),'native source bytepack strict UTF8 invalid');out.push(String.fromCodePoint(cp));i+=n;}return out.join('');}
+  function canonicalBase64(encoded,count,max){hold(typeof encoded==='string'&&Number.isInteger(count)&&count>0&&count<=max&&encoded.length===4*Math.ceil(count/3)&&/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded),'native source bytepack base64 bound invalid');var padding=encoded.endsWith('==')?2:encoded.endsWith('=')?1:0;hold(encoded.length/4*3-padding===count,'native source bytepack base64 byte count invalid');var alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';hold(!padding||(alphabet.indexOf(encoded[encoded.length-padding-1])&((1<<(padding===2?4:2))-1))===0,'native source bytepack base64 canonical bits invalid');}
+  function signed(bytes){return bytes.map(function(v){return v>127?v-256:v;});}
+  function byteHash(bytes){hold(typeof options.hashBytes==='function','native source bytepack codec unavailable');var result=options.hashBytes(signed(bytes));hold(typeof result==='string'&&/^[a-f0-9]{64}$/.test(result),'native source bytepack byte hash invalid');return result;}
+  function packetParity(s,p,bytes,text){var expected=ownData(p,'responseSha256');hold(ownData(p,'responseByteLength')===bytes.length&&typeof expected==='string'&&/^[a-f0-9]{64}$/.test(expected)&&byteHash(bytes)===expected&&hash(s,text)===expected,'native source bytepack raw response preimage invalid');}
+  function packRetained(s,retained){
+   hold(typeof options.encodeBytes==='function'&&typeof options.decodeBytes==='function','native source bytepack codec unavailable');jsonData(s,retained);var json=JSON.stringify(retained),originalBytes=s.byteLength(json);hold(originalBytes<=MAX_RETAINED,'bounded native source retention exceeded');var packed=JSON.parse(json);
+   ['staff','workflow'].forEach(function(slot){var p=sourcePacket(retained,slot),bytes=denseBytes(s,ownData(p,'responseBytes'),false),text=strictText(s,bytes);hold(typeof ownData(p,'responseUtf8')==='string'&&p.responseUtf8===text,'native source bytepack response text changed');packetParity(s,p,bytes,text);s.checkBudget(1000);var encoded=options.encodeBytes(signed(bytes));canonicalBase64(encoded,bytes.length,MAX_RESPONSE);var pp=sourcePacket(packed,slot);pp.responseBytes={schema:'BackofficeNativeByteArray/v1',representation:'UNSIGNED_OCTETS',byteLength:bytes.length,sha256:p.responseSha256,base64:encoded};pp.responseUtf8=null;});
+   var transportJson=JSON.stringify({schema:PACK_SCHEMA,retained:packed}),transportBytes=s.byteLength(transportJson);hold(transportBytes<=MAX_RETAINED,'bounded native source retention exceeded');s.checkBudget(1000);return {json:json,transportJson:transportJson,manifest:{schema:PACK_SCHEMA,retainedJsonByteLength:originalBytes,transportJsonByteLength:transportBytes}};
+  }
+  function responseJsonBytes(s,bytes,text){var count=bytes.length+1+s.byteLength(text)+2;for(var i=0;i<bytes.length;i++){if(i%4096===0)s.checkBudget(1000);count+=bytes[i]<10?1:bytes[i]<100?2:3;}for(var j=0;j<text.length;j++){if(j%4096===0)s.checkBudget(1000);var c=text.charCodeAt(j);if(c===34||c===92)count++;else if(c<32)count+=[8,9,10,12,13].indexOf(c)>=0?1:5;}return count;}
+  function transportManifest(m){exactObject(m,['schema','retainedJsonByteLength','transportJsonByteLength']);hold(m.schema===PACK_SCHEMA&&Number.isInteger(m.retainedJsonByteLength)&&m.retainedJsonByteLength>0&&m.retainedJsonByteLength<=MAX_RETAINED&&Number.isInteger(m.transportJsonByteLength)&&m.transportJsonByteLength>0&&m.transportJsonByteLength<=MAX_RETAINED,'native source bytepack manifest invalid');return m;}
+  function unpackRetained(s,transportJson,m,root){
+   transportManifest(m);hold(typeof transportJson==='string'&&transportJson.length<=MAX_RETAINED&&s.byteLength(transportJson)===m.transportJsonByteLength,'native source bytepack transport size invalid');s.checkBudget(1000);var wrapper=exactObject(JSON.parse(transportJson),['schema','retained']);hold(wrapper.schema===PACK_SCHEMA,'native source bytepack transport schema invalid');var retained=dataObject(wrapper.retained),restoredBytes=s.byteLength(JSON.stringify(retained)),slots=[];
+   ['staff','workflow'].forEach(function(slot){var p=sourcePacket(retained,slot),packed=exactObject(ownData(p,'responseBytes'),['schema','representation','byteLength','sha256','base64']);hold(packed.schema==='BackofficeNativeByteArray/v1'&&packed.representation==='UNSIGNED_OCTETS'&&ownData(p,'responseUtf8')===null&&packed.sha256===ownData(p,'responseSha256')&&packed.byteLength===ownData(p,'responseByteLength'),'native source bytepack source envelope invalid');canonicalBase64(packed.base64,packed.byteLength,MAX_RESPONSE);s.checkBudget(1000);hold(typeof options.decodeBytes==='function'&&typeof options.encodeBytes==='function','native source bytepack codec unavailable');var decoded=denseBytes(s,options.decodeBytes(packed.base64),true);hold(decoded.length===packed.byteLength&&options.encodeBytes(decoded)===packed.base64,'native source bytepack byte codec mismatch');var bytes=decoded.map(function(v){return v<0?v+256:v;}),text=strictText(s,bytes);packetParity(s,p,bytes,text);restoredBytes+=responseJsonBytes(s,bytes,text)-s.byteLength(JSON.stringify(packed))-4;slots.push({packet:p,bytes:bytes,text:text});});
+   hold(restoredBytes===m.retainedJsonByteLength&&restoredBytes<=MAX_RETAINED,'native source bytepack restored size invalid');slots.forEach(function(slot){slot.packet.responseBytes=slot.bytes;slot.packet.responseUtf8=slot.text;});var json=JSON.stringify(retained);hold(s.byteLength(json)===m.retainedJsonByteLength&&s.byteLength(json)<=MAX_RETAINED&&hash(s,json)===root,'native source complete raw bytes root mismatch');s.checkBudget(1000);return json;
+  }
+  function decodeTransport(s,encoded,m,root){transportManifest(m);canonicalBase64(encoded,m.transportJsonByteLength,MAX_RETAINED);s.checkBudget(1000);var text=options.decode(encoded);hold(typeof text==='string'&&text.length<=MAX_RETAINED&&options.encode(text)===encoded,'native source bytepack text codec mismatch');return unpackRetained(s,text,m,root);}
+  function codecDiagnostic(){hold(false,'historical source bytepack diagnostic is unconfigured in the public sample; STOP before native reads');}
+    function registry(ctx,handle){
+   var name=ctx.config.sourceRegistryAdapter||'fernainNativeSourceRegistry';hold(/^fernain[A-Za-z0-9_]{1,100}$/.test(name),'native registry adapter invalid');var native=name==='fernainNativeSourceRegistry'&&typeof options.trustedRegistryFactory==='function'?options.trustedRegistryFactory(handle):ctx.services.invoke(name,{handle:handle||null,runtimeDeadlineUtc:ctx.deadlineUtc}),snapshot=null,p,readProof=null;
+   if(native&&native.producer&&typeof native.producer.capture==='function'&&typeof native.producer.bind==='function'){p=native.producer;snapshot=native.snapshot;readProof=native.nativeReadProof;}
+   else if(native&&typeof native.capture==='function'&&typeof native.bind==='function'){
+    p=native;var pointer=ctx.config.sourceRegistry;
+    if(pointer){var row=ctx.services.readRow('Evidence',pointer.evidenceRow,26);hold(hash(ctx.services,row)===pointer.typedRowSha256,'native registry pointer preimage changed');snapshot=JSON.parse(raw(row)[3]);hold(snapshot.schema==='FERNAIN_SCRIPT_OWNED_PRIMARY_SOURCE_REGISTRY_V1','native registry full read schema changed');}
+   }else{hold(native&&native.schema==='FERNAIN_SCRIPT_OWNED_PRIMARY_SOURCE_REGISTRY_V1','native registry snapshot unavailable');snapshot=copy(native);p=producerModule.createWithScriptOwnedRegistry(function(){return copy(snapshot);});}
+   hold(p&&typeof p.capture==='function'&&typeof p.registryProof==='function','native producer registry instance unavailable');
+   var proof=p.registryProof();if(snapshot)fernFresh({ref:snapshot.sourceRef,checkedAt:readProof?readProof.checkedAtUtc:snapshot.capturedAtUtc},ctx.services.now(),'native source registry');else hold(proof.kind==='SEED_SCRIPT_CONSTANT_V1','nonseed registry requires retained native read');
+   return {producer:p,nativeReadProof:readProof,record:{schema:'BackofficeNativeRetainedRegistry/v1',snapshot:snapshot,proof:proof,manifest:p.registryManifest()}};
+  }
+  function registryContent(r){return r;}
+  function instance(record,readProof){
+   hold(record&&record.schema==='BackofficeNativeRetainedRegistry/v1','retained native registry evidence missing');var p=record.snapshot?producerModule.createWithScriptOwnedRegistry(function(){return copy(record.snapshot);},readProof||undefined):producerModule;
+   hold(p&&typeof p.bind==='function'&&same(p.registryProof(),record.proof)&&same(p.registryManifest(),record.manifest),'retained registered native producer changed');return p;
+  }
+  function identify(p,handle){var manifest=p.registryManifest(),matches=Object.keys(manifest).filter(function(k){return manifest[k].row===handle.row&&manifest[k].leadId===handle.leadId;});hold(matches.length===1,'unregistered exact native source candidate');return {key:matches[0],definition:manifest[matches[0]]};}
+  function registeredHandles(){var ctx=context(),pages=typeof options.trustedRegistryPagesFactory==='function'?options.trustedRegistryPagesFactory():[registry(ctx)],pairs={},handles=[],supported=[],defined=[],derivation=[],held=[],records=[];
+   hold(Array.isArray(pages)&&pages.length>0&&pages.length<=8,'native registry page set bound exceeded');pages.forEach(function(page){var p=page.producer,manifest=p.registryManifest(),keys=Object.keys(manifest);hold(keys.length<=128,'native finite registry page bound exceeded');records.push({schema:'BackofficeNativeRetainedRegistry/v1',snapshot:page.snapshot===undefined?page.record.snapshot:page.snapshot,proof:p.registryProof(),manifest:manifest});
+    keys.forEach(function(k){var d=manifest[k],pair=d.row+'|'+d.leadId;hold(Number.isInteger(d.row)&&d.row>=6&&typeof d.leadId==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(d.leadId),'native registered handle identity missing');if(pairs[pair]){hold(k==='EXAMPLE_ROLE_001'&&pairs[pair]===JSON.stringify(d),'native registered handle identity ambiguous');return;}pairs[pair]=JSON.stringify(d);var h={row:d.row,leadId:d.leadId};handles.push(h);hold(handles.length<=1024,'native aggregate registered handle bound exceeded');
+     hold(typeof p.registrationStatus==='function','native preparation support proof missing');var status=p.registrationStatus(k);hold(status&&status.registered===true&&typeof status.preparationSupported==='boolean','native preparation support status unavailable');if(status.preparationSupported){supported.push(h);if(status.requiresNativeLayoutDerivation)derivation.push(h);else defined.push(h);}else held.push({row:d.row,leadId:d.leadId,reasonCode:'NATIVE_SOURCE_LAYOUT_UNVERIFIED',sourceReasonCode:status.reasonCode});});});var digest=hash(ctx.services,records);
+   return {schema:'BackofficeNativeRegisteredHandles/v1',complete:true,modelAuthority:false,handles:handles,preparationSupportedHandles:supported,definedLayoutHandles:defined,sourcePreparationHandles:derivation,heldRegistrations:held,heldRegistrationsSha256:hash(ctx.services,held),registryContentSha256:digest,ref:'native-script-source-registry:'+digest,checkedAt:stamp(ctx.services),referenceOnly:true};}
+  function entryOf(row){try{var d=JSON.parse(raw(row)[3]);return d.schema==='BackofficeNativeJournal/v1'&&d.kind==='source-metadata'&&d.value?d.value.sourceEntry:null;}catch(ignore){return null;}}
+  function metadataSelectors(snapshot,s){var items=[];snapshot.Evidence.rows.forEach(function(row,i){var a=BackofficeNativeSemanticSnapshotV2.summary(snapshot,i+1),e;if(a){if(a.kind!=='source-metadata')return;hold(a.sourceMetadata&&typeof s.validateArchiveSummary==='function'&&s.validateArchiveSummary(row,a)===true,'source metadata compact selector unverified');var q=a.sourceMetadata;items.push({row:i+1,sourceId:q.sourceId,bindingRow:q.bindingRow,leadId:q.leadId,registryContentSha256:q.registryContentSha256,targetCellsSha256:q.targetCellsSha256,capturedAtUtc:q.capturedAtUtc,expiresAtUtc:q.expiresAtUtc,transportSchema:q.transportSchema,originalHash:a.originalTypedRowSha256});return;}e=entryOf(row);if(e&&e.packet&&e.packet.binding&&e.sourceProof)items.push({row:i+1,sourceId:e.sourceId,bindingRow:e.packet.binding.row,leadId:e.packet.binding.leadId,registryContentSha256:e.sourceProof.registryContentSha256,targetCellsSha256:e.sourceProof.targetCellsSha256,capturedAtUtc:e.sourceProof.capturedAtUtc,expiresAtUtc:e.sourceProof.expiresAtUtc,transportSchema:e.sourceProof.transport&&e.sourceProof.transport.schema,originalHash:hash(s,row)});});return items;}
+  function hydrateMetadata(snapshot,s,selector){var typed=BackofficeNativeSemanticSnapshotV2.logical(s,snapshot,selector.row,selector.originalHash,'SOURCE_METADATA'),e=entryOf(typed);hold(e&&e.sourceId===selector.sourceId&&e.packet&&e.packet.binding&&e.packet.binding.row===selector.bindingRow&&e.packet.binding.leadId===selector.leadId&&e.sourceProof&&e.sourceProof.registryContentSha256===selector.registryContentSha256&&e.sourceProof.targetCellsSha256===selector.targetCellsSha256&&e.sourceProof.capturedAtUtc===selector.capturedAtUtc&&e.sourceProof.expiresAtUtc===selector.expiresAtUtc,'source metadata selector differs from exact original26');return {entry:e,row:selector.row,typed:typed};}
+
+  function packet(q,row,typed,sourceId,c,now){
+   var binding={row:row,leadId:q.lead_id,product:'Jobs',to:fernEmail(q.email),name:q.person,first:q.first,company:q.organization,role:q.current_role,organizationKey:q.organization_key,subject:'A question about '+q.organization+'’s career board',observation:q.observation,sourceRefs:q.sourceRefs,recipientKind:'named-individual'};
+   var exact=fernBinding(binding),scope=c.ownerAuthority.effectScopeRef||c.ownerAuthority.ref;
+   return {schema:'BackofficeCurrentSalesPreflight/v1',packetId:'NATIVE-PACKET-'+sourceId,ref:'native-source:'+sourceId,checkedAt:now,provenance:{kind:'parent-provider-readback',modelAuthority:false,ref:'native-source:'+sourceId},binding:binding,
+    source:{ref:'native-source:'+sourceId,checkedAt:now,clear:true,complete:true,binding:exact},owner:{effectScopeRef:scope,binding:exact,body:renderCurrentSalesBody(binding),allowedEffects:['send-one-initial','message-Label_5','canonical-L-R:Y-EvidenceA:G']},mode:'SEND',scheduleActivation:false,catchUp:false,
+    canonical:{spreadsheetId:FERN_SALES_ID,prospectsSheetId:FERN_PROSPECTS_SHEET,evidenceSheetId:FERN_EVIDENCE_SHEET,evidenceRow:6,rowRenderOption:'FORMULA',rowAtoAA:raw(typed),contactCell:raw(typed)[3]},claim:{id:'UNCLAIMED_NATIVE_SOURCE',writerId:c.writerId}};
+  }
+  function completePolicy(s,handle,q,canonical,snapshot,provider){var previousPhase=FERN_NATIVE_VALIDATION_PHASE_V1,checkedAt=stamp(s);FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_CANONICAL_DIGEST';var canonicalHash=hash(s,canonical);FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_LEDGER_DIGEST';var ledger=fernainNativeSourcePolicyLedgerSnapshot(snapshot,s);FERN_NATIVE_VALIDATION_PHASE_V1=previousPhase;return {schema:'FERNAIN_NATIVE_SEMANTIC_POLICY_PACKET_V2',checkedAtUtc:checkedAt,target:{row:handle.row,leadId:handle.leadId,product:'Jobs',email:q.email},canonicalRawSha256:canonicalHash,ledgerPreimage:ledger,nativeProviderPolicy:provider};}
+  function captureServices(ctx){var s=ctx.services;return {clock:function(){return stamp(s);},hashBytes:options.hashBytes,fetch:function(url,request){s.checkBudget(3000);return options.fetch(url,request);}};}
+  // Immutable rows are transport storage only. A new fetch, binding and root remain authoritative.
+  var REF_SCHEMA='BackofficeNativeImmutableChunkRefs/v1',DELTA_SCHEMA='BackofficeNativeFixedChunkReplacements/v1',LOCATED_SCHEMA='BackofficeNativeLocatedChunkRefs/v2',MAX_DELTA_RUNS=64,MAX_DELTA_CHARACTERS=512,DOWNSTREAM_JOURNAL_RESERVE=1024*1024;
+  function storageRefs(s,e){
+   var m=e.sourceProof;hold(m&&m.schema==='BackofficeNativeChunkManifest/v1'&&Number.isInteger(m.chunkCount)&&m.chunkCount>0&&m.chunkCount<=206&&Array.isArray(m.chunks)&&m.chunks.length===m.chunkCount&&typeof m.retainedJsonSha256==='string'&&/^[a-f0-9]{64}$/.test(m.retainedJsonSha256)&&typeof m.encodedSha256==='string'&&/^[a-f0-9]{64}$/.test(m.encodedSha256),'native source immutable manifest invalid');
+   hold(Object.getPrototypeOf(m.chunks)===Array.prototype&&Object.getOwnPropertySymbols(m.chunks).length===0&&Object.getOwnPropertyNames(m.chunks).length===m.chunkCount+1,'native source immutable manifest invalid');for(var at=0;at<m.chunkCount;at++)ownData(m.chunks,String(at));var explicit=Object.prototype.hasOwnProperty.call(m,'chunkReferenceSchema'),located=explicit&&m.chunkReferenceSchema===LOCATED_SCHEMA,delta=explicit&&(m.chunkReferenceSchema===DELTA_SCHEMA||located);if(explicit)hold(m.chunkReferenceSchema===REF_SCHEMA||delta,'native source immutable reference schema invalid');var rows=new Set();
+   return m.chunks.map(function(ref,i){var keys=['row','rowSha256','index','chunkSha256','originSourceId','originIndex','originTotal','originRetainedJsonSha256'];if(delta)keys=keys.concat(['originChunkSha256','replacements']);if(located)keys.push('location');exactObject(ref,explicit?keys:['row','rowSha256','index','chunkSha256']);if(delta)replacementRuns(ownData(ref,'replacements'));var location=located?exactObject(ref.location,['kind','sheetId','row']):{kind:'EVIDENCE_LOGICAL',sheetId:FERN_EVIDENCE_SHEET,row:ref.row};hold(['EVIDENCE_LOGICAL','ARCHIVE_DIRECT'].indexOf(location.kind)>=0&&Number.isInteger(location.sheetId)&&location.sheetId>=0&&location.row===ref.row&&(location.kind!=='EVIDENCE_LOGICAL'||location.sheetId===FERN_EVIDENCE_SHEET),'native source immutable location invalid');var identity=location.kind+':'+location.sheetId+':'+location.row;hold(ref.index===i&&Number.isInteger(ref.row)&&ref.row>=6&&ref.row<=12000&&!rows.has(identity)&&typeof ref.rowSha256==='string'&&/^[a-f0-9]{64}$/.test(ref.rowSha256)&&typeof ref.chunkSha256==='string'&&/^[a-f0-9]{64}$/.test(ref.chunkSha256),'native source immutable reference invalid');rows.add(identity);var out=copy(ref);out.location=copy(location);if(!explicit){out.originSourceId=e.sourceId;out.originIndex=i;out.originTotal=m.chunkCount;out.originRetainedJsonSha256=m.retainedJsonSha256;}if(!delta){out.originChunkSha256=out.chunkSha256;out.replacements=[];}hold(typeof out.originSourceId==='string'&&/^NATIVE-SOURCE-[A-Za-z0-9_-]{1,100}$/.test(out.originSourceId)&&Number.isInteger(out.originIndex)&&Number.isInteger(out.originTotal)&&out.originTotal>0&&out.originTotal<=206&&out.originIndex>=0&&out.originIndex<out.originTotal&&typeof out.originRetainedJsonSha256==='string'&&/^[a-f0-9]{64}$/.test(out.originRetainedJsonSha256)&&typeof out.originChunkSha256==='string'&&/^[a-f0-9]{64}$/.test(out.originChunkSha256),'native source immutable origin invalid');replacementRuns(out.replacements);return out;});
+  }
+  function replacementRuns(runs){
+   hold(Array.isArray(runs)&&Object.getPrototypeOf(runs)===Array.prototype&&runs.length<=MAX_DELTA_RUNS&&Object.getOwnPropertySymbols(runs).length===0&&Object.getOwnPropertyNames(runs).length===runs.length+1,'native source fixed replacement invalid');var end=0,total=0;for(var i=0;i<runs.length;i++){var run=exactObject(ownData(runs,String(i)),['offset','text']);hold(Number.isSafeInteger(run.offset)&&run.offset>=end&&typeof run.text==='string'&&run.text.length>0&&/^[A-Za-z0-9+/=]+$/.test(run.text)&&run.offset+run.text.length<=39000,'native source fixed replacement invalid');end=run.offset+run.text.length;total+=run.text.length;}hold(total<=MAX_DELTA_CHARACTERS,'native source fixed replacement invalid');return runs;
+  }
+  function fixedReplacements(s,base,target){
+   if(base.length!==target.length)return null;var runs=[],total=0;for(var at=0;at<base.length;){if(at%4096===0)s.checkBudget(1000);if(base[at]===target[at]){at++;continue;}var start=at;while(at<base.length&&base[at]!==target[at])at++;var text=target.slice(start,at);total+=text.length;runs.push({offset:start,text:text});if(runs.length>MAX_DELTA_RUNS||total>MAX_DELTA_CHARACTERS)return null;}return runs;
+  }
+  function replaceFixed(base,runs){
+   replacementRuns(runs);var parts=[],at=0;runs.forEach(function(run){hold(run.offset+run.text.length<=base.length,'native source fixed replacement invalid');parts.push(base.slice(at,run.offset),run.text);at=run.offset+run.text.length;});parts.push(base.slice(at));var result=parts.join('');hold(result.length===base.length,'native source fixed replacement invalid');return result;
+  }
+  function storageIdentity(ref){return ref.location.kind+':'+ref.location.sheetId+':'+ref.row;}
+  function storageRead(s,e){
+   var refs=storageRefs(s,e),ordered=refs.slice().sort(function(a,b){return a.location.kind.localeCompare(b.location.kind)||a.location.sheetId-b.location.sheetId||a.row-b.row;}),groups=[],byIdentity={};ordered.forEach(function(ref){var last=groups[groups.length-1];if(last&&ref.location.kind===last.kind&&ref.location.sheetId===last.sheetId&&ref.row===last.last+1)last.last=ref.row;else groups.push({kind:ref.location.kind,sheetId:ref.location.sheetId,first:ref.row,last:ref.row});});hold(groups.length<=8,'native source immutable read group budget exceeded');hold(typeof s.beginSourceArchiveReadset==='function','explicit bounded source reconstruction readset missing');s.beginSourceArchiveReadset();
+   groups.forEach(function(group){s.checkBudget(1000);var nativeRows;if(group.kind==='EVIDENCE_LOGICAL'){hold(typeof s.readEvidenceRows==='function','native source logical Evidence reader missing');nativeRows=s.readEvidenceRows(group.first,group.last);}else{hold(typeof s.readSourceArchiveChunks==='function','native source direct archive reader missing');nativeRows=s.readSourceArchiveChunks(group.first,group.last,group.sheetId);}hold(Array.isArray(nativeRows)&&nativeRows.length===group.last-group.first+1,'native source immutable full26 rows incomplete');nativeRows.forEach(function(row,i){byIdentity[group.kind+':'+group.sheetId+':'+(group.first+i)]=row;});});
+   var values=refs.map(function(ref){var row=byIdentity[storageIdentity(ref)];hold(Array.isArray(row)&&row.length===26&&hash(s,row)===ref.rowSha256,'native source immutable full26 preimage changed');var text=raw(row)[3];hold(typeof text==='string'&&text.length<=45000,'native source immutable journal invalid');var doc=exactObject(JSON.parse(text),['schema','kind','checkedAt','value']),v=doc.value;hold(doc.schema==='BackofficeNativeJournal/v1'&&doc.kind==='source-chunk','native source immutable journal invalid');exactObject(v,['recordId','sourceId','index','total','chunk','chunkSha256','sourceVersionSha256','noSend']);hold(v.recordId===ref.originSourceId+'-'+ref.originIndex&&v.sourceId===ref.originSourceId&&v.index===ref.originIndex&&v.total===ref.originTotal&&v.noSend===true&&typeof v.chunk==='string'&&v.chunk.length>0&&v.chunk.length<=39000&&/^[A-Za-z0-9+/]*={0,2}$/.test(v.chunk)&&hash(s,v.chunk)===ref.originChunkSha256&&v.chunkSha256===ref.originChunkSha256&&v.sourceVersionSha256===ref.originRetainedJsonSha256,'native source immutable origin/content mismatch');var chunk=replaceFixed(v.chunk,ref.replacements);hold(hash(s,chunk)===ref.chunkSha256,'native source fixed replacement chunk hash mismatch');return {ref:ref,chunk:chunk,physicalChunk:v.chunk};});
+   hold(hash(s,values.map(function(v){return v.chunk;}).join(''))===e.sourceProof.encodedSha256,'native source immutable historical encoded root changed');return values;
+  }
+  function retentionPlan(s,snapshot,handle,registryHash,targetHash,encoded,sourceId,sourceSha,forceCapture){
+   var count=Math.ceil(encoded.length/39000);hold(count>0&&count<=206,'native source chunk count exceeds budget');var candidates=metadataSelectors(snapshot,s).filter(function(q){return q.bindingRow===handle.row&&q.leadId===handle.leadId&&q.registryContentSha256===registryHash&&q.targetCellsSha256===targetHash&&q.transportSchema===PACK_SCHEMA;});
+   candidates.sort(function(a,b){return Date.parse(b.capturedAtUtc)-Date.parse(a.capturedAtUtc)||b.row-a.row;});var stored=[],refs=Array(count),chunks=[],used=new Set();
+   if(candidates.length){var chosen=hydrateMetadata(snapshot,s,candidates[0]);hold(Number.isFinite(Date.parse(chosen.entry.sourceProof.capturedAtUtc)),'native source immutable metadata preimage changed');transportManifest(chosen.entry.sourceProof.transport);var captureOnly=forceCapture===true&&context().trace&&context().trace.operation==='CAPTURE_PUBLIC_SOURCE'&&context().config.sourceProducerAdapter==='fernainNativePersistedSourceProducer',reuse=captureOnly&&typeof s.sourceRetentionReuseReferences==='function'?s.sourceRetentionReuseReferences(storageRefs(s,chosen.entry),chosen.row,hash(s,chosen.typed),chosen.typed):null;if(reuse!==null){hold(Array.isArray(reuse),'retention reference-only reuse unavailable');stored=reuse.map(function(ref){return {ref:ref,admittedOnly:true};});}else{var storedUnion=context().trace&&context().trace.operation==='CAPTURE_PUBLIC_SOURCE'&&context().config.sourceProducerAdapter==='fernainNativePersistedSourceProducer'&&typeof s.withSourceRetentionReadBundle==='function'?s.withSourceRetentionReadBundle(context().config,{metadataRow:chosen.row,metadataHash:hash(s,chosen.typed),prospectRow:handle.row,sourceReferences:storageRefs(s,chosen.entry)},function(){var fresh=hydrateMetadata(snapshot,s,candidates[0]);hold(same(fresh.typed,chosen.typed),'source reconstruction chosen metadata changed');return storageRead(s,fresh.entry);}):null;stored=storedUnion===null?storageRead(s,chosen.entry):storedUnion;}}
+   for(var i=0;i<count;i++){s.checkBudget(1000);var chunk=encoded.slice(i*39000,(i+1)*39000),chunkSha=hash(s,chunk),matches=stored.filter(function(v){return !used.has(storageIdentity(v.ref))&&v.ref.chunkSha256===chunkSha&&(v.admittedOnly===true||v.chunk===chunk);}),selected=matches.length?matches[0]:(stored[i]&&stored[i].admittedOnly!==true?stored[i]:null);if(selected&&selected.admittedOnly===true){var unchanged=copy(selected.ref);unchanged.index=i;refs[i]=unchanged;used.add(storageIdentity(unchanged));continue;}var runs=selected&&!used.has(storageIdentity(selected.ref))?fixedReplacements(s,selected.physicalChunk,chunk):null;if(runs){var ref=copy(selected.ref);ref.index=i;ref.chunkSha256=chunkSha;ref.replacements=runs;refs[i]=ref;used.add(storageIdentity(ref));}else chunks.push({recordId:sourceId+'-'+chunks.length,sourceId:sourceId,index:chunks.length,total:0,chunk:chunk,chunkSha256:chunkSha,sourceVersionSha256:sourceSha,noSend:true});}
+   chunks.forEach(function(v){v.total=chunks.length;});var preview=null;if(chunks.length){hold(typeof s.previewSourceArchiveChunks==='function','read-only direct source archive preview unavailable');preview=s.previewSourceArchiveChunks(chunks);hold(preview&&preview.schema==='BackofficeNativeSourceArchivePreview/v2'&&preview.referenceOnly===true&&preview.modelAuthority===false&&preview.effectEligible===false&&typeof preview.indexSha256==='string'&&/^[a-f0-9]{64}$/.test(preview.indexSha256)&&Array.isArray(preview.locations)&&preview.locations.length===chunks.length,'non-authoritative source storage preview invalid');preview.locations.forEach(function(loc,i){exactObject(loc,['sheetId','row']);hold(Number.isInteger(loc.sheetId)&&loc.sheetId>=0&&Number.isInteger(loc.row)&&loc.row>=6&&loc.row<=12000&&(i===0||loc.sheetId===preview.locations[0].sheetId&&loc.row===preview.locations[i-1].row+1),'bounded contiguous direct source preview required');});}var next=0;for(var j=0;j<count;j++)if(!refs[j]){var position=next,loc=preview.locations[position];refs[j]={row:loc.row,rowSha256:'0'.repeat(64),index:j,chunkSha256:chunks[position].chunkSha256,originSourceId:sourceId,originIndex:next++,originTotal:chunks.length,originRetainedJsonSha256:sourceSha,originChunkSha256:chunks[position].chunkSha256,replacements:[],location:{kind:'ARCHIVE_DIRECT',sheetId:loc.sheetId,row:loc.row}};}
+   var retainedRefs=refs.filter(function(ref){return ref&&used.has(storageIdentity(ref));}).sort(function(a,b){return a.location.kind.localeCompare(b.location.kind)||a.location.sheetId-b.location.sheetId||a.row-b.row;}),outputGroups=chunks.length?1:0;retainedRefs.forEach(function(ref,i){var previous=retainedRefs[i-1];if(i===0||ref.location.kind!==previous.location.kind||ref.location.sheetId!==previous.location.sheetId||ref.row!==previous.row+1)outputGroups++;});hold(outputGroups<=8,'native source immutable read group budget exceeded');return {count:count,refs:refs,chunks:chunks,reusedCount:used.size};
+  }
+  function responseRowGrowth(s,recordId,kind,json,at){
+   var cells=Array.from({length:26},function(){return {};});[recordId,'',kind,json,'Native acknowledged write + exact typed readback','',at].forEach(function(v,i){if(v!=='')cells[i]={stringValue:v};});var units=0,skeleton={values:cells.map(function(c){if(Object.keys(c).length){units+=c.stringValue.length;return {userEnteredValue:{stringValue:''},formattedValue:''};}return {userEnteredValue:{},formattedValue:''};})};return 6*s.byteLength(JSON.stringify(skeleton))+12*units+1;
+  }
+  function retentionCapacity(s,snapshot,plan,metadata){
+   if(snapshot&&snapshot.schema===BackofficeNativeSemanticSnapshotV2.schema){hold(typeof s.planSourceRetentionCapacity==='function','archive-aware bounded source capacity planner missing');var proof=s.planSourceRetentionCapacity(snapshot,plan,metadata,DOWNSTREAM_JOURNAL_RESERVE);hold(proof&&proof.schema==='BackofficeNativeSourceCapacityPlan/v2'&&proof.complete===true&&proof.downstreamJournalReserveBytes===DOWNSTREAM_JOURNAL_RESERVE,'archive-aware measured source capacity unavailable');return proof;}
+   hold(typeof s.snapshotCapacity==='function','native source CAPACITY_HOLD measured snapshot capacity unavailable');var measured=s.snapshotCapacity(snapshot),limit=64*1024*1024,windowLimit=32*1024*1024;hold(measured&&measured.schema==='BackofficeNativeSnapshotCapacity/v1'&&['rawBytes','projectedBytes','maxRawWindowBytes','maxProjectedWindowBytes'].every(function(k){return Number.isSafeInteger(measured[k])&&measured[k]>0;})&&measured.rawBytes<=limit&&measured.projectedBytes<=limit&&measured.maxRawWindowBytes<=windowLimit&&measured.maxProjectedWindowBytes<=windowLimit,'native source CAPACITY_HOLD measured snapshot capacity invalid');
+   var at=stamp(s),growth=0;plan.chunks.forEach(function(v){var text=JSON.stringify({schema:'BackofficeNativeJournal/v1',kind:'source-chunk',checkedAt:at,value:v});hold(text.length<=45000,'native source CAPACITY_HOLD chunk journal bound exceeded');growth+=responseRowGrowth(s,v.recordId,'source-chunk',text,at);});var text=JSON.stringify({schema:'BackofficeNativeJournal/v1',kind:'source-metadata',checkedAt:at,value:metadata});hold(text.length<=45000,'native source CAPACITY_HOLD metadata journal bound exceeded');growth+=responseRowGrowth(s,metadata.recordId,'source-metadata',text,at);
+   // One following CAPTURE_PUBLIC_SOURCE trace has a 45,000-code-unit cell bound.
+   // A serializer may escape any UTF16 unit as six ASCII JSON bytes in both copies.
+   var physical=snapshot.Prospects.rowCount+snapshot.Evidence.rowCount;hold(Number.isInteger(physical)&&physical>0&&physical<=12000,'native source CAPACITY_HOLD physical coverage invalid');growth+=12*45000+8192+3*physical+4096;
+   var captureGrowth=growth;growth+=DOWNSTREAM_JOURNAL_RESERVE;hold(measured.rawBytes+growth<=limit&&measured.projectedBytes+growth<=limit&&measured.maxRawWindowBytes+growth<=windowLimit&&measured.maxProjectedWindowBytes+growth<=windowLimit,'native source CAPACITY_HOLD bounded retention growth exceeds snapshot capacity');return {schema:'BackofficeNativeSourceCapacityPlan/v1',captureGrowthUpperBoundBytes:captureGrowth,downstreamJournalReserveBytes:DOWNSTREAM_JOURNAL_RESERVE,growthUpperBoundBytes:growth,newChunkCount:plan.chunks.length,reusedChunkCount:plan.reusedCount,rawAggregateUpperBoundBytes:measured.rawBytes+growth,projectedAggregateUpperBoundBytes:measured.projectedBytes+growth};
+  }
+  function prepare(args){
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_BRIDGE_CONTEXT';var ctx=context(),s=ctx.services,c=ctx.config,handle=args.handle;hold(typeof ctx.appendEvidence==='function'&&typeof ctx.appendSourceChunks==='function','held canonical source persistence writer missing');hold(handle&&Number.isInteger(handle.row)&&typeof handle.leadId==='string','native source handle missing');
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_BRIDGE_REGISTRY';var currentRegistry=registry(ctx,handle),p=currentRegistry.producer,registered=identify(p,handle),snapshot=BackofficeNativeSemanticSnapshotV2.hydrate(ctx.readSnapshot(),handle,s),typed=BackofficeNativeSemanticSnapshotV2.target(snapshot,handle.row);hold(typed&&raw(typed)[14]===handle.leadId&&raw(typed)[11]==='Qualified - not contacted','native source exact eligible canonical row missing');
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_BRIDGE_EXISTING_EVIDENCE';var registryHash=hash(s,registryContent(currentRegistry.record)),now=s.now(),found=[];
+   metadataSelectors(snapshot,s).forEach(function(q){if(q.bindingRow===handle.row&&q.leadId===handle.leadId&&q.registryContentSha256===registryHash&&q.targetCellsSha256===hash(s,typed)&&Date.parse(q.expiresAtUtc)>now)found.push({id:q.sourceId,evidenceRow:q.row,row:handle.row,leadId:handle.leadId,checkedAt:q.capturedAtUtc});});
+   if(found.length&&args.forceCapture!==true){found.sort(function(a,b){return Date.parse(b.checkedAt)-Date.parse(a.checkedAt);});return {entries:[found[0]],complete:true,ref:'native-registered-source:'+found[0].id,checkedAt:stamp(s)};}
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_CAPTURE';var captured=p.capture(registered.key,captureServices(ctx));FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_CAPTURE_BUDGET';try{s.checkBudget(5000);}catch(e){e.nativeScope='GLOBAL';throw e;}FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_CAPTURE';try{hold(captured&&captured.outcome==='NATIVE_SOURCE_CAPTURED_PREPARATION_ONLY','native source capture candidate HOLD');}catch(error){fernainNativeHoldDiagnostic('SOURCE_CAPTURE',error,captured);throw error;}
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_CANONICAL_READ';var nativeRow=s.readRowCapture('Prospects',handle.row,27),canonical={capturedAtUtc:nativeRow.checkedAt,result:nativeRow.result};hold(same(nativeRow.typedRow,typed),'canonical changed while public source captured');
+   var preliminary=completePolicy(s,handle,registered.definition,canonical,snapshot,{schema:'SOURCE_PREPARATION_POLICY_PENDING_V1',modelAuthority:false,sendEligibility:'NOT_EVALUATED'});
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_BIND';var bound=p.bind(captured,canonical,preliminary,stamp(s));try{hold(bound&&bound.sourceVerificationPassed===true&&bound.effect_eligible===false&&bound.send_eligible===false,'native source full-byte binding candidate HOLD');}catch(error){fernainNativeHoldDiagnostic('SOURCE_BIND',error,bound);throw error;}
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_RETENTION';var sourceId='NATIVE-SOURCE-'+s.newId(),retained={schema:'BackofficeNativeRetainedSource/v1',sourceId:sourceId,capturedAtUtc:captured.capturedAtUtc,registrySnapshot:currentRegistry.record,bundle:captured,canonicalCapture:canonical,canonicalTargetCellsSha256:hash(s,typed),boundSourceVersionSha256:bound.source_context.fullBindingSha256};
+   var packed=packRetained(s,retained),json=packed.json,encoded=options.encode(packed.transportJson);canonicalBase64(encoded,packed.manifest.transportJsonByteLength,MAX_RETAINED);
+   var sourceSha=hash(s,json),plan=retentionPlan(s,snapshot,handle,registryHash,hash(s,typed),encoded,sourceId,sourceSha,args.forceCapture),count=plan.count,refs=plan.refs,chunks=plan.chunks,sourceExpiresAtUtc=new Date(Date.parse(captured.capturedAtUtc)+FERN_FRESH_MS).toISOString();hold(Date.parse(sourceExpiresAtUtc)>s.now(),'native retained source manifest stale/incomplete');
+   var q=copy(bound.source_context.candidate);q.sourceRefs=bound.source_context.sourceRefs;
+   var e={schema:'BackofficeNativeSource/v1',sourceId:sourceId,packet:packet(q,handle.row,typed,sourceId,c,stamp(s)),targetCells:copy(typed),sourceProof:{schema:'BackofficeNativeChunkManifest/v1',profile:captured.profile,capturedAtUtc:captured.capturedAtUtc,expiresAtUtc:sourceExpiresAtUtc,registryContentSha256:registryHash,targetCellsSha256:hash(s,typed),retainedJsonSha256:sourceSha,encodedSha256:hash(s,encoded),chunkCount:count,chunks:refs,transport:packed.manifest,chunkReferenceSchema:LOCATED_SCHEMA},owner:{effectScopeRef:c.ownerAuthority.effectScopeRef||c.ownerAuthority.ref,authorityRef:c.ownerAuthority.ref,standing:true,approvedAt:c.ownerAuthority.approvedAt}};
+   var metadata={recordId:sourceId,sourceId:sourceId,sourceEntry:e,sourceVersionSha256:e.sourceProof.retainedJsonSha256,humanAuthorityRef:c.ownerAuthority.ref,noSend:true};retentionCapacity(s,snapshot,plan,metadata);
+   if(args.forceCapture===true&&ctx.trace&&ctx.trace.operation==='CAPTURE_PUBLIC_SOURCE'&&chunks.length&&typeof ctx.appendSourceRetention==='function'){FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_RETENTION_WRITE';var joint=ctx.appendSourceRetention(chunks,metadata,sourceExpiresAtUtc);hold(joint&&joint.acknowledged===true&&joint.verified===true&&joint.metadata,'mixed source retention complete receipt missing');return {entries:[{id:sourceId,evidenceRow:joint.metadata.row,row:handle.row,leadId:handle.leadId}],complete:true,ref:joint.metadata.ref,checkedAt:stamp(s)};}
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_CHUNK_WRITE';try{s.checkBudget(3000);}catch(error){error.nativeScope='GLOBAL';throw error;}var written=chunks.length?ctx.appendSourceChunks(chunks,sourceExpiresAtUtc):[];hold(Array.isArray(written)&&written.length===chunks.length,'native source batch acknowledgement/readback missing');
+   written.forEach(function(r,i){hold(r&&Number.isInteger(r.row)&&r.row>=6&&r.row<=12000&&(i===0||r.row===written[i-1].row+1)&&typeof r.hash==='string'&&/^[a-f0-9]{64}$/.test(r.hash),'native source batch row identity invalid');var ref=refs.filter(function(v){return v.originSourceId===sourceId&&v.originIndex===i;});hold(ref.length===1,'native source immutable acknowledgement mapping invalid');hold(r.location&&r.location.kind==='ARCHIVE_DIRECT'&&r.location.row===r.row&&ref[0].location.sheetId===r.location.sheetId&&ref[0].location.row===r.row,'native source direct archive mapping invalid');ref[0].row=r.row;ref[0].rowSha256=r.hash;ref[0].location=copy(r.location);});
+   FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_METADATA_WRITE';hold(Date.parse(e.sourceProof.expiresAtUtc)>s.now(),'native retained source manifest stale/incomplete');var meta=ctx.appendEvidence('source-metadata',metadata);
+   return {entries:[{id:sourceId,evidenceRow:meta.row,row:handle.row,leadId:handle.leadId}],complete:true,ref:meta.ref,checkedAt:stamp(s)};
+  }
+  function reconstruct(ctx,e){
+   var s=ctx.services,m=e.sourceProof;hold(m&&m.schema==='BackofficeNativeChunkManifest/v1'&&Number.isInteger(m.chunkCount)&&m.chunkCount>0&&m.chunkCount<=206&&Array.isArray(m.chunks)&&m.chunks.length===m.chunkCount&&Date.parse(m.expiresAtUtc)>s.now(),'native retained source manifest stale/incomplete');var encoded='',rows=new Set();
+   if(Object.prototype.hasOwnProperty.call(m,'chunkReferenceSchema')){encoded=storageRead(s,e).map(function(v){return v.chunk;}).join('');}else{
+   var first=Infinity,last=0;m.chunks.forEach(function(ref,i){hold(ref&&ref.index===i&&Number.isInteger(ref.row)&&ref.row>=6&&!rows.has(ref.row)&&(i===0||ref.row>m.chunks[i-1].row),'native source chunk order/row invalid');rows.add(ref.row);first=Math.min(first,ref.row);last=Math.max(last,ref.row);});hold(last-first<500&&typeof s.readEvidenceRows==='function','native source chunk containing span exceeds budget');
+   hold(typeof s.beginSourceArchiveReadset==='function','explicit bounded legacy source readset missing');s.beginSourceArchiveReadset();s.checkBudget(1000);var nativeRows=s.readEvidenceRows(first,last);hold(Array.isArray(nativeRows)&&nativeRows.length===last-first+1,'native source full26 chunk rows incomplete');
+   m.chunks.forEach(function(ref,i){var row=nativeRows[ref.row-first];hold(Array.isArray(row)&&row.length===26&&hash(s,row)===ref.rowSha256,'native source full26 chunk preimage changed');var doc=JSON.parse(raw(row)[3]),v=doc.value;hold(doc.schema==='BackofficeNativeJournal/v1'&&doc.kind==='source-chunk'&&v&&v.recordId===e.sourceId+'-'+i&&v.sourceId===e.sourceId&&v.index===i&&v.total===m.chunkCount&&v.noSend===true&&typeof v.chunk==='string'&&v.chunk.length>0&&v.chunk.length<=39000&&hash(s,v.chunk)===ref.chunkSha256&&v.chunkSha256===ref.chunkSha256&&v.sourceVersionSha256===m.retainedJsonSha256,'native source chunk identity/content mismatch');encoded+=v.chunk;});
+   }
+   hold(hash(s,encoded)===m.encodedSha256,'native source encoded root mismatch');var json=Object.prototype.hasOwnProperty.call(m,'transport')?decodeTransport(s,encoded,m.transport,m.retainedJsonSha256):options.decode(encoded);hold(typeof json==='string'&&s.byteLength(json)<=6000000&&hash(s,json)===m.retainedJsonSha256,'native source complete raw bytes root mismatch');var retained=JSON.parse(json);hold(retained.schema==='BackofficeNativeRetainedSource/v1'&&retained.sourceId===e.sourceId&&retained.canonicalTargetCellsSha256===m.targetCellsSha256&&retained.capturedAtUtc===m.capturedAtUtc,'native source retention identity mismatch');return retained;
+  }
+  function readProof(args){
+   var ctx=context(),s=ctx.services,snapshot=args.canonical||ctx.readSnapshot(),matches=[];
+   metadataSelectors(snapshot,s).forEach(function(q){if((!args.evidenceRow||q.row===args.evidenceRow)&&q.originalHash===(args.sourceEvidenceHash||args.evidenceHash)&&(!args.sourceId||q.sourceId===args.sourceId))matches.push(q);});hold(matches.length===1,'exact registered source metadata native preimage unavailable');var selected=hydrateMetadata(snapshot,s,matches[0]),e=selected.entry;selected.hash=matches[0].originalHash;
+   var live=BackofficeNativeSemanticSnapshotV2.logical(s,snapshot,selected.row,selected.hash,'SOURCE_METADATA');hold(hash(s,live)===selected.hash,'source metadata changed on native read');var retained=reconstruct(ctx,e),currentRegistry=registry(ctx,{row:e.packet.binding.row,leadId:e.packet.binding.leadId});hold(hash(s,registryContent(currentRegistry.record))===e.sourceProof.registryContentSha256&&same(registryContent(retained.registrySnapshot),registryContent(currentRegistry.record)),'native registry definition/version changed');
+   var p=instance(retained.registrySnapshot,currentRegistry.nativeReadProof),handle={row:e.packet.binding.row,leadId:e.packet.binding.leadId},registered=identify(p,handle),nativeRow=s.readRowCapture('Prospects',handle.row,27),canonical={capturedAtUtc:nativeRow.checkedAt,result:nativeRow.result};hold(same(nativeRow.typedRow,e.targetCells)&&same(nativeRow.typedRow,BackofficeNativeSemanticSnapshotV2.target(snapshot,handle.row)),'source full27 canonical preimage changed');
+   var provider=args.nativeProviderPolicy;if(!provider)provider=s.invoke(ctx.config.providerPolicyAdapter,{accountAddress:'operator@example.com',binding:e.packet.binding,nowUtc:stamp(s),runtimeDeadlineUtc:ctx.deadlineUtc});
+   var policy=completePolicy(s,handle,registered.definition,canonical,snapshot,provider),bound=p.bind(retained.bundle,canonical,policy,stamp(s));hold(bound&&bound.sourceVerificationPassed===true&&bound.effect_eligible===false&&bound.send_eligible===false,'retained native source/policy binding failed');
+   var q=copy(bound.source_context.candidate);q.sourceRefs=bound.source_context.sourceRefs;var reconstructed=packet(q,handle.row,nativeRow.typedRow,e.sourceId,ctx.config,stamp(s)),binding=fernBinding(reconstructed.binding);
+   hold(same(binding,fernBinding(e.packet.binding))&&(!args.binding||same(binding,fernBinding(args.binding))),'reconstructed source route/body binding mismatch');var bodySha=hash(s,renderCurrentSalesBody(reconstructed.binding));hold(!args.bodySha256||args.bodySha256===bodySha,'native source exact approved body mismatch');
+   return {ref:'native-retained-source:'+e.sourceId,checkedAt:stamp(s),complete:true,clear:true,sourceVerificationPassed:true,effectEligible:false,modelAuthority:false,sourceId:e.sourceId,evidenceRow:selected.row,evidenceHash:selected.hash,binding:binding,bodySha256:bodySha,sourceVersionSha256:e.sourceProof.retainedJsonSha256,boundSourceProof:{schema:'BackofficeNativeVerifiedSourceProof/v1',bundle:retained.bundle,canonicalRow:canonical,policy:policy,sourceEvidenceHash:selected.hash,sourceId:e.sourceId,sourceMetadataRow:selected.row,sourceMetadataSha256:selected.hash,sourceVersionSha256:e.sourceProof.retainedJsonSha256,retainedSourceEvidence:Object.assign({},retained,{bundle:{schema:'BackofficeNativeRetainedBundleReference/v1',sourceId:e.sourceId,retainedJsonSha256:e.sourceProof.retainedJsonSha256,encodedSha256:e.sourceProof.encodedSha256,referenceOnly:true,modelAuthority:false,effectEligible:false}}),canonicalCapture:canonical,fullPolicyPacket:policy,verifiedContext:bound.source_context,sourceBinding:bound.evidence.binding,modelAuthority:false,sourceTextIsUntrustedData:true,sourceVerificationPassed:true,effectEligible:false}};
+  }
+  return {prepare:prepare,readProof:readProof,registeredHandles:registeredHandles,codecDiagnostic:codecDiagnostic};
+ }
+ return {create:create};
+}());
+function fernainNativeSourceBridge(){return BackofficeNativeSourceBridgeV1.create({context:function(){return BackofficeNativeRuntimeV1.nativeContext();},producerModule:BackofficeNativePublicSourceV1,trustedRegistryFactory:function(handle){return fernainNativeRegistryPage(handle);},trustedRegistryPagesFactory:function(){return fernainNativeRegistryPages();},encode:function(text){return Utilities.base64Encode(Utilities.newBlob(text,'text/plain').getBytes());},decode:function(encoded){return Utilities.newBlob(Utilities.base64Decode(encoded)).getDataAsString('UTF-8');},encodeBytes:function(bytes){return Utilities.base64Encode(bytes);},decodeBytes:function(encoded){return Utilities.base64Decode(encoded);},hashBytes:function(bytes){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,bytes).map(function(b){return ((b+256)%256).toString(16).padStart(2,'0');}).join('');},fetch:function(url,opts){var context=BackofficeNativeRuntimeV1.nativeContext();return fernainNativeReadBoundaryV1_(context&&context.services,function(){return UrlFetchApp.fetch(url,opts);});}});}
+function fernainNativeQuotaProbeFinalizeV1_(out,s,got){try{if(got&&s)s.lock.releaseLock();}catch(finalizationError){out.complete=false;if(out.checks)out.checks.complete=false;out.status='HOLD';out.failedStage='SHEETS_GET_FINALIZATION';out.failureCategory='QUOTA_METER';out.storageFinalizationVerified=false;}return fernainNativeQuotaProbeReportV1(out,s);}
+function fernainNativeReadBoundaryV1_(s,fn){if(s&&typeof s.invalidateNativeReadBoundary==='function')s.invalidateNativeReadBoundary();try{return fn();}finally{if(s&&typeof s.invalidateNativeReadBoundary==='function')s.invalidateNativeReadBoundary();}}
+function fernainNativeQuotaProbeReportV1(out,s){
+ if(!s||typeof s.sheetsGetMetrics!=='function')return out;
+ var metrics=s.sheetsGetMetrics();out.sheetsGetMetrics=metrics;out.internalMeterPropertyWriteAttempts=metrics.internalMeterWriteAttempts;out.quotaBookkeepingPropertyKey='FERNAIN_NATIVE_SHEETS_GET_PACE_V1';
+ out.propertyWriteAttempted=out.propertyWriteAttempted===true||metrics.internalMeterWriteAttempts>0;
+ out.canonicalReadOnly=out.canonicalWriteAttempted!==true&&out.archiveWriteAttempted!==true&&out.sendAttempted!==true&&out.sourceFetchAttempted!==true;
+ out.quotaBookkeepingOnly=out.canonicalReadOnly;out.readOnly=out.canonicalReadOnly&&!out.propertyWriteAttempted;
+ if(Object.prototype.hasOwnProperty.call(out,'effectsAttempted'))out.effectsAttempted=out.effectsAttempted===true||out.propertyWriteAttempted;
+ return out;
+}
+function fernainNativeSourceRetentionCapacityDiagnosticV1(){
+ 'use strict';var s=null,got=false,stage='SERVICES',out={schema:'BackofficeNativeSourceRetentionCapacityDiagnostic/v1',complete:false,readOnly:true,sourceFetchAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sendAttempted:false,failedStage:null,failureCategory:null};
+ try{s=fernainNativeServices();s.startBudget(110000);stage='LOCK';got=s.lock.tryLock(0);fernHold(got,'held project lock required for source snapshot reuse');stage='CONFIG';var config=JSON.parse(s.props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1'));fernHold(config&&config.schema==='BackofficeNativeConfig/v1'&&config.projectId===s.projectId&&config.spreadsheetId==='{{CONFIGURE_GOOGLE_ID_030}}','native source bytepack diagnostic exact configuration required');stage='FULL_SNAPSHOT';var snapshot=s.snapshot(config);stage='DESTINATION_FORMATS';out.capacity=s.snapshotCapacity(snapshot);out.identityDefaultBlankEvidenceDisplayVerified=true;out.physicalRows=snapshot.Prospects.rowCount+snapshot.Evidence.rowCount;out.complete=true;
+ }catch(error){out.failedStage=stage;try{fernainNativeHoldDiagnostic('SOURCE_RETENTION',error);out.failureCategory=FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1.category;}catch(ignore){out.failureCategory='OTHER';}}
+ finally{fernainNativeQuotaProbeFinalizeV1_(out,s,got);}Logger.log('FERNAIN_SOURCE_RETENTION_CAPACITY_DIAGNOSTIC_V1:'+JSON.stringify(out));return out;
+}
+function fernainNativeSourceBytepackDiagnosticV1(){return {schema:'BackofficeNativeSourceBytepackDiagnostic/v1',complete:false,status:'HOLD',failedStage:'UNCONFIGURED',failureCategory:'SOURCE_RETENTION',sourceFetchAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sendAttempted:false};}
+function fernainNativePersistedSourceProducer(args){return fernainNativeSourceBridge().prepare(args);}
+function fernainNativePersistedSourceProof(args){return fernainNativeSourceBridge().readProof(fernainNativeResolvePreflightCanonicalArgs(args,'fernainNativePersistedSourceProof'));}
+function fernainNativeReadBoundSourceProof(args){return fernainNativeSourceBridge().readProof(args).boundSourceProof;}
+function fernainNativeRegisteredSourceHandles(){return fernainNativeSourceBridge().registeredHandles();}
+
+/* END exact module native-unattended-runtime/NativeSourceBridge.gs */
+
+/* BEGIN exact module native-unattended-runtime/NativeProviderPolicy.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Proposed native read-only policy adapter. Uses read-only settings calls under gmail.modify and
+ * requires Admin Reports audit/read-only scope, neither granted by these offline files.
+ * This approved profile explicitly relies on a retained delegation-OFF baseline
+ * and lagged audit change detection. It never claims an instantaneous getter.
+ */
+var BackofficeNativeProviderPolicyV1=(function(){
+ 'use strict';
+ var APPROVAL='EXAMPLE_AUTHORITY_REFERENCE';
+ var PROFILE='MONITORED_DELEGATION_OFF_AUDIT_V1';
+ var BASELINE_SHA='0000000000000000000000000000000000000000000000000000000000000000';
+ var LIMITS={messages24:500,externalUnique24:500,apiRecipientsPerMessage:500,recipients24:10000,externalRecipients24:3000,uniqueRecipients24:3000};
+ function hold(ok,why){fernHold(ok,why);}
+ function data(x){hold(x&&typeof x==='object'&&!Array.isArray(x),'native policy object required');Object.getOwnPropertyNames(x).forEach(function(k){var d=Object.getOwnPropertyDescriptor(x,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value'),'native policy accessor prohibited');});return x;}
+ function arr(x){hold(Array.isArray(x),'native policy array required');for(var i=0;i<x.length;i++){var d=Object.getOwnPropertyDescriptor(x,String(i));hold(d&&Object.prototype.hasOwnProperty.call(d,'value'),'native policy sparse/accessor array prohibited');}return x;}
+ function captured(x,depth){hold((depth||0)<=24,'native policy evidence depth exceeded');if(x===null||typeof x==='string'||typeof x==='boolean')return x;if(typeof x==='number'){hold(Number.isFinite(x),'native policy nonfinite evidence');return x;}hold(x&&typeof x==='object','native policy evidence DTO required');hold(Object.getOwnPropertySymbols(x).length===0,'native policy symbolic evidence prohibited');if(Array.isArray(x))return Array.prototype.map.call(arr(x),function(v){return captured(v,(depth||0)+1);});data(x);var out=Object.create(null);Object.keys(x).forEach(function(k){out[k]=captured(x[k],(depth||0)+1);});return out;}
+ function read(args,s){
+  var n=s.now(),stamp=new Date(n).toISOString(),c=data(s.config()),m=data(c.monitoredProvider);
+  hold(args.accountAddress==='operator@example.com'&&m.profile===PROFILE&&m.approvalRef===APPROVAL&&m.baselineRawSha256===BASELINE_SHA,'approved monitored profile and exact baseline required');
+  var raw=s.baselineRaw(m),baseline=JSON.parse(raw);hold(s.sha(raw)===BASELINE_SHA,'retained complete native baseline hash mismatch');
+  var b=data(baseline.proof),d=data(b.delegation),g=data(b.gwsmo);
+  hold(b.account==='operator@example.com'&&d.checkedAt==='{{CONFIGURE_REVIEW_TIMESTAMP_UTC}}'&&d.url==='https://admin.google.com/ac/apps/gmail/usersettings'&&arr(d.evidence).some(function(v){return typeof v==='string'&&v.indexOf('{{CONFIGURE_DELEGATION_CONTROL_TEXT}}')>=0;})&&d.evidence.some(function(v){return v.indexOf('Example department setting')>=0;})&&d.evidence.some(function(v){return v.indexOf("Mail delegation Inherited from 'Example Organization'")>=0;}),'exact retained Executive/root delegation OFF baseline missing');
+  hold(g.checkedAt==='{{CONFIGURE_REVIEW_TIMESTAMP_UTC}}'&&g.account===b.account&&g.organizationalUnit==='Example department'&&g.inheritedFrom==='Example Organization'&&g.gwsmo==='{{CONFIGURE_GWSMO_STATUS}}'&&g.outboundGateway==='{{CONFIGURE_OUTBOUND_GATEWAY_STATUS}}'&&arr(g.evidence).length>0,'retained GWSMO ON / external SMTP gateway OFF baseline missing');
+  var settings=s.nativeSettings();data(settings);hold(settings.accountAddress===b.account&&settings.aliases&&settings.aliases.complete===true&&settings.vacation&&settings.vacation.complete===true&&settings.vacation.enableAutoReply===false,'fresh native aliases/vacation coverage unavailable');
+  var start=Math.min(Date.parse(d.checkedAt),Date.parse(g.checkedAt)),seen=new Set(),tokens=new Set(),events=[],nativePages=[],token,pages=0,limit=5000;
+  hold(Number.isFinite(start)&&start<=n&&n-start<=180*86400000,'audit retention cannot cover original baseline');
+  function stop(why){s.onHalt(why,{profile:PROFILE,approvalRef:APPROVAL,baselineRawSha256:BASELINE_SHA,observedAt:stamp});hold(false,why);}
+  try{
+   do{
+    s.checkBudget(3000);var options={startTime:new Date(start).toISOString(),endTime:stamp,maxResults:100};if(token)options.pageToken=token;
+    var readStartedAt=new Date(s.now()).toISOString(),page=captured(s.reportsList(options)),readCompletedAt=new Date(s.now()).toISOString();data(page);hold(!page.error&&!page.isError,'Admin audit unavailable');nativePages.push({pageIndex:pages,readStartedAtUtc:readStartedAt,readCompletedAtUtc:readCompletedAt,request:captured(options),response:page,responseRepresentation:s.reportsListRepresentation||'ADMIN_REPORTS_SDK_SEMANTIC_DATA_V1',nativePageSha256:s.sha(JSON.stringify(page))});hold(JSON.stringify(nativePages).length<=2000000,'native audit source retention bound exceeded');var items=page.items===undefined?[]:arr(page.items);
+    hold(items.length<=100,'Admin audit page exceeds requested bound');
+    items.forEach(function(activity){data(activity);var id=data(activity.id),time=Date.parse(id.time);hold(Number.isFinite(time)&&time>=start&&time<=n+5000&&id.applicationName==='admin'&&typeof id.uniqueQualifier==='string'&&id.uniqueQualifier,'Admin audit identity/window unavailable');var k=id.time+'|'+id.uniqueQualifier;hold(!seen.has(k),'Admin audit duplicate activity');seen.add(k);hold(seen.size<=limit,'Admin audit complete pagination exceeds finite budget');
+     arr(activity.events).forEach(function(event){data(event);hold(typeof event.name==='string'&&event.name&&typeof event.type==='string'&&event.type,'unknown Admin audit event');var params=event.parameters===undefined?[]:arr(event.parameters);params.forEach(data);
+      var name=event.name.toUpperCase(),mapped={};
+      params.forEach(function(p){hold(typeof p.name==='string'&&p.name,'Admin event parameter name missing');var key=p.name.toUpperCase();if(['APPLICATION_NAME','SETTING_NAME','ORG_UNIT_NAME','GROUP_EMAIL','USER_EMAIL'].indexOf(key)>=0){hold(mapped[key]===undefined,'duplicate Admin scope parameter');hold(typeof p.value==='string','Admin scope parameter unsupported');mapped[key]=p.value;}});
+      var app=(mapped.APPLICATION_NAME||'').toLowerCase(),ou=mapped.ORG_UNIT_NAME,group=mapped.GROUP_EMAIL;
+      var knownOtherApp=['calendar','google calendar','drive','google drive','drive and docs','google chat','chat','google meet','meet'].indexOf(app)>=0;
+      var gmail=app==='gmail'||app==='google mail'||name==='CHANGE_EMAIL_SETTING';
+      var settingMutation=/^(?:CHANGE|CREATE|DELETE)_APPLICATION_SETTING$|^CHANGE_EMAIL_SETTING$/.test(name);
+      var accessOrOu=/(?:ORG|ORGANIZATIONAL_UNIT|MOVE_USER|DELEGAT|GWSMO|SMTP|PRIVILEGE|ROLE_ASSIGN)/.test(name);
+      // An absolute disjoint OU path is an established non-ancestor of the
+      // baseline /Executive OU. Group-scoped overrides require membership
+      // evidence, so an unreviewed group is never called unrelated.
+      var disjointOu=typeof ou==='string'&&/^\/[A-Za-z0-9 _.-]+(?:\/[A-Za-z0-9 _.-]+)*$/.test(ou)&&ou!=='/Executive'&&ou.indexOf('/Executive/')!==0&&(!group||group==='');
+      if(settingMutation){
+       if(knownOtherApp){ /* proven other application; no Gmail dependency */ }
+       else if(gmail&&disjointOu){ /* proven unrelated OU branch */ }
+       else if(gmail&&(ou==='Example department'||ou==='/Executive'||ou==='Example Organization'||ou==='/'||group))stop('ADMIN_POLICY_OR_OU_CHANGE_REQUIRES_REVIEW');
+       else stop('UNKNOWN_ADMIN_POLICY_SCOPE_REQUIRES_REVIEW');
+      }else if(accessOrOu){
+       if(mapped.USER_EMAIL&&mapped.USER_EMAIL!==b.account&&!/(?:ORG|ORGANIZATIONAL_UNIT)/.test(name)){ /* explicitly another user's access */ }
+       else stop('ADMIN_POLICY_OR_OU_CHANGE_REQUIRES_REVIEW');
+      }else if(!/^(?:VIEW_|GET_|LIST_|SEARCH_|REPORT_|LOGIN$|LOGOUT$)/.test(name))stop('UNKNOWN_ADMIN_EVENT_REQUIRES_REVIEW');
+      events.push({at:id.time,name:event.name,type:event.type,parameters:params});hold(events.length<=limit,'Admin audit event budget exhausted');
+     });
+    });
+    token=page.nextPageToken;hold(token===undefined||typeof token==='string'&&token&&!tokens.has(token),'Admin audit pagination token invalid/repeated');if(token)tokens.add(token);pages++;hold(pages<=51,'Admin audit page budget exhausted');
+   }while(token);
+  }catch(e){if(s.onHalt)s.onHalt('ADMIN_AUDIT_COVERAGE_UNKNOWN',{profile:PROFILE,observedAt:stamp,baselineRawSha256:BASELINE_SHA});throw e;}
+  var latest=events.reduce(function(v,e){return Math.max(v,Date.parse(e.at));},0),dimensions={};Object.keys(LIMITS).forEach(function(k){dimensions[k]={applicable:true,complete:true,limit:LIMITS[k],reserved:0,used:0,increment:1};});
+  var ref='native-admin-audit:'+s.projectId+':'+n,audit={schema:'BackofficeNativeAuditContinuity/v1',complete:true,clear:true,baselineRawSha256:BASELINE_SHA,originalBaselineAt:new Date(start).toISOString(),checkedAt:stamp,ref:ref,startTime:new Date(start).toISOString(),endTime:stamp,pages:pages,eventCount:events.length,retainedNativeEventsSha256:s.sha(JSON.stringify(events)),latestObservedEventUtc:latest?new Date(latest).toISOString():null,latestObservedEventAgeMs:latest?n-latest:null,queryWindowMs:n-start,lagProfile:'GOOGLE_NEAR_REAL_TIME_WITH_POSSIBLE_LAG_OR_OMISSION',instantPolicyAttestation:false};
+  var basis={schema:'BackofficeNativeProviderPolicyBasis/v1',accountAddress:b.account,profile:PROFILE,approvalRef:APPROVAL,checkedAt:stamp,readStartedAtUtc:stamp,readCompletedAtUtc:new Date(s.now()).toISOString(),originalBaseline:{rawSha256:BASELINE_SHA,evidenceRow:m.baselineEvidenceRow||null,typedRowSha256:m.baselineEvidenceRowSha256||null,delegationReadAtUtc:d.checkedAt,gwsmoReadAtUtc:g.checkedAt},settingsDTO:captured(settings),adminAudit:{userKey:'all',applicationName:'admin',startTime:audit.startTime,endTime:audit.endTime,complete:true,pages:nativePages,events:captured(events),eventCount:events.length,pageCount:pages,retainedNativeEventsSha256:audit.retainedNativeEventsSha256,lagProfile:audit.lagProfile,instantPolicyAttestation:false}};var basisHash=s.sha(JSON.stringify(basis));audit.nativeSourceBasisSha256=basisHash;
+  return {nativePolicyBasis:basis,nativePolicyBasisSha256:basisHash,captureKind:PROFILE,approvalRef:APPROVAL,complete:true,laggedChangeDetectionOnly:true,accountAddress:b.account,sentSearchCoversAllUsage:true,unknownUsage:false,senderAddresses:settings.senderAddresses,internalDomains:['example.com'],tier:'trial-or-conservative',dimensions:dimensions,aliases:settings.aliases,vacation:settings.vacation,delegation:{state:'OFF',originalBaselineAt:d.checkedAt,complete:true,checkedAt:stamp,ref:ref+'#retained-off-monitored'},gwsmo:{state:'ON',originalBaselineAt:g.checkedAt},outboundGateway:{state:'OFF',originalBaselineAt:g.checkedAt},audit:audit,checkedAt:stamp,ref:ref};
+ }
+ return {read:read,profile:PROFILE,approvalRef:APPROVAL,baselineRawSha256:BASELINE_SHA};
+}());
+/* Fixed official Admin audit JSON read, using the existing granted scope.
+ * Full JSON activity pages are retained; no SDK helpers are serialized.
+ * No configurable origin, redirects, credentials storage or retry. */
+function fernainNativeAdminAuditHttpJsonV1(options,native){
+ var token=null,response=null,text=null,status=null,phase='ARGUMENTS';
+ function need(ok){fernHold(ok,'Admin audit unavailable');}
+ function own(o,k){return Object.prototype.hasOwnProperty.call(o,k);}
+ try{
+  need(options&&typeof options==='object'&&!Array.isArray(options)&&native&&typeof native.checkBudget==='function'&&typeof native.sha==='function'&&typeof native.byteLength==='function');
+  var proto=Object.getPrototypeOf(options);need((proto===null||proto===Object.prototype)&&!('then' in options));
+  need(Object.getOwnPropertySymbols(options).length===0);
+  var keys=Object.getOwnPropertyNames(options),allowed=['startTime','endTime','maxResults','pageToken'];need(keys.length>=3&&keys.length<=4);
+  keys.forEach(function(k){var d=Object.getOwnPropertyDescriptor(options,k);need(allowed.indexOf(k)>=0&&d&&own(d,'value'));});
+  ['startTime','endTime','maxResults'].forEach(function(k){need(own(options,k));});
+  var start=options.startTime,end=options.endTime,max=options.maxResults,now=Date.now();
+  need(typeof start==='string'&&typeof end==='string'&&Number.isFinite(Date.parse(start))&&Number.isFinite(Date.parse(end))&&new Date(Date.parse(start)).toISOString()===start&&new Date(Date.parse(end)).toISOString()===end&&Date.parse(start)>=Date.parse('{{CONFIGURE_REVIEW_TIMESTAMP_UTC}}')&&Date.parse(start)<Date.parse(end)&&Date.parse(end)<=now+5000&&now-Date.parse(start)<=180*86400000&&Number.isSafeInteger(max)&&max>=1&&max<=100);
+  var pageToken=own(options,'pageToken')?options.pageToken:undefined;need(pageToken===undefined||typeof pageToken==='string'&&pageToken.length>0&&pageToken.length<=10000);
+  var url='https://admin.googleapis.com/admin/reports/v1/activity/users/all/applications/admin?startTime='+encodeURIComponent(start)+'&endTime='+encodeURIComponent(end)+'&maxResults='+max;
+  if(pageToken!==undefined)url+='&pageToken='+encodeURIComponent(pageToken);
+  phase='TOKEN';native.checkBudget(1000);token=ScriptApp.getOAuthToken();need(typeof token==='string'&&token.length>0);
+  var remaining=native.checkBudget(1000),timeoutSeconds=Math.min(110,Math.floor(remaining/1000));
+  phase='FETCH';response=UrlFetchApp.fetch(url,{method:'get',headers:{Authorization:'Bearer '+token},validateHttpsCertificates:true,followRedirects:false,muteHttpExceptions:true,timeoutSeconds:timeoutSeconds});
+  token=null;phase='HTTP';status=response.getResponseCode();need(status===200);
+  phase='BODY';text=response.getContentText('UTF-8');response=null;need(typeof text==='string'&&text.length<=2000000);native.checkBudget(1000);
+  var decodedUtf8Bytes=native.byteLength(text);need(decodedUtf8Bytes<=2000000);var decodedTextSha256=native.sha(text);
+  phase='JSON';var result=JSON.parse(text);text=null;need(result&&typeof result==='object'&&!Array.isArray(result));native.checkBudget();
+  Logger.log('FERNAIN_ADMIN_AUDIT_HTTP_V1:'+JSON.stringify({phase:'COMPLETE',status:status,decodedUtf8Bytes:decodedUtf8Bytes,decodedTextSha256:decodedTextSha256,responseRepresentation:'GOOGLE_ADMIN_REPORTS_HTTP_JSON_V1',rawWireBytesAttested:false}));
+  return result;
+ }catch(error){Logger.log('FERNAIN_ADMIN_AUDIT_HTTP_V1:'+JSON.stringify({phase:phase,status:typeof status==='number'&&Number.isFinite(status)?status:null,complete:false}));fernHold(false,'Admin audit unavailable');}
+ finally{token=null;response=null;text=null;}
+}
+
+function fernainNativeApprovedProviderPolicy(args){
+ var ctx=BackofficeNativeRuntimeV1.nativeContext(),native=ctx&&ctx.services;
+ fernHold(native&&ctx.config&&ctx.config.projectId===native.projectId&&native.lock&&native.lock.hasLock()===true,'same-lock native provider context required');
+ var props=native.props,policyStarted=native.now(),remaining=args.runtimeDeadlineUtc?Date.parse(args.runtimeDeadlineUtc)-policyStarted:45000;
+ fernHold(Number.isFinite(remaining)&&remaining>=3000,'native policy runtime budget unavailable');var policyDeadline=policyStarted+Math.min(45000,remaining);
+ function policyBudget(reserve){if(reserve===undefined)reserve=0;fernHold(Number.isSafeInteger(reserve)&&reserve>=0&&policyDeadline-native.now()>reserve,'native policy runtime budget unavailable');return Math.min(policyDeadline-native.now(),native.checkBudget(reserve));}
+ var config=function(){return JSON.parse(props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1')||'null');};
+ return BackofficeNativeProviderPolicyV1.read(args,{now:native.now,sha:native.sha,projectId:native.projectId,config:config,checkBudget:policyBudget,nativeSettings:function(){policyBudget(1000);var out=native.nativeSettings();policyBudget();return out;},
+  baselineRaw:function(m){fernHold(Number.isInteger(m.baselineEvidenceRow)&&m.baselineEvidenceRow>=6,'registered baseline Evidence row missing');policyBudget(1000);var row=native.readRow('Evidence',m.baselineEvidenceRow,26);policyBudget();fernHold(native.sha(JSON.stringify(row))===m.baselineEvidenceRowSha256,'registered full26 baseline native Evidence changed');return row[3].stringValue;},
+  reportsListRepresentation:'GOOGLE_ADMIN_REPORTS_HTTP_JSON_V1',reportsList:function(options){policyBudget(1000);var out=fernainNativeAdminAuditHttpJsonV1(options,{checkBudget:policyBudget,sha:native.sha,byteLength:native.byteLength});policyBudget();return out;},
+  onHalt:function(reason,evidence){var value=JSON.stringify({schema:'BackofficeNativeHalt/v1',reason:reason,evidence:evidence,checkedAt:new Date(native.now()).toISOString()});/* Preserve the existing protective halt even inside a read bundle; it grants no effect authority. */var haltProps=PropertiesService.getScriptProperties();haltProps.setProperty('FERNAIN_NATIVE_HALT_V1',value);fernHold(haltProps.getProperty('FERNAIN_NATIVE_HALT_V1')===value,'native global halt acknowledgement/readback missing');}
+ });
+}
+
+/* END exact module native-unattended-runtime/NativeProviderPolicy.gs */
+
+/* BEGIN exact module native-unattended-runtime/NativeUnattendedRuntime.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Synchronous native companion. No top-level effects, provider keys, schedules,
+ * Node/filesystem, or model-supplied authority. Install only after native cutover.
+ * Evidence acknowledgement/readback is not an fsync-equivalent guarantee.
+ */
+/* Source-stage locator: a retained-evidence selector, never flow/run authentication
+ * or source, model, policy, or effect authority. No I/O. */
+function fernainNativeSourceLocator(value){
+ fernHold(typeof value==='string'&&value.length<=1024&&value.indexOf('FERNAIN_SOURCE_V1:')===0,'exact staged source locator required');
+ var x=JSON.parse(value.slice(18)),keys=['schema','row','leadId','sourceId','evidenceRow','evidenceHash','sourceVersionSha256','targetCellsSha256','registryContentSha256','capturedAtUtc','expiresAtUtc','traceId','traceRow','traceRowSha256'];
+ fernHold(x&&typeof x==='object'&&!Array.isArray(x)&&Object.getOwnPropertySymbols(x).length===0&&JSON.stringify(Object.keys(x).sort())===JSON.stringify(keys.slice().sort()),'exact staged source locator shape required');
+ keys.forEach(function(k){var d=Object.getOwnPropertyDescriptor(x,k);fernHold(d&&Object.prototype.hasOwnProperty.call(d,'value'),'staged source locator own data required');});
+ fernHold(x.schema==='BackofficeNativeSourceLocator/v1'&&Number.isInteger(x.row)&&x.row>=6&&typeof x.leadId==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(x.leadId)&&typeof x.sourceId==='string'&&/^NATIVE-SOURCE-[A-Za-z0-9_-]{1,100}$/.test(x.sourceId)&&Number.isInteger(x.evidenceRow)&&x.evidenceRow>=6&&Number.isInteger(x.traceRow)&&x.traceRow>=6&&x.traceRow!==x.evidenceRow&&typeof x.traceId==='string'&&/^NATIVE-TRACE-[A-Za-z0-9_-]{1,100}$/.test(x.traceId),'staged source locator identity required');
+ ['evidenceHash','sourceVersionSha256','targetCellsSha256','registryContentSha256','traceRowSha256'].forEach(function(k){fernHold(typeof x[k]==='string'&&/^[a-f0-9]{64}$/.test(x[k]),'staged source locator exact hash required');});
+ fernHold(typeof x.capturedAtUtc==='string'&&typeof x.expiresAtUtc==='string'&&new Date(Date.parse(x.capturedAtUtc)).toISOString()===x.capturedAtUtc&&new Date(Date.parse(x.expiresAtUtc)).toISOString()===x.expiresAtUtc&&Date.parse(x.expiresAtUtc)-Date.parse(x.capturedAtUtc)===FERN_FRESH_MS,'staged source locator exact expiry required');
+ return x;
+}
+
+/* Current-call immutable full-ledger views. No native I/O or shared cache. */
+
+/* Semantic v2: complete observed safety columns and genuine targeted full27.
+ * Physical Evidence rows remain full26. Archived summaries are independently
+ * admitted by the native Services classifier; hashes never create authority. */
+var BackofficeNativeSemanticSnapshotV2=(function(){
+ 'use strict';var COLUMNS=[1,3,11,14,17,18,19,20,21,22,26],SCHEMA='BackofficeNativeSemanticSnapshot/v2',immutableShapes=new WeakSet();
+ function need(ok,why){fernHold(ok,why||'semantic native snapshot coverage unavailable');}
+ function own(o,k){return Object.prototype.hasOwnProperty.call(o,k);}
+ function dense(a,n){need(Array.isArray(a)&&Object.getPrototypeOf(a)===Array.prototype&&a.length===n&&Object.getOwnPropertySymbols(a).length===0&&Object.getOwnPropertyNames(a).length===n+1);for(var i=0;i<n;i++){var d=Object.getOwnPropertyDescriptor(a,String(i));need(d&&own(d,'value')&&d.enumerable);}return a;}
+ function keys(o,expected){need(o&&typeof o==='object'&&!Array.isArray(o)&&Object.getOwnPropertySymbols(o).length===0&&(Object.getPrototypeOf(o)===Object.prototype||Object.getPrototypeOf(o)===null));var got=Object.getOwnPropertyNames(o);need(got.length===expected.length&&expected.every(function(k){return got.indexOf(k)>=0;}));got.forEach(function(k){var d=Object.getOwnPropertyDescriptor(o,k);need(d&&own(d,'value')&&d.enumerable);});return o;}
+ function cell(c){need(c&&typeof c==='object'&&!Array.isArray(c)&&Object.getOwnPropertySymbols(c).length===0);var k=Object.getOwnPropertyNames(c);need(k.length<=1);if(!k.length)return '';var d=Object.getOwnPropertyDescriptor(c,k[0]);need(d&&own(d,'value')&&d.enumerable&&((k[0]==='stringValue'||k[0]==='formulaValue')&&typeof d.value==='string'||k[0]==='numberValue'&&Number.isFinite(d.value)||k[0]==='boolValue'&&typeof d.value==='boolean'));return d.value;}
+ function validate(x,s){
+  keys(x,['schema','spreadsheetId','checkedAt','ref','Prospects','Evidence']);need(x.schema===SCHEMA&&x.spreadsheetId===FERN_SALES_ID);fernFresh(x,s.now(),'semantic native canonical snapshot');
+  var p=keys(x.Prospects,['sheetId','rowCount','width','columns','safetyRows','organizationDisplay','headers','target']),e=keys(x.Evidence,['sheetId','rowCount','width','rows','displayRows','archiveSummaries']);
+  need(p.sheetId===FERN_PROSPECTS_SHEET&&p.width===27&&Number.isInteger(p.rowCount)&&p.rowCount>=6&&p.rowCount<=2000&&e.sheetId===FERN_EVIDENCE_SHEET&&e.width===26&&Number.isInteger(e.rowCount)&&e.rowCount>=6&&p.rowCount+e.rowCount<=12000&&JSON.stringify(p.columns)===JSON.stringify(COLUMNS));
+  if(!immutableShapes.has(x)){dense(p.safetyRows,p.rowCount).forEach(function(r){dense(r,11).forEach(cell);});dense(p.organizationDisplay,p.rowCount).forEach(function(v){need(typeof v==='string');});dense(p.headers,27).forEach(cell);}
+  if(p.target!==null){var t=keys(p.target,['row','leadId','typedRow27','displayRow27']);need(Number.isInteger(t.row)&&t.row>=6&&t.row<=p.rowCount&&typeof t.leadId==='string');dense(t.typedRow27,27).forEach(cell);dense(t.displayRow27,27).forEach(function(v){need(typeof v==='string');});need(cell(t.typedRow27[14])===t.leadId);COLUMNS.forEach(function(c,i){need(JSON.stringify(t.typedRow27[c])===JSON.stringify(p.safetyRows[t.row-1][i]),'target full27 differs from complete safety projection');});need(t.displayRow27[1]===p.organizationDisplay[t.row-1]);}
+  if(!immutableShapes.has(x)){dense(e.rows,e.rowCount).forEach(function(r){dense(r,26).forEach(cell);});dense(e.displayRows,e.rowCount).forEach(function(r){dense(r,26).forEach(function(v){need(typeof v==='string');});});}
+  var summaries=immutableShapes.has(x)?e.archiveSummaries:dense(e.archiveSummaries,e.rowCount),batched=s&&typeof s.validateArchiveSummaries==='function';if(batched)need(s.validateArchiveSummaries(e.rows,summaries)===true,'unverified archive semantic summary');summaries.forEach(function(a,i){if(a===null)return;if(!batched)need(s&&typeof s.validateArchiveSummary==='function'&&s.validateArchiveSummary(e.rows[i],a)===true,'unverified archive semantic summary');need(a.schema==='BackofficeNativeArchiveSummary/v2'&&a.logicalRow===i+1&&a.modelAuthority===false&&['source-chunk','source-metadata','usage-basis-chunk','usage-basis-manifest','action-trace'].indexOf(a.kind)>=0,'unknown archive semantic classification');});
+  if(s.checkBudget)s.checkBudget(1000);return x;
+ }
+ function certifyShape(x){
+  keys(x,['schema','spreadsheetId','checkedAt','ref','Prospects','Evidence']);need(x.schema===SCHEMA&&x.spreadsheetId===FERN_SALES_ID);
+  var p=keys(x.Prospects,['sheetId','rowCount','width','columns','safetyRows','organizationDisplay','headers','target']),e=keys(x.Evidence,['sheetId','rowCount','width','rows','displayRows','archiveSummaries']);
+  need(p.sheetId===FERN_PROSPECTS_SHEET&&p.width===27&&Number.isInteger(p.rowCount)&&p.rowCount>=6&&p.rowCount<=2000&&e.sheetId===FERN_EVIDENCE_SHEET&&e.width===26&&Number.isInteger(e.rowCount)&&e.rowCount>=6&&p.rowCount+e.rowCount<=12000&&JSON.stringify(p.columns)===JSON.stringify(COLUMNS));
+  dense(p.safetyRows,p.rowCount).forEach(function(r){dense(r,11).forEach(cell);});dense(p.organizationDisplay,p.rowCount).forEach(function(v){need(typeof v==='string');});dense(p.headers,27).forEach(cell);
+  if(p.target!==null){var t=keys(p.target,['row','leadId','typedRow27','displayRow27']);need(Number.isInteger(t.row)&&t.row>=6&&t.row<=p.rowCount&&typeof t.leadId==='string');dense(t.typedRow27,27).forEach(cell);dense(t.displayRow27,27).forEach(function(v){need(typeof v==='string');});need(cell(t.typedRow27[14])===t.leadId);COLUMNS.forEach(function(c,i){need(JSON.stringify(t.typedRow27[c])===JSON.stringify(p.safetyRows[t.row-1][i]),'target full27 differs from complete safety projection');});need(t.displayRow27[1]===p.organizationDisplay[t.row-1]);}
+  dense(e.rows,e.rowCount).forEach(function(r){dense(r,26).forEach(cell);});dense(e.displayRows,e.rowCount).forEach(function(r){dense(r,26).forEach(function(v){need(typeof v==='string');});});
+  var summaries=dense(e.archiveSummaries,e.rowCount);summaries.forEach(function(a,i){if(a===null)return;need(a.schema==='BackofficeNativeArchiveSummary/v2'&&a.logicalRow===i+1&&a.modelAuthority===false&&['source-chunk','source-metadata','usage-basis-chunk','usage-basis-manifest','action-trace'].indexOf(a.kind)>=0,'unknown archive semantic classification');});
+  return x;
+ }
+ function values(x,row){need(Number.isInteger(row)&&row>=1&&row<=x.Prospects.rowCount);if(x.schema!==SCHEMA)return x.Prospects.rows[row-1].map(cell);var out={},r=x.Prospects.safetyRows[row-1];COLUMNS.forEach(function(c,i){out[c]=cell(r[i]);});return out;}
+ function target(x,row){if(x.schema!==SCHEMA){need(x.Prospects.rows[row-1]);return x.Prospects.rows[row-1];}var t=x.Prospects.target;need(t&&t.row===row,'genuine selected full27 target unavailable');return t.typedRow27;}
+ function display(x,row,col){if(x.schema!==SCHEMA)return x.Prospects.displayRows[row-1][col];if(col===1)return x.Prospects.organizationDisplay[row-1];need(x.Prospects.target&&x.Prospects.target.row===row);return x.Prospects.target.displayRow27[col];}
+ function safetyTyped(x,row){if(x.schema!==SCHEMA)return x.Prospects.rows[row-1];var out={},r=x.Prospects.safetyRows[row-1];COLUMNS.forEach(function(c,i){out[c]=r[i];});return out;}
+ function receiptValues(v){return [17,18,19,20,21,22].map(function(c){return v[c];});}
+ function scan(x,fn){for(var i=0;i<x.Prospects.rowCount;i++)fn(values(x,i+1),i);}
+ function hydrate(x,h,s){if(x.schema!==SCHEMA)return x;if(x.Prospects.target&&x.Prospects.target.row===h.row&&x.Prospects.target.leadId===h.leadId)return x;var r=s.readRowCapture('Prospects',h.row,27);need(r&&r.typedRow&&r.displayRow&&cell(r.typedRow[14])===h.leadId,'target full27 handle changed');var y=Object.assign({},x,{Prospects:Object.assign({},x.Prospects,{target:{row:h.row,leadId:h.leadId,typedRow27:r.typedRow,displayRow27:r.displayRow}})});return validate(y,s);}
+ function summary(x,row){return x.schema===SCHEMA?x.Evidence.archiveSummaries[row-1]:null;}
+ function logical(s,x,row,expected,purpose){var a=summary(x,row);if(a){need(typeof s.readEvidenceLogicalRow==='function','purpose-scoped original Evidence reader unavailable');need(!expected||a.originalTypedRowSha256===expected,'archived logical Evidence expected hash changed');return s.readEvidenceLogicalRow(row,expected||a.originalTypedRowSha256,purpose);}var r=s.readRow('Evidence',row,26);if(expected)need(s.sha(JSON.stringify(r))===expected,'original Evidence full26 expected hash changed');return r;}
+ function immutable(x,s){validate(x,s);var copy=JSON.parse(JSON.stringify(x)),allowed=new WeakSet(),cache=new WeakMap(),closed=false,count=0;function freeze(v){if(!v||typeof v!=='object')return;Object.keys(v).forEach(function(k){freeze(v[k]);});Object.freeze(v);allowed.add(v);if(++count%4096===0&&s.checkBudget)s.checkBudget(1000);}freeze(copy);certifyShape(copy);immutableShapes.add(copy);function current(){need(!closed,'semantic preflight scope closed');fernFresh(copy,s.now(),'semantic native canonical snapshot');if(s.checkBudget)s.checkBudget(1000);}return Object.freeze({canonical:copy,hash:function(v){current();var known=v&&typeof v==='object'&&allowed.has(v);if(known&&cache.has(v))return cache.get(v);var h=s.sha(typeof v==='string'?v:JSON.stringify(v));current();if(known)cache.set(v,h);return h;},close:function(){closed=true;immutableShapes.delete(copy);cache=new WeakMap();}});}
+ return Object.freeze({schema:SCHEMA,columns:COLUMNS.slice(),validate:validate,values:values,target:target,display:display,safetyTyped:safetyTyped,receiptValues:receiptValues,scan:scan,hydrate:hydrate,summary:summary,logical:logical,immutable:immutable});
+}());
+
+var BackofficeNativeImmutablePreflightV1=(function(){
+ 'use strict';
+ function create(source,services){
+  if(source&&source.schema===BackofficeNativeSemanticSnapshotV2.schema)return BackofficeNativeSemanticSnapshotV2.immutable(source,services);
+  var checks=0,cache=new WeakMap(),allowed=new WeakSet(),closed=false;
+  function need(ok){fernHold(ok,'immutable preflight full snapshot boundary unavailable');}
+  function tick(){if(++checks%4096===0&&services.checkBudget)services.checkBudget(1000);}
+  function object(value,keys){
+   tick();need(value&&typeof value==='object'&&!Array.isArray(value)&&(Object.getPrototypeOf(value)===Object.prototype||Object.getPrototypeOf(value)===null)&&Object.getOwnPropertySymbols(value).length===0);
+   var names=Object.getOwnPropertyNames(value);need(names.length===keys.length&&keys.every(function(k){return names.indexOf(k)>=0;}));
+   names.forEach(function(k){var d=Object.getOwnPropertyDescriptor(value,k);need(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable);});return value;
+  }
+  function dense(value,length){
+   tick();need(Array.isArray(value)&&Object.getPrototypeOf(value)===Array.prototype&&value.length===length&&Object.getOwnPropertySymbols(value).length===0&&Object.getOwnPropertyNames(value).length===length+1);
+   for(var i=0;i<length;i++){var d=Object.getOwnPropertyDescriptor(value,String(i));need(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable);}return value;
+  }
+  object(source,['Prospects','Evidence','spreadsheetId','checkedAt','ref']);
+  need(typeof source.spreadsheetId==='string'&&typeof source.checkedAt==='string'&&typeof source.ref==='string');
+  fernFresh(source,services.now(),'full native canonical snapshot');var canonical=Object.assign({},source);
+  [['Prospects',27,901],['Evidence',26,903]].forEach(function(def){
+   var q=object(source[def[0]],['sheetId','rowCount','width','rows','displayRows']);
+   need(q.sheetId===def[2]&&q.width===def[1]&&Number.isInteger(q.rowCount)&&q.rowCount>=6&&q.rowCount<=12000);
+   dense(q.rows,q.rowCount);dense(q.displayRows,q.rowCount);
+   var rows=q.rows.slice(),display=q.displayRows.slice();
+   rows.forEach(function(row){dense(row,def[1]);row.forEach(function(cell){
+    tick();need(cell&&typeof cell==='object'&&!Array.isArray(cell)&&(Object.getPrototypeOf(cell)===Object.prototype||Object.getPrototypeOf(cell)===null)&&Object.getOwnPropertySymbols(cell).length===0);
+    var names=Object.getOwnPropertyNames(cell);need(names.length<=1);names.forEach(function(k){var d=Object.getOwnPropertyDescriptor(cell,k);need(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable&&((k==='stringValue'||k==='formulaValue')&&typeof d.value==='string'||k==='numberValue'&&Number.isFinite(d.value)||k==='boolValue'&&typeof d.value==='boolean'));});Object.freeze(cell);
+   });Object.freeze(row);});
+   display.forEach(function(row){dense(row,def[1]);row.forEach(function(value){need(typeof value==='string');});Object.freeze(row);});
+   Object.freeze(rows);Object.freeze(display);var table=Object.assign({},q,{rows:rows,displayRows:display});Object.freeze(table);canonical[def[0]]=table;
+   allowed.add(table);allowed.add(rows);allowed.add(display);
+  });need(canonical.Prospects.rowCount+canonical.Evidence.rowCount<=12000);Object.freeze(canonical);allowed.add(canonical);
+  function current(){need(!closed);fernFresh(canonical,services.now(),'full native canonical snapshot');if(services.checkBudget)services.checkBudget(1000);}
+  return Object.freeze({canonical:canonical,hash:function(value){
+   current();var known=value&&typeof value==='object'&&allowed.has(value);if(known&&cache.has(value))return cache.get(value);
+   var digest=services.sha(typeof value==='string'?value:JSON.stringify(value));current();if(known)cache.set(value,digest);return digest;
+  },close:function(){closed=true;cache=new WeakMap();}});
+ }
+ return {create:create};
+}());
+function fernainNativePreflightSnapshotHash(value,services){
+ var ctx=null;try{ctx=BackofficeNativeRuntimeV1.nativeContext();}catch(ignore){}
+ if(ctx&&ctx.services===services&&typeof ctx.preflightSnapshotHash==='function')return ctx.preflightSnapshotHash(value);
+ return services.sha(typeof value==='string'?value:JSON.stringify(value));
+}
+function fernainNativeResolvePreflightCanonicalArgs(args,name){
+ if(!args||!Object.prototype.hasOwnProperty.call(args,'nativeCanonicalRef'))return args;
+ var ctx=fernainNativePolicyContext(args);fernHold(typeof ctx.resolvePreflightCanonical==='function','current native canonical adapter scope unavailable');
+ var canonical=ctx.resolvePreflightCanonical(args,name),out={};Object.keys(args).forEach(function(k){if(k!=='nativeCanonicalRef'&&k!=='nativeSourceProofRef')out[k]=args[k];});out.canonical=canonical;if(Object.prototype.hasOwnProperty.call(args,'nativeSourceProofRef')){fernHold(typeof ctx.resolvePreflightSourceProof==='function','private source proof transport unavailable');out.boundSourceProof=ctx.resolvePreflightSourceProof(args,name);}return out;
+}
+
+var BackofficeNativeRuntimeV1 = (function () {
+  'use strict';
+  var builtinSemantic=fernainNativeSemanticReview,builtinSourceProof=fernainNativePersistedSourceProof;
+  var CFG='FERNAIN_NATIVE_RUNTIME_CONFIG_V1', HALT='FERNAIN_NATIVE_HALT_V1', LAST='FERNAIN_NATIVE_LAST_ATTEMPT_V1';
+  var MARK='FERNAIN_NATIVE_NO_RESEND_V1:', CAP='FERNAIN_NATIVE_CAPTURE_V1:', INCOMING='FERNAIN_NATIVE_INCOMING_BLOCK_V1:', SOURCE_CURSOR='FERNAIN_NATIVE_SOURCE_PREPARATION_CURSOR_V1';
+  var REPLAY_LEADS=['EXAMPLE-LEAD-001','EXAMPLE-LEAD-001','EXAMPLE-LEAD-001'];
+  var REPLAY_ROWS=[673,672,671];
+  var REPLAY_IDS=['1a11dbf62667b2e8','1a120a4026ec26e2','1a119b3fade48fb0'];
+  var nativeContext=null;
+  var FLAGS=['namedIndividual','currentRole','verifiedRoute','noGuessedRoute','mlaExcluded',
+    'suppressionClear','aliasClear','organizationFamilyClear','duplicateClear',
+    'noReplyOrActiveConversation','ownerReply24hClear','noReferralEffects','uncertainOrInflightClear'];
+  function hold(ok,why){fernHold(ok,why);}
+  function copy(x){return JSON.parse(JSON.stringify(x));}
+  function same(a,b){return JSON.stringify(a)===JSON.stringify(b);}
+  function shape(x,keys){return x&&typeof x==='object'&&!Array.isArray(x)&&same(Object.keys(x).sort(),keys.slice().sort());}
+  function raw(row){return row.map(function(v){if(!Object.keys(v).length)return '';return v.formulaValue!==undefined?v.formulaValue:v.stringValue!==undefined?v.stringValue:v.numberValue!==undefined?v.numberValue:v.boolValue;});}
+  function str(v){var text=String(v);return text===''?{}:{stringValue:text};}
+  function blank(n){return Array.from({length:n},function(){return {};});}
+  function isBlank(row){return row.every(function(v){return Object.keys(v).length===0;});}
+  function parse(text,max){hold(typeof text==='string'&&text.length<=max,'bounded JSON missing');var value=JSON.parse(text);hold(value&&typeof value==='object'&&!Array.isArray(value),'JSON object required');return value;}
+  function sync(x){hold(!x||typeof x.then!=='function','asynchronous native adapter unsupported');return x;}
+  function create(s){
+    hold(s&&s.lock&&s.props&&typeof s.snapshot==='function'&&typeof s.casWrites==='function','native synchronous services required');
+    var active=false,latestSnapshot=null,runDeadline=null,nativeFencedLeads={},actionFrame=null,preflightFrame=null,preflightSequence=0,privateReadBundleActive=false;
+    function now(){return s.now();}
+    function iso(){return new Date(now()).toISOString();}
+    function hash(x){return preflightFrame?preflightFrame.scope.hash(x):s.sha(typeof x==='string'?x:JSON.stringify(x));}
+    function key(lead){return MARK+hash(lead);}
+    function prop(k){var text=s.props.getProperty(k);return text===null?null:parse(text,8500);}
+    function store(k,v){
+      var text=JSON.stringify(v),all=s.props.getProperties(),total=0;
+      hold(s.byteLength(text)<=8500,'Properties value capacity; never evict markers');
+      all[k]=text;Object.keys(all).forEach(function(p){total+=s.byteLength(p)+s.byteLength(all[p]);});
+      hold(total<=490000,'Properties total capacity; never evict markers');
+      sync(s.props.setProperty(k,text));hold(s.props.getProperty(k)===text,'native property acknowledgement/readback missing');return v;
+    }
+    function cleanupCaptures(){if(!s.props.deleteProperty)return;Object.keys(s.props.getProperties()).filter(function(k){return k.indexOf(CAP)===0;}).forEach(function(k){var v=prop(k);if(v&&v.schema==='BackofficeNativeCapture/v1'&&(v.consumed===true||Date.parse(v.expiresAt)<=now())){sync(s.props.deleteProperty(k));hold(s.props.getProperty(k)===null,'ephemeral capture cleanup unverified');}});}
+    function paced(){var prior=prop(LAST);hold(!prior||prior.schema==='BackofficeNativePacing/v1'&&prior.state==='SETTLED'&&Number.isFinite(Date.parse(prior.attemptedAt))&&Number.isFinite(Date.parse(prior.settledAt))&&Date.parse(prior.settledAt)>=Date.parse(prior.attemptedAt)&&now()-Date.parse(prior.settledAt)>=180000,'GLOBAL_CAMPAIGN_PACING_HOLD; minimum3minutes after settled attempt, no burst/catchup; unresolved or legacy fence requires verified reconciliation');}
+    function settlePacing(p){return store(LAST,{schema:'BackofficeNativePacing/v1',state:'SETTLED',attemptId:p.attemptId,attemptedAt:p.attemptedAt,settledAt:iso()});}
+    function configured(){
+      var c=prop(CFG);hold(c&&c.schema==='BackofficeNativeConfig/v1'&&c.enabled===true&&c.mode==='SEND'&&c.minimumBatch===0&&c.catchUp===false,'native SEND config missing');
+      hold(c.projectId===s.projectId&&c.spreadsheetId===FERN_SALES_ID&&c.writerId&&c.ownerAuthority&&c.ownerAuthority.standing===true&&c.ownerAuthority.ref,'exact project/owner config missing');
+      hold(c.soleWriter&&c.soleWriter.cutoverRef&&c.soleWriter.externalWritersDisabled===true&&c.soleWriter.writerId===c.writerId,'explicit native sole-writer cutover required');
+      ['sourceProducerAdapter','sourceProofAdapter','semanticReviewAdapter','providerPolicyAdapter','cutoverAdapter'].forEach(function(k){hold(/^fernain[A-Za-z0-9_]{1,100}$/.test(c[k]||''),'registered native adapter missing: '+k);});
+      return c;
+    }
+    function preflightKeys(name){return name==='fernainNativePersistedSourceProof'?['nativeProviderPolicy','sourceId','evidenceRow','evidenceHash','sourceProof','binding','bodySha256','canonical','nowUtc']:name==='fernainNativeSemanticReview'?['binding','bodySha256','canonical','sourceEvidenceHash','boundSourceProof','nativeProviderPolicy','ownClaimId','ownAttemptId','nowUtc']:null;}
+    function resolvePreflightCanonical(args,name){
+      var keys=preflightKeys(name),proofRef=name==='fernainNativeSemanticReview'&&Object.prototype.hasOwnProperty.call(args,'nativeSourceProofRef'),expected=keys&&keys.filter(function(k){return k!=='canonical'&&(!proofRef||k!=='boundSourceProof');}).concat(['nativeCanonicalRef','runtimeDeadlineUtc']).concat(proofRef?['nativeSourceProofRef']:[]);
+      hold(active&&preflightFrame&&preflightFrame.adapter===name&&expected&&shape(args,expected)&&typeof s.lock.hasLock==='function'&&s.lock.hasLock()===true,'current native canonical adapter scope unavailable');
+      hold(Object.getOwnPropertySymbols(args).length===0&&Object.getOwnPropertyNames(args).length===expected.length&&expected.every(function(k){var d=Object.getOwnPropertyDescriptor(args,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable;}),'current native canonical adapter arguments unavailable');
+      hold(args.nativeCanonicalRef===preflightFrame.id,'current native canonical adapter scope unavailable');fernFresh(preflightFrame.scope.canonical,now(),'full native canonical snapshot');return preflightFrame.scope.canonical;
+    }
+    // Same-frame owned input transport. All source/ledger/semantic checks remain.
+    // No public token can mint or revive this single-use private certificate.
+    function freezeOwnedSourceProof(value){
+      var seen=new WeakSet(),ancestors=new WeakSet(),count=0;
+      function visit(v,depth){
+        hold(++count<=2000000&&depth<=100,'private source proof structural budget unavailable');if(count%4096===0&&s.checkBudget)s.checkBudget(1000);
+        if(v===null||typeof v==='string'||typeof v==='boolean')return;
+        if(typeof v==='number'){hold(Number.isFinite(v)&&!Object.is(v,-0),'private source proof number unavailable');return;}
+        hold(v&&typeof v==='object','private source proof must contain inert JSON data');
+        hold(Object.getOwnPropertySymbols(v).length===0,'private source proof symbol unavailable');
+        var array=Array.isArray(v),prototype=Object.getPrototypeOf(v);
+        hold(array?prototype===Array.prototype:prototype===Object.prototype||prototype===null,'private source proof prototype unavailable');
+        hold(!('toJSON' in v),'private source proof toJSON unavailable');
+        hold(!ancestors.has(v),'private source proof cycle unavailable');if(seen.has(v))return;seen.add(v);ancestors.add(v);
+        var names=Object.getOwnPropertyNames(v);if(array)hold(names.length===v.length+1,'private source proof array fields unavailable');var values=names.map(function(k){var d=Object.getOwnPropertyDescriptor(v,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&(array&&k==='length'||d.enumerable),'private source proof descriptor unavailable');return d.value;});
+        // Freezing makes Proxy target prototype/own-value invariants enforceable.
+        Object.freeze(v);hold(Object.isFrozen(v)&&Object.getPrototypeOf(v)===prototype&&Object.getOwnPropertySymbols(v).length===0&&!('toJSON' in v),'private source proof freeze unavailable');
+        var after=Object.getOwnPropertyNames(v);hold(after.length===names.length&&names.every(function(k,i){return after[i]===k;}),'private source proof freeze fields changed');
+        names.forEach(function(k,i){var d=Object.getOwnPropertyDescriptor(v,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&Object.is(d.value,values[i])&&(array&&k==='length'||d.enumerable),'private source proof frozen descriptor changed');if(array&&k==='length')return;if(array)hold(/^(0|[1-9][0-9]*)$/.test(k)&&Number(k)<v.length,'private source proof array field unavailable');visit(d.value,depth+1);});
+        if(array)for(var i=0;i<v.length;i++)hold(Object.prototype.hasOwnProperty.call(v,i),'private source proof sparse array unavailable');ancestors.delete(v);
+      }
+      visit(value,0);return value;
+    }
+    function builtinDescriptor(name,expected){var root=typeof globalThis!=='undefined'?globalThis:null,d=root&&Object.getOwnPropertyDescriptor(root,name);return !!d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.value===expected;}
+    function sourceProofStamp(){hold(typeof s.preflightTransportStamp==='function','private source proof boundary stamp unavailable');return s.preflightTransportStamp();}
+    function sourceProofScopeCurrent(slot,entry){
+      hold(active&&preflightFrame&&slot&&preflightFrame.sourceProof===slot&&!slot.consumed&&slot.frame===preflightFrame&&slot.config===nativeContext.config&&JSON.stringify(slot.config)===slot.configText,'private source proof scope changed');
+      var age=now()-slot.checkedMs;hold(age>=0&&age<=5000&&now()<slot.expiresMs,'private source proof expired');
+      hold(builtinDescriptor('fernainNativeSemanticReview',builtinSemantic)&&builtinDescriptor('fernainNativePersistedSourceProof',builtinSourceProof),'private source proof builtin changed');
+      var current=sourceProofStamp(),expected=Object.assign({},slot.stamp);if(entry){expected.boundaryEpoch++;expected.frameEpoch++;}
+      hold(same(current,expected),'private source proof native boundary changed');
+    }
+    function certifySourceProof(c,bound,proof,binding,bodySha){
+      if(c.semanticReviewAdapter!=='fernainNativeSemanticReview'||c.sourceProofAdapter!=='fernainNativePersistedSourceProof'||!builtinDescriptor('fernainNativeSemanticReview',builtinSemantic)||!builtinDescriptor('fernainNativePersistedSourceProof',builtinSourceProof))return;
+      hold(active&&preflightFrame&&preflightFrame.adapter===null&&nativeContext&&nativeContext.config===c,'private source proof held frame unavailable');
+      var owned=proof.boundSourceProof,m=bound.entry.sourceProof;
+      hold(owned&&owned.schema==='BackofficeNativeVerifiedSourceProof/v1'&&owned.sourceId===bound.sourceId&&owned.sourceEvidenceHash===bound.evidenceHash&&owned.sourceMetadataRow===bound.evidenceRow&&owned.sourceMetadataSha256===bound.evidenceHash&&owned.sourceVersionSha256===m.retainedJsonSha256&&proof.sourceVersionSha256===m.retainedJsonSha256&&same(proof.binding,binding)&&proof.bodySha256===bodySha,'private source proof exact identity unavailable');
+      var expires=Date.parse(m.expiresAtUtc);hold(Number.isFinite(expires)&&expires>now(),'private source proof manifest expired');freezeOwnedSourceProof(owned);
+      preflightFrame.sourceProof={frame:preflightFrame,config:c,configText:JSON.stringify(c),owned:owned,sourceId:bound.sourceId,evidenceHash:bound.evidenceHash,bindingText:JSON.stringify(binding),bodySha256:bodySha,checkedMs:now(),expiresMs:expires,stamp:sourceProofStamp(),consumed:false,input:null};
+    }
+    function resolvePreflightSourceProof(args,name){
+      var slot=preflightFrame&&preflightFrame.sourceProof;try{hold(name==='fernainNativeSemanticReview'&&preflightFrame&&preflightFrame.adapter===name&&slot&&args===slot.input&&args.nativeSourceProofRef===preflightFrame.id&&args.nativeCanonicalRef===preflightFrame.id,'private source proof exact adapter handoff unavailable');
+      sourceProofScopeCurrent(slot,true);hold(args.sourceEvidenceHash===slot.evidenceHash&&JSON.stringify(args.binding)===slot.bindingText&&args.bodySha256===slot.bodySha256,'private source proof binding changed');slot.consumed=true;slot.input=null;return slot.owned;}catch(proofError){if(slot){slot.consumed=true;slot.input=null;}if(preflightFrame)preflightFrame.sourceProof=null;throw proofError;}
+    }
+    function invoke(name,args){
+      var input,keys=preflightKeys(name),scoped=preflightFrame&&keys&&nativeContext&&((name==='fernainNativePersistedSourceProof'&&nativeContext.config.sourceProofAdapter===name)||(name==='fernainNativeSemanticReview'&&nativeContext.config.semanticReviewAdapter===name));
+      if(scoped){
+        hold(args&&typeof args==='object'&&!Array.isArray(args)&&(Object.getPrototypeOf(args)===Object.prototype||Object.getPrototypeOf(args)===null)&&Object.getOwnPropertySymbols(args).length===0,'current native canonical adapter arguments unavailable');
+        Object.getOwnPropertyNames(args).forEach(function(k){var d=Object.getOwnPropertyDescriptor(args,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable,'current native canonical adapter arguments unavailable');});
+        scoped=shape(args,keys)&&args.canonical===preflightFrame.scope.canonical;
+      }
+      var proofSlot=scoped&&name==='fernainNativeSemanticReview'&&preflightFrame.sourceProof;
+      if(proofSlot){try{sourceProofScopeCurrent(proofSlot,false);hold(args.boundSourceProof===proofSlot.owned&&args.sourceEvidenceHash===proofSlot.evidenceHash&&JSON.stringify(args.binding)===proofSlot.bindingText&&args.bodySha256===proofSlot.bodySha256,'private source proof input changed');}catch(proofError){proofSlot.consumed=true;proofSlot.input=null;preflightFrame.sourceProof=null;throw proofError;}}
+      if(scoped){var small={};keys.forEach(function(k){if(k!=='canonical'&&(!proofSlot||k!=='boundSourceProof'))small[k]=args[k];});input=copy(small);input.nativeCanonicalRef=preflightFrame.id;if(proofSlot){input.nativeSourceProofRef=preflightFrame.id;proofSlot.input=input;}}else input=copy(args);
+      input.runtimeDeadlineUtc=new Date(runDeadline||now()+110000).toISOString();if(!scoped)return sync(s.invoke(name,input));
+      hold(preflightFrame.adapter===null,'native canonical adapter scope already active');preflightFrame.adapter=name;try{return sync(s.invoke(name,input));}finally{if(proofSlot){proofSlot.input=null;preflightFrame.sourceProof=null;}preflightFrame.adapter=null;}
+    }
+    function exclusive(c){
+      var x=invoke(c.cutoverAdapter,{projectId:c.projectId,writerId:c.writerId,cutoverRef:c.soleWriter.cutoverRef});fernFresh(x,now(),'native sole-writer cutover');
+      hold(x.complete===true&&x.exclusive===true&&x.externalWritersDisabled===true&&x.projectId===c.projectId&&x.writerId===c.writerId&&x.cutoverRef===c.soleWriter.cutoverRef,'canonical external writer exclusion unavailable');
+    }
+    function traced(c,out){var priorCapture=actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'?fernainNativeCaptureTraceProjectionV1_(out,FERN_NATIVE_VALIDATION_PHASE_V1,FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1):null;try{hold(typeof s.archiveMutationFence==='function','archive mutation fence required');s.archiveMutationFence();}catch(guard){var captureTraceObservation=priorCapture?fernainNativeCaptureTraceFenceObservationV1_(priorCapture,guard):null;fernainNativeHoldDiagnostic('TRACE_ARCHIVE_PRESERVATION_FENCE',guard);var fenced={status:'HOLD',reasonCode:'NATIVE_ARCHIVE_PRESERVATION_HOLD',scope:'GLOBAL',stage:'ARCHIVE_PRESERVATION_FENCE',noResend:out.noResend===true,traceRecorded:false,traceRecordReason:'PRESERVATION_TRANSITION_OR_INTEGRITY_HOLD'};if(out.sendAttempted===true){fenced.sendAttempted=true;fenced.no_send=false;}else if(out.sendAttempted===false){fenced.sendAttempted=false;fenced.no_send=true;}else if(typeof out.no_send==='boolean')fenced.no_send=out.no_send;else if(actionFrame.operation!=='CONSUME_GEMINI')fenced.no_send=true;if(captureTraceObservation)fenced.captureTraceObservation=captureTraceObservation;if(out.firstFailure)fenced.firstFailure=copy(out.firstFailure);if(out.originalRetentionError){fenced.originalRetentionError=out.originalRetentionError;fenced.underlyingReasonCode=out.underlyingReasonCode;fenced.traceRetentionError=fernainNativeSourceRetentionExceptionObservationV1_('TRACE_ARCHIVE_PRESERVATION_FENCE',guard);}return fenced;}
+      var t={schema:'BackofficeNativeActionTrace/v1',traceId:actionFrame.traceId,requestId:actionFrame.traceId,operation:actionFrame.operation,startedAt:actionFrame.startedAt,finishedAt:iso(),outcome:out.status,reasonCode:out.reasonCode||'NATIVE_RESULT_RECORDED',scope:out.scope||'GLOBAL',stage:out.stage||out.status,projectId:s.projectId,writerId:c.writerId,humanAuthorityRef:c.ownerAuthority.ref,humanApprovedAt:c.ownerAuthority.approvedAt||null,captureId:out.capture_id||null,leadId:out.leadId||null,noResend:out.noResend===true,noSend:out.no_send===true||out.sendAttempted!==true,modelAuthority:false,servedModel:'UNKNOWN_NOT_ATTESTED',nativeReadbackRequired:true,registrationCoverage:actionFrame.registrationCoverage||null,sourcePreparation:actionFrame.sourcePreparation||null};
+      if(out.firstFailure)t.firstFailure=copy(out.firstFailure);if(out.sourceLocator)t.sourceCapture=copy(out.sourceLocator);
+      if(actionFrame.priorSourceCapture)t.priorSourceCapture=copy(actionFrame.priorSourceCapture);if(actionFrame.rowCapacity)t.rowCapacity=copy(actionFrame.rowCapacity);
+      if(FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1)t.validationDiagnostic=JSON.parse(JSON.stringify(FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1));
+      if(actionFrame.candidateHandle)t.candidateHandle=copy(actionFrame.candidateHandle);
+      if(actionFrame.consumerCapture)t.consumerCapture=copy(actionFrame.consumerCapture);if(actionFrame.consumerModelInput)t.consumerModelInput=copy(actionFrame.consumerModelInput);if(actionFrame.consumerComparison)t.consumerComparison=copy(actionFrame.consumerComparison);if(actionFrame.consumerNormalization)t.consumerNormalization=copy(actionFrame.consumerNormalization);
+      if(out.capture_id){var cap=prop(CAP+out.capture_id);if(cap){t.sourceId=cap.sourceId;t.sourceVersionSha256=cap.sourceHash;t.bodySha256=cap.bodySha256;t.beforeTypedRowSha256=cap.typedHash;t.handle=cap.handle;t.preparedUsageBasisRef=cap.preparedUsageBasisRef||null;}}
+      if(out.leadId){var m=prop(key(out.leadId));if(m){t.attemptId=m.attemptId;t.pendingRow=m.pendingRow;t.receiptId=m.receiptId||null;t.bindingHash=m.bindingHash;t.bodySha256=m.bodySha256;t.markerState=m.state;}}
+      try{var ref=evidenceEvent(c,'action-trace',{trace:t,noSend:true},[]);out.traceId=t.traceId;out.traceRecorded=true;out.traceRef=ref.ref;
+        if(out.capture_id){var cap=prop(CAP+out.capture_id);cap.traceId=t.traceId;cap.traceRow=ref.row;cap.traceRowSha256=ref.hash;store(CAP+out.capture_id,cap);}if(out.sourceLocator){hold(Date.parse(out.sourceLocator.expiresAtUtc)>now(),'native retained source manifest stale/incomplete');var loc=Object.assign({},out.sourceLocator,{traceId:t.traceId,traceRow:ref.row,traceRowSha256:ref.hash});out.candidate_id='FERNAIN_SOURCE_V1:'+JSON.stringify(loc);fernainNativeSourceLocator(out.candidate_id);delete out.sourceLocator;}return out;
+      }catch(ignored){fernainNativeHoldDiagnostic('TRACE_PERSISTENCE',ignored);
+        try{var md=ignored&&typeof ignored==='object'&&Object.getOwnPropertyDescriptor(ignored,'message'),message=md&&Object.prototype.hasOwnProperty.call(md,'value')&&typeof md.value==='string'?md.value:null,known={'HOLD: canonical batchUpdate native data exceeds structural budget':'ACK_STRUCTURE','HOLD: canonical batchUpdate native number is non-finite':'ACK_NUMBER','HOLD: canonical batchUpdate native data contains unsupported values':'ACK_TYPE','HOLD: canonical batchUpdate native data contains symbol fields':'ACK_SYMBOL','HOLD: canonical batchUpdate native array is sparse':'ACK_SPARSE','HOLD: canonical batchUpdate native accessor field prohibited':'ACK_ACCESSOR','HOLD: canonical batchUpdate synchronous native result missing':'ACK_SYNC','HOLD: canonical batchUpdate inherited native field prohibited':'ACK_INHERITED','HOLD: canonical batchUpdate native error':'ACK_ERROR','HOLD: canonical acknowledgment own native fields missing':'ACK_FIELDS','HOLD: canonical native batch acknowledgment missing/uncertain':'ACK_SEMANTIC','HOLD: canonical complete-row typed readback mismatch':'CAS_READBACK','HOLD: canonical complete-row CAS preimage changed':'CAS_PREIMAGE','HOLD: Evidence journal acknowledgement/readback missing':'TRACE_ACK','HOLD: Evidence journal cell bound exceeded':'TRACE_CELL_BUDGET','HOLD: native run budget exhausted or insufficient remaining time':'RUN_BUDGET','HOLD: native typed chunk workbook/coverage mismatch':'READ_COVERAGE','HOLD: Sheets typed chunk native data exceeds structural budget':'READ_STRUCTURE','HOLD: Sheets typed chunk native accessor field prohibited':'READ_ACCESSOR'};Logger.log('FERNAIN_TRACE_BOUNDARY_V1:'+JSON.stringify({operation:['LIST_CANDIDATES','CAPTURE_PUBLIC_SOURCE','PREPARE_SOURCE','CONSUME_GEMINI','RECONCILE_PENDING','READ_STATUS','HALT','INVALID_STUDIO_INPUT'].indexOf(actionFrame.operation)>=0?actionFrame.operation:'OTHER',category:message&&Object.prototype.hasOwnProperty.call(known,message)?known[message]:fernainNativeFiniteErrorCategoryV1(ignored),priorOutcome:['CANDIDATE_HANDLES','EMPTY_POOL','PUBLIC_SOURCE_RETAINED','SOURCE_READY','HOLD','CONFIRMED_NO_RESEND','PENDING_NO_RESEND','PENDING_NO_RESEND_TRACE_HOLD','HALTED','RECONCILED','NATIVE_STATUS'].indexOf(out.status)>=0?out.status:'OTHER'}));}catch(ignore){}
+        var traceFailure={status:out.noResend===true?'PENDING_NO_RESEND_TRACE_HOLD':'HOLD',reasonCode:'NATIVE_TRACE_PERSISTENCE_HOLD',scope:'GLOBAL',stage:out.status,noResend:out.noResend===true,leadId:out.leadId||null,traceId:t.traceId,traceRecorded:false,traceRecordReason:'NATIVE_CANONICAL_TRACE_UNAVAILABLE',underlyingReasonCode:out.reasonCode||'NATIVE_RESULT_TRACE_INCOMPLETE'};if(out.firstFailure)traceFailure.firstFailure=copy(out.firstFailure);if(out.originalRetentionError)traceFailure.originalRetentionError=out.originalRetentionError;if(out.sendAttempted===true){traceFailure.sendAttempted=true;traceFailure.no_send=false;}else if(out.sendAttempted===false){traceFailure.sendAttempted=false;traceFailure.no_send=true;}else if(typeof out.no_send==='boolean')traceFailure.no_send=out.no_send;else if(actionFrame.operation!=='CONSUME_GEMINI')traceFailure.no_send=true;if(typeof out.noResend==='boolean')traceFailure.noResend=out.noResend;return traceFailure;
+      }
+    }
+    function captureFirstFailureObservation(phase,error){
+      if(['SOURCE_RETENTION','SOURCE_RETENTION_WRITE'].indexOf(phase)<0)return null;
+      var d=FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1||{},out={schema:'BackofficeCaptureFirstFailureObservation/v1',phase:phase,
+        category:typeof d.category==='string'&&/^[A-Z0-9_]{1,64}$/.test(d.category)?d.category:fernainNativeFiniteErrorCategoryV1(error),
+        assertionReason:typeof d.assertionReason==='string'&&d.assertionReason.length<=400&&/^[\x20-\x7e]+$/.test(d.assertionReason)?d.assertionReason:'UNAVAILABLE',
+        readEffectCounters:'NOT_SAMPLED_AT_THIS_BOUNDARY',lockState:'NOT_SAMPLED_AT_THIS_BOUNDARY',proofConsumption:'NOT_SAMPLED_AT_THIS_BOUNDARY',sourceAgeMs:'NOT_SAMPLED_AT_THIS_BOUNDARY',
+        observationOnly:true,sourceAuthority:false,sendAuthority:false};
+      return out;
+    }
+    function captureRetentionBudgetHold(error){
+      if(!actionFrame||actionFrame.operation!=='CAPTURE_PUBLIC_SOURCE'||FERN_NATIVE_VALIDATION_PHASE_V1!=='SOURCE_RETENTION_WRITE')return false;
+      try{var code=Object.getOwnPropertyDescriptor(error,'code'),message=Object.getOwnPropertyDescriptor(error,'message');
+        return code&&Object.prototype.hasOwnProperty.call(code,'value')&&code.value==='CURRENT_SALES_VALIDATION_HOLD'&&
+          message&&Object.prototype.hasOwnProperty.call(message,'value')&&message.value==='HOLD: native run budget exhausted or insufficient remaining time';
+      }catch(ignore){return false;}
+    }
+    function locked(fn,allowHalt,operation,bootstrapHandle){
+      if(active)return {status:'HOLD',reasonCode:'NATIVE_REENTRANT_LOCK',scope:'GLOBAL',stage:'LOCK',noResend:false,no_send:true,traceRecorded:false,traceRecordReason:'NATIVE_LOCK_NOT_OWNED'};
+      FERN_NATIVE_VALIDATION_PHASE_V1='LOCK';FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1=null;var got=false,c=null,lastResult=null,captureBudgetHold=false;try{got=sync(s.lock.tryLock(0));if(!got)return {status:'HOLD',reasonCode:'NATIVE_PROJECT_LOCK_BUSY',scope:'GLOBAL',stage:'LOCK',noResend:false,no_send:true,traceRecorded:false,traceRecordReason:'NATIVE_LOCK_NOT_OWNED'};active=true;latestSnapshot=null;var startedBudget=s.startBudget?s.startBudget(110000):null;runDeadline=startedBudget&&Number.isSafeInteger(startedBudget.deadline)?startedBudget.deadline:now()+110000;actionFrame={traceId:'NATIVE-TRACE-'+s.newId(),operation:operation||'NATIVE_ACTION',startedAt:iso()};
+        FERN_NATIVE_VALIDATION_PHASE_V1='CONFIG';c=configured();nativeContext={services:s,config:c,deadlineUtc:new Date(runDeadline).toISOString(),trace:actionFrame,resolvePreflightCanonical:resolvePreflightCanonical,resolvePreflightSourceProof:resolvePreflightSourceProof,preflightSnapshotHash:function(value){return hash(value);},readSnapshot:function(){if(actionFrame&&['CAPTURE_PUBLIC_SOURCE','CONSUME_GEMINI'].indexOf(actionFrame.operation)>=0&&FERN_NATIVE_VALIDATION_PHASE_V1==='SOURCE_BRIDGE_REGISTRY'&&latestSnapshot){hold(active&&typeof s.lock.hasLock==='function'&&s.lock.hasLock()===true,'held project lock required for source snapshot reuse');fernFresh(latestSnapshot,now(),'full native canonical snapshot');return latestSnapshot;}return snapshot(c);},appendEvidence:function(kind,value,skip){return evidenceEvent(c,kind,value,skip);},appendSourceChunks:function(values,expiresAtUtc){return sourceChunkBatch(c,values,expiresAtUtc);},appendSourceRetention:function(values,metadata,expiresAtUtc){hold(actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&c.sourceProducerAdapter==='fernainNativePersistedSourceProducer','mixed source retention exact builtin fresh CAPTURE only');return sourceRetentionEvent(c,values,metadata,expiresAtUtc);}};FERN_NATIVE_VALIDATION_PHASE_V1='HALT_CHECK';if(!allowHalt)hold(!prop(HALT),'native runtime halted');FERN_NATIVE_VALIDATION_PHASE_V1='ARCHIVE_PRESERVATION_FENCE';hold(typeof s.archiveMutationFence==='function','archive mutation fence required');if(actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&typeof s.captureBootstrapSnapshot==='function'){var bootstrapSnapshot=sync(s.captureBootstrapSnapshot(c,bootstrapHandle||null));latestSnapshot=bootstrapSnapshot;actionFrame.bootstrapSnapshot={frame:actionFrame,config:c,owner:capturedMetadataOwner(),snapshot:bootstrapSnapshot};}s.archiveMutationFence();FERN_NATIVE_VALIDATION_PHASE_V1='CAPTURE_CLEANUP';cleanupCaptures();FERN_NATIVE_VALIDATION_PHASE_V1='ACTION';var produced=fn(c);function effectFlag(k){try{var d=produced&&Object.getOwnPropertyDescriptor(produced,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='boolean'?d.value:null;}catch(ignore){return null;}}var producedAttempted=effectFlag('sendAttempted'),producedNoResend=effectFlag('noResend');try{lastResult=traced(c,produced);}catch(traceBoundaryError){fernainNativeHoldDiagnostic('TRACE_METADATA',traceBoundaryError);var attempted=producedAttempted,noResend=producedNoResend,noSend=effectFlag('no_send');lastResult={status:'HOLD',reasonCode:'NATIVE_TRACE_PERSISTENCE_HOLD',scope:'GLOBAL',stage:'TRACE_METADATA',noResend:noResend===true,traceRecorded:false,traceRecordReason:'NATIVE_CANONICAL_TRACE_UNAVAILABLE'};if(attempted!==null)lastResult.sendAttempted=attempted;if(attempted===true)lastResult.no_send=false;else if(attempted===false)lastResult.no_send=true;else if(noSend!==null)lastResult.no_send=noSend;else if(operation!=='CONSUME_GEMINI')lastResult.no_send=true;try{var first=produced&&Object.getOwnPropertyDescriptor(produced,'firstFailure');if(first&&Object.prototype.hasOwnProperty.call(first,'value')&&first.value)lastResult.firstFailure=copy(first.value);}catch(ignore){}try{var lead=produced&&Object.getOwnPropertyDescriptor(produced,'leadId');if(lead&&Object.prototype.hasOwnProperty.call(lead,'value')&&typeof lead.value==='string')lastResult.leadId=lead.value;}catch(ignore){}}if(producedAttempted===true)lastResult.sendAttempted=true;if(producedNoResend===true)lastResult.noResend=true;return lastResult;
+      }catch(e){if(FERN_NATIVE_VALIDATION_PHASE_V1==='ARCHIVE_PRESERVATION_FENCE'){fernainNativeHoldDiagnostic('ARCHIVE_PRESERVATION_FENCE',e);return lastResult={status:'HOLD',reasonCode:'NATIVE_ARCHIVE_PRESERVATION_HOLD',scope:'GLOBAL',stage:'ARCHIVE_PRESERVATION_FENCE',noResend:false,no_send:true,traceRecorded:false,traceRecordReason:'PRESERVATION_TRANSITION_OR_INTEGRITY_HOLD'};}var failurePhase=FERN_NATIVE_VALIDATION_PHASE_V1,firstFailure=actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'?captureFirstFailureObservation(failurePhase,e):null;var originalRetentionError=actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&failurePhase==='SOURCE_RETENTION'&&fernainNativeFiniteErrorCategoryV1(e)==='NATIVE_EXCEPTION'?fernainNativeSourceRetentionExceptionObservationV1_('SOURCE_RETENTION',e):null;fernainNativeHoldDiagnostic(failurePhase,e);if(captureRetentionBudgetHold(e)){captureBudgetHold=true;var budgetHold={status:'HOLD',reasonCode:'NATIVE_VALIDATION_HOLD',scope:'GLOBAL',stage:'SOURCE_RETENTION_WRITE',noResend:false,no_send:true,traceId:actionFrame.traceId,traceRecorded:false,traceRecordReason:'NATIVE_CANONICAL_TRACE_UNAVAILABLE',validationDiagnostic:JSON.parse(JSON.stringify(FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1))};if(firstFailure)budgetHold.firstFailure=firstFailure;return lastResult=budgetHold;}var out={status:'HOLD',reasonCode:e&&e.code==='CURRENT_SALES_VALIDATION_HOLD'?'NATIVE_VALIDATION_HOLD':'NATIVE_RUNTIME_EXCEPTION',scope:e&&e.nativeScope==='CANDIDATE'?'CANDIDATE':'GLOBAL',stage:failurePhase==='SOURCE_RETENTION'||failurePhase==='SOURCE_RETENTION_WRITE'?failurePhase:'PREFLIGHT',noResend:false};if(firstFailure)out.firstFailure=firstFailure;if(originalRetentionError){out.originalRetentionError=originalRetentionError;out.underlyingReasonCode=out.reasonCode;}return lastResult=c&&actionFrame?traced(c,out):Object.assign(out,{traceRecorded:false,traceRecordReason:'NATIVE_CONFIG_OR_LOCK_UNAVAILABLE'});}
+      finally{if(preflightFrame)preflightFrame.scope.close();preflightFrame=null;active=false;nativeContext=null;actionFrame=null;if(got){try{s.lock.releaseLock();}catch(finalizationError){fernainNativeHoldDiagnostic('SHEETS_GET_FINALIZATION',finalizationError);if(!lastResult)lastResult={status:'HOLD',noResend:false,no_send:true,traceRecorded:false};var firstFailure=lastResult.firstFailure?copy(lastResult.firstFailure):null;lastResult.status='HOLD';lastResult.reasonCode='NATIVE_SHEETS_GET_FINALIZATION_HOLD';lastResult.scope='GLOBAL';lastResult.stage='SHEETS_GET_FINALIZATION';if(lastResult.sendAttempted===true)lastResult.no_send=false;else if(lastResult.sendAttempted===false)lastResult.no_send=true;lastResult.storageFinalizationVerified=false;if(firstFailure)lastResult.firstFailure=firstFailure;lastResult.finalizationFailure={schema:'BackofficeCaptureFinalizationFailure/v1',phase:'SHEETS_GET_FINALIZATION',category:FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1&&FERN_NATIVE_VALIDATION_DIAGNOSTIC_V1.category||'OTHER',observationOnly:true,sourceAuthority:false,sendAuthority:false};}finally{if(lastResult&&typeof s.sheetsGetMetrics==='function')lastResult.sheetsGetMetrics=s.sheetsGetMetrics();if(captureBudgetHold&&lastResult){try{Logger.log('FERNAIN_SOURCE_RETENTION_BUDGET_HOLD_V1:'+JSON.stringify(lastResult));}catch(ignore){}}}}}
+    }
+    function snapshot(c,handle,prepared){var h=handle||actionFrame&&actionFrame.candidateHandle||null,bootstrap=!prepared&&actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&actionFrame.bootstrapSnapshot,x;if(bootstrap){capturedMetadataCurrent(bootstrap,true);hold(bootstrap.config===c&&(!h||bootstrap.snapshot.Prospects.target&&bootstrap.snapshot.Prospects.target.row===h.row&&bootstrap.snapshot.Prospects.target.leadId===h.leadId),'private bootstrap selected handle changed');actionFrame.bootstrapSnapshot=null;x=bootstrap.snapshot;}else x=sync(prepared||s.snapshot(c,h));hold(x&&x.schema===BackofficeNativeSemanticSnapshotV2.schema,'honest semantic snapshot v2 required');BackofficeNativeSemanticSnapshotV2.validate(x,s);fernFresh(x,now(),'full native canonical snapshot');nativeFencedLeads={};x.Evidence.rows.forEach(function(row){try{var v=raw(row),d=JSON.parse(v[3]);if(d.schema==='BackofficeNativeJournal/v1'&&d.value&&d.value.noResend===true&&typeof d.value.leadId==='string')nativeFencedLeads[d.value.leadId]=true;}catch(ignore){}});latestSnapshot=x;return x;}
+    function blocked(row,lead,readProp){return REPLAY_ROWS.indexOf(row)>=0||REPLAY_LEADS.indexOf(lead)>=0||nativeFencedLeads[lead]===true||!!(readProp||prop)(key(lead));}
+    function eligible(x,n,readProp){var v=BackofficeNativeSemanticSnapshotV2.values(x,n);if(!(n>=6&&v[11]==='Qualified - not contacted'&&v[26]==='Jobs'&&typeof v[14]==='string'&&v[14]&&BackofficeNativeSemanticSnapshotV2.receiptValues(v).every(function(x){return x==='';})&&!blocked(n,v[14],readProp)))return false;var contact=typeof v[3]==='string'?v[3].split(/\r?\n/):[],route=contact[contact.length-1],incomingKey;try{incomingKey=INCOMING+hash(fernEmail(route));}catch(ignore){return false;}return !(readProp||prop)(incomingKey);}
+    function candidates(c,x){
+      hold(typeof s.lock.hasLock==='function'&&s.lock.hasLock()===true,'held project lock required for candidate properties');
+      var properties=s.props.getProperties();hold(properties&&typeof properties==='object'&&!Array.isArray(properties)&&(Object.getPrototypeOf(properties)===Object.prototype||Object.getPrototypeOf(properties)===null),'candidate property snapshot object required');
+      hold(Object.getOwnPropertySymbols(properties).length===0,'candidate property snapshot symbols prohibited');Object.getOwnPropertyNames(properties).forEach(function(k){var d=Object.getOwnPropertyDescriptor(properties,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='string','candidate property snapshot own strings required');});
+      function candidateProp(k){var d=Object.getOwnPropertyDescriptor(properties,k);return d===undefined?null:parse(d.value,8500);}
+      var queued=[];BackofficeNativeSemanticSnapshotV2.scan(x,function(v,i){if(eligible(x,i+1,candidateProp))queued.push({row:i+1,leadId:v[14]});});
+      var coverage={schema:'BackofficeNativeCandidateRegistrationCoverage/v1',canonicalQueuedCount:queued.length,canonicalQueueSha256:hash(queued),registryRead:false,registeredQueuedCount:0,preparationSupportedQueuedCount:0,definedLayoutQueuedCount:0,sourcePreparationQueuedCount:0,layoutHeldQueuedCount:0,unregisteredCount:0,layoutHeldReasonCounts:{},heldCandidates:[],heldSampleLimit:20,heldSampleTruncated:false,referenceOnly:true,modelAuthority:false,effect_eligible:false};
+      actionFrame.registrationCoverage=coverage;if(!queued.length)return [];
+      var reg=invoke('fernainNativeRegisteredSourceHandles',{nowUtc:iso()});fernFresh(reg,now(),'trusted native registered candidate handles');hold(reg.schema==='BackofficeNativeRegisteredHandles/v1'&&reg.complete===true&&reg.modelAuthority===false&&reg.referenceOnly===true&&Array.isArray(reg.handles)&&reg.handles.length<=1024&&/^[a-f0-9]{64}$/.test(reg.registryContentSha256),'native registered handle coverage unavailable');
+      var map={};reg.handles.forEach(function(h){hold(shape(h,['row','leadId'])&&Number.isInteger(h.row)&&h.row>=6&&typeof h.leadId==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(h.leadId)&&!map[h.row+'|'+h.leadId],'native registered handle identity missing/ambiguous');map[h.row+'|'+h.leadId]=true;});actionFrame.registeredHandles=map;coverage.registryRead=true;coverage.registryRef=reg.ref;coverage.registryReadAtUtc=reg.checkedAt;coverage.registryContentSha256=reg.registryContentSha256;
+      hold(Array.isArray(reg.preparationSupportedHandles)&&Array.isArray(reg.definedLayoutHandles)&&Array.isArray(reg.sourcePreparationHandles)&&Array.isArray(reg.heldRegistrations)&&reg.preparationSupportedHandles.length+reg.heldRegistrations.length===reg.handles.length&&reg.definedLayoutHandles.length+reg.sourcePreparationHandles.length===reg.preparationSupportedHandles.length&&hash(reg.heldRegistrations)===reg.heldRegistrationsSha256,'native complete preparation support coverage unavailable');var supported={},defined={},derivation={},held={};
+      reg.preparationSupportedHandles.forEach(function(h){var id=h.row+'|'+h.leadId;hold(shape(h,['row','leadId'])&&map[id]&&!supported[id],'native preparation-supported handle ambiguous');supported[id]=true;});
+      reg.definedLayoutHandles.forEach(function(h){var id=h.row+'|'+h.leadId;hold(shape(h,['row','leadId'])&&supported[id]&&!defined[id],'native defined-layout handle ambiguous');defined[id]=true;});
+      reg.sourcePreparationHandles.forEach(function(h){var id=h.row+'|'+h.leadId;hold(shape(h,['row','leadId'])&&supported[id]&&!defined[id]&&!derivation[id],'native source-preparation handle ambiguous');derivation[id]=true;});
+      reg.heldRegistrations.forEach(function(h){var id=h.row+'|'+h.leadId;hold(shape(h,['row','leadId','reasonCode','sourceReasonCode'])&&map[id]&&!supported[id]&&!held[id]&&h.reasonCode==='NATIVE_SOURCE_LAYOUT_UNVERIFIED'&&typeof h.sourceReasonCode==='string','native held registration handle ambiguous');held[id]=h;});coverage.heldRegistrationsSha256=reg.heldRegistrationsSha256;actionFrame.preparationSupportedHandles=supported;
+      var known=[],pending=[];queued.forEach(function(h){var id=h.row+'|'+h.leadId;if(map[id]){coverage.registeredQueuedCount++;if(supported[id]){coverage.preparationSupportedQueuedCount++;if(defined[id]){coverage.definedLayoutQueuedCount++;known.push(h);}else{hold(derivation[id],'native source-preparation partition incomplete');coverage.sourcePreparationQueuedCount++;pending.push(h);}}else{hold(held[id],'native queued preparation coverage missing');coverage.layoutHeldQueuedCount++;coverage.layoutHeldReasonCounts[held[id].sourceReasonCode]=(coverage.layoutHeldReasonCounts[held[id].sourceReasonCode]||0)+1;if(coverage.heldCandidates.length<20)coverage.heldCandidates.push({traceId:actionFrame.traceId+'-SOURCE-LAYOUT-'+h.row,row:h.row,leadId:h.leadId,scope:'CANDIDATE',reasonCode:'NATIVE_SOURCE_LAYOUT_UNVERIFIED',sourceReasonCode:held[id].sourceReasonCode,no_send:true,effect_eligible:false});}}else{coverage.unregisteredCount++;if(coverage.heldCandidates.length<20)coverage.heldCandidates.push({traceId:actionFrame.traceId+'-UNREGISTERED-'+h.row,row:h.row,leadId:h.leadId,scope:'CANDIDATE',reasonCode:'NATIVE_SOURCE_UNREGISTERED',no_send:true,effect_eligible:false});}});
+      coverage.heldSampleTruncated=coverage.unregisteredCount+coverage.layoutHeldQueuedCount>coverage.heldCandidates.length;
+      var all=known.concat(pending),cursor=candidateProp(SOURCE_CURSOR);if(cursor&&cursor.schema==='BackofficeNativeSourcePreparationCursor/v1'&&cursor.registryContentSha256===reg.registryContentSha256&&cursor.canonicalQueueSha256===coverage.canonicalQueueSha256){var at=all.findIndex(function(h){return h.row===cursor.handle.row&&h.leadId===cursor.handle.leadId;});if(at>=0)all=all.slice(at+1).concat(all.slice(0,at+1));}
+      coverage.selectionKind='BOUNDED_SOURCE_PREPARATION_ONLY_REQUIRES_ALL_CURRENT_GUARDS';return all.slice(0,20);
+    }
+    function stagedSourceTrace(c,loc){
+      hold(Date.parse(loc.capturedAtUtc)<=now()+5000&&Date.parse(loc.expiresAtUtc)>now(),'native retained source manifest stale/incomplete');
+      var row=BackofficeNativeSemanticSnapshotV2.logical(s,latestSnapshot,loc.traceRow,loc.traceRowSha256,'PREPARATION_TRACE');hold(hash(row)===loc.traceRowSha256,'staged source trace full26 preimage changed');var doc=parse(raw(row)[3],45000),t=doc.value&&doc.value.trace,base=copy(loc);delete base.traceId;delete base.traceRow;delete base.traceRowSha256;
+      hold(doc.schema==='BackofficeNativeJournal/v1'&&doc.kind==='action-trace'&&doc.value.noSend===true&&t&&t.schema==='BackofficeNativeActionTrace/v1'&&t.traceId===loc.traceId&&t.operation==='CAPTURE_PUBLIC_SOURCE'&&t.outcome==='PUBLIC_SOURCE_RETAINED'&&t.projectId===s.projectId&&t.writerId===c.writerId&&t.humanAuthorityRef===c.ownerAuthority.ref&&t.noSend===true&&t.modelAuthority===false&&t.sourceCapture&&same(t.sourceCapture,base)&&Number.isFinite(Date.parse(t.finishedAt))&&Date.parse(t.finishedAt)<=now()+5000&&Date.parse(t.finishedAt)>=Date.parse(loc.capturedAtUtc),'exact retained source-stage trace required');
+    }
+    function readBundle(c,selection,fn){hold(!privateReadBundleActive&&typeof s.withReadOnlyBundle==='function','private synchronous read bundle unavailable');privateReadBundleActive=true;try{return s.withReadOnlyBundle(c,selection,fn);}finally{privateReadBundleActive=false;}}
+    function sourceReadSelection(c,bound){var rows=[bound.evidenceRow],p=c.sourceRegistry;if(c.providerPolicyAdapter==='fernainNativeApprovedProviderPolicy'&&c.monitoredProvider&&c.monitoredProvider.profile==='MONITORED_DELEGATION_OFF_AUDIT_V1'){hold(Number.isInteger(c.monitoredProvider.baselineEvidenceRow)&&c.monitoredProvider.baselineEvidenceRow>=6&&c.monitoredProvider.baselineEvidenceRow<=12000,'registered baseline Evidence row missing');rows.push(c.monitoredProvider.baselineEvidenceRow);}if(p){var pages=p.schema==='BackofficeNativeRegistryPointer/v1'?[p]:p.pages;hold(Array.isArray(pages)&&pages.length<=8,'bounded complete registry read selection unavailable');pages.forEach(function(p){rows.push(p.evidenceRow);});}return {evidenceRows:Array.from(new Set(rows)),prospectRows:[bound.entry.packet.binding.row],sourceReferences:bound.entry.sourceProof.chunks};}
+    // Private one-action acknowledged metadata; locator planning only, never eligibility.
+    function capturedMetadataOwner(){var p=s.preflightTransportStamp();return {projectId:p.projectId,lockEpoch:p.lockEpoch,actionEpoch:p.actionEpoch,deadlineMs:p.deadlineMs,mutationEpoch:p.mutationEpoch,getAttempts:p.getAttempts};}
+    function capturedMetadataCurrent(r,includeReads){var p=capturedMetadataOwner();hold(active&&actionFrame===r.frame&&r.config&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&p.projectId===r.owner.projectId&&p.lockEpoch===r.owner.lockEpoch&&p.actionEpoch===r.owner.actionEpoch&&p.deadlineMs===r.owner.deadlineMs&&p.mutationEpoch===r.owner.mutationEpoch&&(!includeReads||p.getAttempts===r.owner.getAttempts),'private captured metadata action ownership changed');}
+    function consumeCapturedMetadata(c,handle,ref,sourceLocator,forceCapture){
+      if(forceCapture!==true||sourceLocator||!actionFrame||actionFrame.operation!=='CAPTURE_PUBLIC_SOURCE'||c.sourceProducerAdapter!=='fernainNativePersistedSourceProducer')return null;
+      var r=actionFrame.sourceRetentionMetadataAck;actionFrame.sourceRetentionMetadataAck=null;if(!r)return null;
+      capturedMetadataCurrent(r,true);hold(r.config===c&&r.row===ref.evidenceRow&&r.sourceId===ref.id&&r.handle.row===handle.row&&r.handle.leadId===handle.leadId&&Date.parse(r.expiresAtUtc)>now()&&hash(r.originalAfter26)===r.evidenceHash,'private acknowledged source metadata binding changed');return r;
+    }
+    function nativeEntry(c,handle,x,sourceLocator,forceCapture){if(sourceLocator&&!privateReadBundleActive)return readBundle(c,{evidenceRows:[sourceLocator.traceRow,sourceLocator.evidenceRow],prospectRows:[handle.row],sourceReferences:[]},function(){return nativeEntryCaptured(c,handle,x,sourceLocator,forceCapture);});return nativeEntryCaptured(c,handle,x,sourceLocator,forceCapture);}
+    function nativeEntryCaptured(c,handle,x,sourceLocator,forceCapture){
+      FERN_NATIVE_VALIDATION_PHASE_V1='NATIVE_ENTRY_HANDLE';hold(shape(handle,['row','leadId'])&&Number.isInteger(handle.row)&&handle.row>=6&&/^[A-Za-z0-9_-]+$/.test(handle.leadId),'exact row/LeadID handle required');
+      x=BackofficeNativeSemanticSnapshotV2.hydrate(x,handle,s);latestSnapshot=x;hold(handle.row<=x.Prospects.rowCount&&eligible(x,handle.row)&&BackofficeNativeSemanticSnapshotV2.values(x,handle.row)[14]===handle.leadId,'listed candidate stale/ineligible/replayed');
+      FERN_NATIVE_VALIDATION_PHASE_V1='NATIVE_SOURCE_PRODUCER';var reg;if(sourceLocator){stagedSourceTrace(c,sourceLocator);actionFrame.priorSourceCapture=copy(sourceLocator);reg={complete:true,entries:[{id:sourceLocator.sourceId,evidenceRow:sourceLocator.evidenceRow,row:sourceLocator.row,leadId:sourceLocator.leadId}],ref:'native-staged-source:'+sourceLocator.sourceId,checkedAt:iso()};}else reg=invoke(c.sourceProducerAdapter,c.sourceProducerAdapter==='fernainNativePersistedSourceProducer'?{handle:handle,forceCapture:forceCapture===true}:{handle:handle,canonical:x,nowUtc:iso(),forceCapture:forceCapture===true});fernFresh(reg,now(),'independently registered native source');
+      hold(reg.complete===true&&Array.isArray(reg.entries)&&reg.entries.length<=20,'native source registry incomplete');
+      var matches=reg.entries.filter(function(e){return e&&e.leadId===handle.leadId&&e.row===handle.row;});hold(matches.length===1,'exact native registered source missing/ambiguous');
+      var ref=matches[0];hold(typeof ref.id==='string'&&ref.id.length<=128&&Number.isInteger(ref.evidenceRow)&&ref.evidenceRow>=6,'registered evidence coordinates missing');
+      FERN_NATIVE_VALIDATION_PHASE_V1='NATIVE_ENTRY_METADATA_READ';var capturedMetadata=consumeCapturedMetadata(c,handle,ref,sourceLocator,forceCapture),combinedRefresh=!capturedMetadata&&forceCapture===true&&actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&!sourceLocator&&c.sourceProducerAdapter==='fernainNativePersistedSourceProducer'&&typeof s.snapshotSourceMetadata==='function'?sync(s.snapshotSourceMetadata(c,handle,ref.evidenceRow,null)):null;var row=capturedMetadata?copy(capturedMetadata.originalAfter26):combinedRefresh?combinedRefresh.logicalRow:BackofficeNativeSemanticSnapshotV2.logical(s,x,ref.evidenceRow,sourceLocator&&sourceLocator.evidenceHash||null,'SOURCE_METADATA'),values=raw(row);hold(values[0]===ref.id&&typeof values[3]==='string','native source Evidence identity mismatch');
+      var entry=parse(values[3],45000);if(entry.schema==='BackofficeNativeJournal/v1'&&entry.kind==='source-metadata'&&entry.value)entry=entry.value.sourceEntry;hold(entry&&entry.schema==='BackofficeNativeSource/v1'&&entry.sourceId===ref.id&&entry.packet&&entry.targetCells&&entry.owner,'versioned native source registration missing');
+      if(sourceLocator){var m=entry.sourceProof;hold(hash(row)===sourceLocator.evidenceHash&&m&&m.schema==='BackofficeNativeChunkManifest/v1'&&m.retainedJsonSha256===sourceLocator.sourceVersionSha256&&m.targetCellsSha256===sourceLocator.targetCellsSha256&&m.registryContentSha256===sourceLocator.registryContentSha256&&m.capturedAtUtc===sourceLocator.capturedAtUtc&&m.expiresAtUtc===sourceLocator.expiresAtUtc&&Date.parse(m.expiresAtUtc)>now(),'exact staged source metadata/manifest changed');}
+      FERN_NATIVE_VALIDATION_PHASE_V1='NATIVE_ENTRY_PREIMAGE';hold(entry.packet.binding.row===handle.row&&entry.packet.binding.leadId===handle.leadId&&same(entry.targetCells,BackofficeNativeSemanticSnapshotV2.target(x,handle.row)),'native source/canonical full27 preimage changed');
+      FERN_NATIVE_VALIDATION_PHASE_V1='NATIVE_ENTRY_REFRESH';var live;
+      if(capturedMetadata){
+        // Capture only: exact committed metadata plus a fresh actual full27 target.
+        capturedMetadataCurrent(capturedMetadata,false);var observed=copy(capturedMetadata.targetCapture);fernFresh(observed,now(),'native captured full27 target');hold(observed.sheetId===FERN_PROSPECTS_SHEET&&observed.sheetName==='Prospects'&&observed.row===handle.row&&observed.width===27&&same(observed.typedRow,BackofficeNativeSemanticSnapshotV2.target(x,handle.row))&&Array.isArray(observed.displayRow)&&observed.displayRow.length===27&&observed.displayRow.every(function(value){return typeof value==='string';})&&observed.displayRow[1]===BackofficeNativeSemanticSnapshotV2.display(x,handle.row,1),'canonical changed while source evidence persisted');capturedMetadataCurrent(capturedMetadata,false);hold(Date.parse(capturedMetadata.expiresAtUtc)>now(),'native retained source manifest stale/incomplete');fernFresh(x,now(),'full native canonical snapshot');live=x;
+      }else if(sourceLocator){
+        // Staged preparation/Consume read retained evidence without producing source.
+        // Reuse only this action's complete safety snapshot under the same lock;
+        // sourceAndPolicy still creates its existing immutable preflight scope.
+        hold(active&&actionFrame&&['PREPARE_SOURCE','CONSUME_GEMINI'].indexOf(actionFrame.operation)>=0&&latestSnapshot===x&&typeof s.lock.hasLock==='function'&&s.lock.hasLock()===true,'held project lock required for source snapshot reuse');BackofficeNativeSemanticSnapshotV2.validate(x,s);
+        var observed=sync(s.readRowCapture('Prospects',handle.row,27));fernFresh(observed,now(),'native staged full27 target');hold(observed.sheetId===FERN_PROSPECTS_SHEET&&observed.sheetName==='Prospects'&&observed.row===handle.row&&observed.width===27&&same(observed.typedRow,BackofficeNativeSemanticSnapshotV2.target(x,handle.row))&&Array.isArray(observed.displayRow)&&observed.displayRow.length===27&&observed.displayRow.every(function(value){return typeof value==='string';})&&observed.displayRow[1]===BackofficeNativeSemanticSnapshotV2.display(x,handle.row,1),'canonical changed while source evidence persisted');fernFresh(x,now(),'full native canonical snapshot');live=x;
+      }else live=snapshot(c,handle,combinedRefresh&&combinedRefresh.canonicalSnapshot);
+      hold(same(BackofficeNativeSemanticSnapshotV2.target(live,handle.row),BackofficeNativeSemanticSnapshotV2.target(x,handle.row)),'canonical changed while source evidence persisted');return {entry:entry,evidenceRow:ref.evidenceRow,evidenceHash:hash(row),sourceId:ref.id,canonicalSnapshot:live};
+    }
+    function freeRow(x,skip){for(var i=5;i<x.Evidence.rows.length;i++)if(skip.indexOf(i+1)<0&&isBlank(x.Evidence.rows[i]))return i+1;hold(false,'no physical blank Evidence26 capacity');}
+    function requireRoundCapacity(x,reserve,stage){var skip=reservedRows(x),free=0;for(var i=5;i<x.Evidence.rows.length;i++)if(skip.indexOf(i+1)<0&&isBlank(x.Evidence.rows[i]))free++;hold(Number.isInteger(reserve)&&reserve>0&&free>=reserve,'bounded normal-round Evidence row capacity HOLD');actionFrame.rowCapacity={schema:'BackofficeNativeRoundRowCapacity/v2',stage:stage,freeUnreservedRows:free,requiredRows:reserve,remainingRowsAfterWorstCase:free-reserve,physicalEvidenceRowCap:10000,unknownMeansHold:true};return free;}
+    function reservedRows(x){var skip=[];Object.keys(s.props.getProperties()).filter(function(k){return k.indexOf(MARK)===0;}).forEach(function(k){var m=prop(k);if(m&&m.state!=='CONFIRMED_NO_RESEND'&&m.finalRow)skip.push(m.finalRow);});
+      x.Evidence.rows.forEach(function(row,i){try{var v=raw(row),d=JSON.parse(v[3]);if(d.schema==='BackofficeNativeClaim/v1'&&d.status==='ACTIVE'&&d.finalRow){skip.push(i+1);skip.push(d.finalRow);}}catch(ignore){}});return skip;
+    }
+    // Only preparation-only source chunks may use this bounded contiguous writer.
+    function sourceChunkBatch(c,values,expiresAtUtc){
+      hold(Array.isArray(values)&&values.length>0&&values.length<=206&&typeof s.appendSourceArchiveChunks==='function','bounded direct native source archive writer missing');
+      var sourceId=values[0]&&values[0].sourceId,sourceSha=values[0]&&values[0].sourceVersionSha256;
+      values.forEach(function(v,i){hold(shape(v,['recordId','sourceId','index','total','chunk','chunkSha256','sourceVersionSha256','noSend'])&&typeof sourceId==='string'&&/^NATIVE-SOURCE-[A-Za-z0-9_-]{1,100}$/.test(sourceId)&&v.sourceId===sourceId&&v.recordId===sourceId+'-'+i&&v.index===i&&v.total===values.length&&v.noSend===true&&typeof v.chunk==='string'&&v.chunk.length>0&&v.chunk.length<=39000&&/^[A-Za-z0-9+/]*={0,2}$/.test(v.chunk)&&v.chunkSha256===hash(v.chunk)&&typeof sourceSha==='string'&&/^[a-f0-9]{64}$/.test(sourceSha)&&v.sourceVersionSha256===sourceSha,'native source batch chunk identity/content mismatch');});
+      exclusive(c);var ack=sync(s.appendSourceArchiveChunks(values,expiresAtUtc));hold(ack&&ack.schema==='BackofficeNativeDirectArchiveChunkAck/v2'&&ack.acknowledged===true&&ack.verified===true&&Array.isArray(ack.chunks)&&ack.chunks.length===values.length,'direct source archive acknowledgement/readback missing');var rows=new Set();
+      return ack.chunks.map(function(r,i){var v=values[i];hold(r&&Number.isInteger(r.archiveSheetId)&&r.archiveSheetId>=0&&Number.isInteger(r.archiveRow)&&r.archiveRow>=6&&r.archiveRow<=12000&&!rows.has(r.archiveSheetId+':'+r.archiveRow)&&typeof r.originalTypedRowSha256==='string'&&/^[a-f0-9]{64}$/.test(r.originalTypedRowSha256)&&typeof r.originalDisplayRowSha256==='string'&&/^[a-f0-9]{64}$/.test(r.originalDisplayRowSha256)&&r.recordId===v.recordId&&r.sourceId===v.sourceId&&r.index===v.index&&r.total===v.total&&r.chunkSha256===v.chunkSha256&&r.sourceVersionSha256===v.sourceVersionSha256,'direct source archive returned origin mismatch');rows.add(r.archiveSheetId+':'+r.archiveRow);return {row:r.archiveRow,hash:r.originalTypedRowSha256,location:{kind:'ARCHIVE_DIRECT',sheetId:r.archiveSheetId,row:r.archiveRow},ref:'https://docs.google.com/spreadsheets/d/'+FERN_SALES_ID+'/edit#gid='+r.archiveSheetId+'&range=A'+r.archiveRow};});
+    }
+
+    function sourceRetentionEvent(c,values,metadata,expires){exclusive(c);hold(values.length>=1&&values.length<=205&&typeof s.previewSourceRetention==='function'&&typeof s.persistSourceRetention==='function','mixed source205 plus metadata writer required');var x=latestSnapshot||snapshot(c),row=freeRow(x,reservedRows(x)),at=iso(),preview=sync(s.previewSourceRetention(values,row,at)),value=copy(metadata);hold(preview&&preview.schema==='BackofficeNativeSourceRetentionPreview/v1'&&preview.referenceOnly===true&&preview.metadataRow===row&&preview.atUtc===at&&Array.isArray(preview.chunks)&&preview.chunks.length===values.length,'mixed source preview identity missing');values.forEach(function(v,i){var refs=value.sourceEntry.sourceProof.chunks.filter(function(r){return r.originSourceId===v.sourceId&&r.originIndex===i;});hold(refs.length===1,'mixed source reference exact mapping missing');var p=preview.chunks[i];hold(refs[0].location.kind==='ARCHIVE_DIRECT'&&refs[0].location.sheetId===p.archiveSheetId&&refs[0].location.row===p.archiveRow&&refs[0].row===p.archiveRow,'mixed source planned physical mapping changed');refs[0].rowSha256=p.originalTypedRowSha256;});var record={schema:'BackofficeNativeJournal/v1',kind:'source-metadata',checkedAt:at,value:value},json=JSON.stringify(record);hold(json.length<=45000&&value.sourceEntry.sourceProof.expiresAtUtc===expires&&Date.parse(expires)>now(),'mixed source metadata expiry/cell bound');var after=blank(26);[value.recordId,'','source-metadata',json,'Native acknowledged write + exact typed readback','',at].forEach(function(v,i){after[i]=str(v);});var ack=sync(s.persistSourceRetention(values,{sheet:'Evidence',row:row,expected:x.Evidence.rows[row-1],after:after},preview,expires,{sheet:'Prospects',row:actionFrame.candidateHandle.row,expectedTyped:copy(BackofficeNativeSemanticSnapshotV2.target(x,actionFrame.candidateHandle.row)),organizationDisplay:BackofficeNativeSemanticSnapshotV2.display(x,actionFrame.candidateHandle.row,1)}));hold(ack&&ack.schema==='BackofficeNativeSourceRetentionAck/v1'&&ack.acknowledged===true&&ack.verified===true&&ack.metadata&&ack.metadata.logicalOriginal26Sha256===hash(after)&&Array.isArray(ack.chunks)&&ack.chunks.length===values.length,'mixed source complete durable receipt missing');x.Evidence.rows[row-1]=copy(ack.metadata.physicalAfter26);x.Evidence.displayRows[row-1]=copy(ack.metadata.physicalDisplay26);x.Evidence.archiveSummaries[row-1]=ack.metadata.archiveSummary;ack.metadata.ref='https://docs.google.com/spreadsheets/d/'+FERN_SALES_ID+'/edit#gid='+FERN_EVIDENCE_SHEET+'&range=A'+row+':Z'+row;hold(active&&actionFrame&&actionFrame.operation==='CAPTURE_PUBLIC_SOURCE'&&c.sourceProducerAdapter==='fernainNativePersistedSourceProducer','private captured metadata exact builtin action required');actionFrame.sourceRetentionMetadataAck={frame:actionFrame,config:c,owner:capturedMetadataOwner(),handle:copy(actionFrame.candidateHandle),row:row,sourceId:value.sourceId,expiresAtUtc:expires,evidenceHash:hash(after),originalAfter26:copy(after),targetCapture:copy(ack.targetCapture)};return ack;}
+    function evidenceEvent(c,kind,value,skip){
+      exclusive(c);var x=latestSnapshot||snapshot(c),row=freeRow(x,reservedRows(x).concat(skip||[]));
+      // The Services whole26 CAS independently checks this blank preimage
+      // before the first effect; allocation uses the held snapshot only.
+      var record={schema:'BackofficeNativeJournal/v1',kind:kind,checkedAt:iso(),value:copy(value)},json=JSON.stringify(record);hold(json.length<=45000,'Evidence journal cell bound exceeded');
+      var after=blank(26);[value.recordId||value.leadId||value.binding&&value.binding.leadId||'',value.company||value.binding&&value.binding.company||'',kind,json,'Native acknowledged write + exact typed readback', '',iso()].forEach(function(v,i){after[i]=str(v);});
+      if(kind==='source-metadata')hold(value.noSend===true&&value.sourceEntry&&value.sourceEntry.sourceProof&&Date.parse(value.sourceEntry.sourceProof.expiresAtUtc)>now(),'native retained source manifest stale/incomplete');
+      hold(typeof s.persistArchiveEligibleRow==='function','archive-aware acknowledged Evidence writer unavailable');var ack=sync(s.persistArchiveEligibleRow({sheet:'Evidence',row:row,expected:x.Evidence.rows[row-1],after:after},kind,kind==='source-metadata'?value.sourceEntry.sourceProof.expiresAtUtc:undefined));hold(ack&&ack.acknowledged===true&&ack.verified===true&&Array.isArray(ack.physicalAfter26)&&ack.physicalAfter26.length===26&&Array.isArray(ack.physicalDisplay26)&&ack.physicalDisplay26.length===26&&ack.logicalOriginal26Sha256===hash(after),'Evidence journal acknowledgement/readback missing');
+      x.Evidence.rows[row-1]=copy(ack.physicalAfter26);x.Evidence.displayRows[row-1]=copy(ack.physicalDisplay26);x.Evidence.archiveSummaries[row-1]=ack.archiveSummary||null;if(value.noResend===true&&typeof value.leadId==='string')nativeFencedLeads[value.leadId]=true;
+      return {row:row,ref:'https://docs.google.com/spreadsheets/d/'+FERN_SALES_ID+'/edit#gid='+FERN_EVIDENCE_SHEET+'&range=A'+row+':Z'+row,hash:hash(after)};
+    }
+    // Private bounded usage-only writer. Chunks and their exact complete
+    // manifest share one native CAS/migration and one PREPARED/ACTIVE cycle.
+    function evidenceEvents(c,kind,values,skip,manifestBase){
+      hold(kind==='usage-basis'&&Array.isArray(values)&&values.length>0&&values.length<=150&&shape(manifestBase,['schema','basisId','sha256','checkedAt'])&&manifestBase.schema==='BackofficeNativeUsageBasisManifest/v1'&&typeof s.persistArchiveEligibleRows==='function','bounded archive usage batch writer unavailable');
+      exclusive(c);var x=latestSnapshot||snapshot(c),reserved=reservedRows(x).concat(skip||[]),writes=[],at=iso(),refs=[];
+      function append(rowKind,value){
+        var row=freeRow(x,reserved);reserved.push(row);var record={schema:'BackofficeNativeJournal/v1',kind:rowKind,checkedAt:at,value:copy(value)},json=JSON.stringify(record);hold(json.length<=45000,'Evidence journal cell bound exceeded');
+        var after=blank(26);[value.recordId||value.leadId||'',value.company||'',rowKind,json,'Native acknowledged write + exact typed readback','',at].forEach(function(v,i){after[i]=str(v);});
+        writes.push({sheet:'Evidence',row:row,expected:copy(x.Evidence.rows[row-1]),after:after});return {row:row,hash:hash(after)};
+      }
+      values.forEach(function(value,index){hold(value&&value.basisId===manifestBase.basisId&&value.basisSha256===manifestBase.sha256&&value.index===index&&value.leadId===values[0].leadId,'bounded archive usage batch identity changed');var r=append('usage-basis-chunk',value);refs.push({row:r.row,rowSha256:r.hash,index:index,chunkSha256:value.chunkSha256});});
+      var manifest={schema:manifestBase.schema,basisId:manifestBase.basisId,sha256:manifestBase.sha256,checkedAt:manifestBase.checkedAt,chunks:refs,chunkCount:refs.length};append('usage-basis-manifest',{recordId:manifest.basisId,leadId:values[0].leadId,manifest:manifest,noSend:true});
+      // Services independently checks every blank whole26 preimage, exact chunk
+      // value and final manifest reference/hash before the first effect.
+      var ack=sync(s.persistArchiveEligibleRows(writes,kind));hold(ack&&ack.acknowledged===true&&ack.verified===true&&Array.isArray(ack.rows)&&ack.rows.length===writes.length,'Evidence journal batch acknowledgement/readback missing');
+      // Validate the entire receipt vector before updating the held snapshot.
+      ack.rows.forEach(function(r,index){var w=writes[index],rowKind=w.after[2].stringValue;hold(r&&r.row===w.row&&Array.isArray(r.physicalAfter26)&&r.physicalAfter26.length===26&&Array.isArray(r.physicalDisplay26)&&r.physicalDisplay26.length===26&&r.physicalDisplay26.every(function(v){return typeof v==='string';})&&r.archiveSummary&&r.archiveSummary.kind===rowKind&&r.logicalOriginal26Sha256===hash(w.after),'Evidence journal batch acknowledgement/readback missing');});
+      return ack.rows.map(function(r,index){var w=writes[index];x.Evidence.rows[w.row-1]=copy(r.physicalAfter26);x.Evidence.displayRows[w.row-1]=copy(r.physicalDisplay26);x.Evidence.archiveSummaries[w.row-1]=copy(r.archiveSummary);return {row:w.row,ref:'https://docs.google.com/spreadsheets/d/'+FERN_SALES_ID+'/edit#gid='+FERN_EVIDENCE_SHEET+'&range=A'+w.row+':Z'+w.row,hash:r.logicalOriginal26Sha256};});
+    }
+    function nativePreflight(p){
+      var view=p,rawRow=p.canonical.rowAtoAA,organization=rawRow[1];
+      if(typeof organization==='string'&&organization.charAt(0)==='='){
+        var b=p.canonical.nativeOrganizationDisplay,match=/^=HYPERLINK\(\s*"((?:[^"]|"")*)"\s*[,;]\s*"((?:[^"]|"")*)"\s*\)$/i.exec(organization);
+        fernFresh(b,now(),'native Organization formula/display binding');
+        hold(b.profile==='INDEPENDENT_NATIVE_HYPERLINK_DISPLAY_V1'&&b.rawPreimage&&b.rawPreimage.formulaValue===organization&&hash(b.rawPreimage)===b.rawPreimageSha256&&match&&/^https?:\/\/[^\s<>]+$/.test(match[1].replace(/""/g,'"'))&&match[2].replace(/""/g,'"')===b.value&&b.value===p.binding.company,'exact raw Organization HYPERLINK/native display changed');
+        // Only this temporary legacy-validator view substitutes the separately
+        // proved display label. The native packet and all27 typed CAS remain raw.
+        view=copy(p);view.canonical.rowAtoAA[1]=b.value;view.nativeCompatibilityProfile='V8_EXACT_HYPERLINK_ORGANIZATION_DISPLAY_ONLY';
+      }
+      var out=validateCurrentSalesPreflight(view,now());out.row=copy(rawRow);return out;
+    }
+    function retainUsageBasis(c,basis,leadId,skipRows){
+      hold(basis&&basis.schema==='BackofficeNativeAccountUsageBasis/v1'&&basis.accountAddress==='operator@example.com','reconstructable native usage basis missing');var json=JSON.stringify(basis),root=hash(json),id='USAGE-'+s.newId(),values=[];hold(s.byteLength(json)<=2500000,'native usage basis exceeds finite retention bound');
+      for(var at=0,index=0;at<json.length;index++){var end=Math.min(at+18000,json.length);if(end<json.length&&json.charCodeAt(end-1)>=55296&&json.charCodeAt(end-1)<=56319)end--;var chunk=json.slice(at,end);values.push({recordId:id+'-'+index,leadId:leadId,basisId:id,index:index,chunkText:chunk,chunkSha256:hash(chunk),basisSha256:root,noSend:true});at=end;hold(values.length<=150,'native usage basis chunk budget exhausted');}
+      var written=evidenceEvents(c,'usage-basis',values,skipRows||[],{schema:'BackofficeNativeUsageBasisManifest/v1',basisId:id,sha256:root,checkedAt:basis.checkedAt}),ack=written[values.length];return {schema:'BackofficeNativeUsageBasisManifest/v1',basisId:id,sha256:root,manifestRow:ack.row,manifestRowSha256:ack.hash,checkedAt:basis.checkedAt};
+    }
+    function sourceAndPolicy(c,bound,x,claim,ownAttempt){return readBundle(c,sourceReadSelection(c,bound),function(){return sourceAndPolicyCaptured(c,bound,x,claim,ownAttempt);});}
+    function sourceAndPolicyCaptured(c,bound,x,claim,ownAttempt){
+      hold(!preflightFrame&&active&&typeof s.lock.hasLock==='function'&&s.lock.hasLock()===true,'held project lock required for immutable preflight scope');
+      preflightFrame={id:actionFrame.traceId+':'+(++preflightSequence),adapter:null,scope:BackofficeNativeImmutablePreflightV1.create(x,s)};x=preflightFrame.scope.canonical;try{
+      FERN_NATIVE_VALIDATION_PHASE_V1='POLICY_BINDING';var e=bound.entry,p=copy(e.packet),binding=fernBinding(p.binding),body=renderCurrentSalesBody(p.binding);hold(!prop(INCOMING+hash(binding.to)),'independently verified incoming route permanently fenced');
+      FERN_NATIVE_VALIDATION_PHASE_V1='POLICY_FENCES';var ownMarker=prop(key(p.binding.leadId));hold(REPLAY_ROWS.indexOf(p.binding.row)<0&&REPLAY_LEADS.indexOf(p.binding.leadId)<0&&(!ownMarker||ownAttempt&&ownMarker.attemptId===ownAttempt&&ownMarker.state==='PENDING_NO_RESEND'),'permanent no-resend/replay fence');
+      FERN_NATIVE_VALIDATION_PHASE_V1='PROVIDER_POLICY';var policy=invoke(c.providerPolicyAdapter,{accountAddress:'operator@example.com',binding:binding,nowUtc:iso()});fernFresh(policy,now(),'fresh native provider/account policy');
+      FERN_NATIVE_VALIDATION_PHASE_V1='PROVIDER_BASIS';hold(policy.nativePolicyBasis&&policy.nativePolicyBasis.schema==='BackofficeNativeProviderPolicyBasis/v1'&&policy.nativePolicyBasis.accountAddress==='operator@example.com'&&policy.nativePolicyBasis.checkedAt===policy.checkedAt&&hash(policy.nativePolicyBasis)===policy.nativePolicyBasisSha256,'reconstructable native provider source basis missing/changed');
+      FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_PROOF';var proof=invoke(c.sourceProofAdapter,{nativeProviderPolicy:policy,sourceId:bound.sourceId,evidenceRow:bound.evidenceRow,evidenceHash:bound.evidenceHash,sourceProof:e.sourceProof,binding:binding,bodySha256:hash(body),canonical:x,nowUtc:iso()});
+      FERN_NATIVE_VALIDATION_PHASE_V1='SOURCE_PROOF_VALIDATION';try{fernFresh(proof,now(),'native source truth');hold(proof.complete===true&&proof.clear===true&&proof.sourceVerificationPassed===true&&proof.modelAuthority===false&&proof.sourceId===bound.sourceId&&proof.evidenceHash===bound.evidenceHash&&same(proof.binding,binding)&&proof.bodySha256===hash(body),'native source truth unsupported/not effect eligible');}catch(e){e.nativeScope='CANDIDATE';throw e;}
+      FERN_NATIVE_VALIDATION_PHASE_V1='OWNER_SCOPE';hold(e.owner.effectScopeRef===p.owner.effectScopeRef&&e.owner.standing===true&&e.owner.authorityRef===c.ownerAuthority.ref&&Number.isFinite(Date.parse(e.owner.approvedAt))&&Date.parse(e.owner.approvedAt)<=now(),'standing owner exact source scope missing');
+      certifySourceProof(c,bound,proof,binding,hash(body));
+      FERN_NATIVE_VALIDATION_PHASE_V1='SEMANTIC_REVIEW';var review=invoke(c.semanticReviewAdapter,{binding:binding,bodySha256:hash(body),canonical:x,sourceEvidenceHash:bound.evidenceHash,boundSourceProof:proof.boundSourceProof||null,nativeProviderPolicy:policy,ownClaimId:claim&&claim.id||null,ownAttemptId:ownAttempt||null,nowUtc:iso()});
+      FERN_NATIVE_VALIDATION_PHASE_V1='SEMANTIC_VALIDATION';try{fernFresh(review,now(),'native semantic suppression/family review');
+      hold(review.complete===true&&review.modelAuthority===false&&same(review.binding,binding)&&review.bodySha256===hash(body)&&review.prospectsSha256===hash(x.Prospects)&&review.evidenceSha256===hash(x.Evidence)&&FLAGS.every(function(f){return review.flags&&review.flags[f]===true;}),'native semantic coverage/conflict/unknown');}catch(e){e.nativeScope='CANDIDATE';throw e;}
+      FERN_NATIVE_VALIDATION_PHASE_V1='PROVIDER_SETTINGS';var nativeInstant=policy.captureKind==='FRESH_NATIVE_POLICY_READ_V1'&&policy.laggedChangeDetectionOnly===false;
+      var monitored=c.monitoredProvider&&c.monitoredProvider.profile==='MONITORED_DELEGATION_OFF_AUDIT_V1'&&c.monitoredProvider.approvalRef==='EXAMPLE_AUTHORITY_REFERENCE'&&c.monitoredProvider.baselineRawSha256==='0000000000000000000000000000000000000000000000000000000000000000'&&policy.captureKind==='MONITORED_DELEGATION_OFF_AUDIT_V1'&&policy.approvalRef===c.monitoredProvider.approvalRef&&policy.laggedChangeDetectionOnly===true&&policy.audit&&policy.audit.complete===true&&policy.audit.clear===true&&policy.audit.baselineRawSha256===c.monitoredProvider.baselineRawSha256&&policy.delegation&&policy.delegation.state==='OFF'&&policy.delegation.originalBaselineAt&&policy.gwsmo&&policy.gwsmo.state==='ON'&&policy.outboundGateway&&policy.outboundGateway.state==='OFF';
+      hold(policy.complete===true&&(nativeInstant||monitored)&&policy.accountAddress==='operator@example.com'&&policy.sentSearchCoversAllUsage===true&&policy.unknownUsage===false&&['aliases','delegation','vacation'].every(function(k){return policy[k]&&policy[k].complete===true&&policy[k].ref&&Number.isFinite(Date.parse(policy[k].checkedAt))&&now()-Date.parse(policy[k].checkedAt)<=FERN_FRESH_MS&&Date.parse(policy[k].checkedAt)<=now()+5000;}),'fresh native settings or explicitly approved monitored policy unsupported');
+      FERN_NATIVE_VALIDATION_PHASE_V1='ACCOUNT_HISTORY_USAGE';hold(Array.isArray(review.familyTerms)&&review.familyTerms.length>0&&review.familyTerms.length<=40&&review.familyTerms.every(function(v){return typeof v==='string'&&v.length>0&&v.length<=300&&!/[\"{}\r\n\x00]/.test(v);})&&new Set(review.familyTerms).size===review.familyTerms.length,'complete reviewed family history terms missing');p.familyTerms=copy(review.familyTerms);var usage=sync(s.accountUsage(binding,{provider:policy,reservations:review.reservations,familyTerms:review.familyTerms}));
+      hold(usage&&usage.account&&usage.usage&&usage.provider&&usage.historyCheck,'fresh native account coverage missing');
+      FERN_NATIVE_VALIDATION_PHASE_V1='POLICY_ASSEMBLY';p.checkedAt=iso();p.ref=proof.ref;p.provenance={kind:'parent-provider-readback',modelAuthority:false,ref:proof.ref};
+      p.nativeProvenance={schema:'BackofficeNativeBoundary/v1',kind:'independent-native-evidence-readback',sourceId:bound.sourceId,evidenceHash:bound.evidenceHash,providerPolicyBasisSha256:policy.nativePolicyBasisSha256};
+      p.source={ref:proof.ref,checkedAt:proof.checkedAt,clear:true,complete:true,binding:binding};p.account=usage.account;p.usage=usage.usage;p.provider=usage.provider;
+      p.provider.ref=policy.ref;p.provider.checkedAt=policy.checkedAt;
+      p.checks={};FERN_COVERAGE.forEach(function(k){p.checks[k]={ref:review.ref+'#'+k,checkedAt:review.checkedAt,complete:true,clear:true,binding:copy(binding)};});
+      p.checks.gmailHistory=usage.historyCheck;p.checks.accountSent={ref:p.usage.ref,checkedAt:p.usage.checkedAt,complete:true,clear:true,binding:copy(binding)};
+      p.mode='SEND';p.catchUp=false;p.scheduleActivation=false;p.canonical.rowAtoAA=raw(BackofficeNativeSemanticSnapshotV2.target(x,p.binding.row));p.canonical.rowRenderOption='FORMULA';var org=BackofficeNativeSemanticSnapshotV2.target(x,p.binding.row)[1];if(org.formulaValue!==undefined)p.canonical.nativeOrganizationDisplay={profile:'INDEPENDENT_NATIVE_HYPERLINK_DISPLAY_V1',rawPreimage:copy(org),rawPreimageSha256:hash(org),value:BackofficeNativeSemanticSnapshotV2.display(x,p.binding.row,1),ref:x.ref,checkedAt:x.checkedAt};
+      if(claim)p.claim={id:claim.id,writerId:c.writerId};
+      var retainedBasis=copy(usage.nativeUsageBasis);retainedBasis.nativeProviderPolicyBasis=copy(policy.nativePolicyBasis);retainedBasis.nativeProviderPolicyBasisSha256=policy.nativePolicyBasisSha256;
+      FERN_NATIVE_VALIDATION_PHASE_V1='FINAL_PREFLIGHT';return {packet:p,prepared:nativePreflight(p),typed:copy(BackofficeNativeSemanticSnapshotV2.target(x,p.binding.row)),nativeUsageBasis:retainedBasis};
+      }finally{preflightFrame.scope.close();preflightFrame=null;}
+    }
+    function capturePublicSourceLocked(c,handle){
+      FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_SNAPSHOT';var x=snapshot(c,handle||null);requireRoundCapacity(x,480,'CAPTURE');FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_CANDIDATES';var list=candidates(c,x);FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_HANDLE';if(handle&&(handle.row>x.Prospects.rowCount||!eligible(x,handle.row))){var err=new Error('HOLD: explicit listed candidate changed/ineligible');err.code='CURRENT_SALES_VALIDATION_HOLD';err.nativeScope='CANDIDATE';throw err;}if(list.length===0)return {status:'EMPTY_POOL',candidate_ids:[],candidate_id:'',no_send:true,effect_eligible:false};
+      FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_HANDLE';var diagnosticHandleKey;handle=handle||list[0];if(!actionFrame.registeredHandles||!actionFrame.registeredHandles[(diagnosticHandleKey=handle.row+'|'+handle.leadId)]){var unregistered=new Error('native source candidate unregistered');unregistered.code='CURRENT_SALES_VALIDATION_HOLD';unregistered.nativeScope='CANDIDATE';throw unregistered;}if(!actionFrame.preparationSupportedHandles||!actionFrame.preparationSupportedHandles[diagnosticHandleKey]){var unsupported=new Error('native source classification/layout preparation unsupported');unsupported.code='CURRENT_SALES_VALIDATION_HOLD';unsupported.nativeScope='CANDIDATE';throw unsupported;}actionFrame.candidateHandle={row:Number(diagnosticHandleKey.split('|')[0]),leadId:diagnosticHandleKey.split('|')[1]};FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_PACING';paced();FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_CUTOVER';exclusive(c);
+      if(!x.Prospects.target)x=snapshot(c,{row:handle.row,leadId:handle.leadId});x=BackofficeNativeSemanticSnapshotV2.hydrate(x,handle,s);latestSnapshot=x;var coverage=actionFrame.registrationCoverage;actionFrame.sourcePreparation={schema:'BackofficeNativeSourcePreparationAttempt/v1',handle:copy(actionFrame.candidateHandle),registryContentSha256:coverage.registryContentSha256,canonicalQueueSha256:coverage.canonicalQueueSha256,typedRowSha256:hash(BackofficeNativeSemanticSnapshotV2.target(x,actionFrame.candidateHandle.row)),checkedAt:iso(),modelAuthority:false,effect_eligible:false,no_send:true};
+      store(SOURCE_CURSOR,{schema:'BackofficeNativeSourcePreparationCursor/v1',handle:copy(actionFrame.candidateHandle),registryContentSha256:coverage.registryContentSha256,canonicalQueueSha256:coverage.canonicalQueueSha256,checkedAt:iso(),no_send:true,effect_eligible:false});var bound;try{bound=nativeEntry(c,handle,x,null,true);}catch(e){if(e.nativeScope!=='GLOBAL')e.nativeScope='CANDIDATE';throw e;}
+      var m=bound.entry.sourceProof;hold(m&&m.schema==='BackofficeNativeChunkManifest/v1'&&Date.parse(m.expiresAtUtc)>now(),'native retained source manifest stale/incomplete');
+      var loc={schema:'BackofficeNativeSourceLocator/v1',row:handle.row,leadId:handle.leadId,sourceId:bound.sourceId,evidenceRow:bound.evidenceRow,evidenceHash:bound.evidenceHash,sourceVersionSha256:m.retainedJsonSha256,targetCellsSha256:m.targetCellsSha256,registryContentSha256:m.registryContentSha256,capturedAtUtc:m.capturedAtUtc,expiresAtUtc:m.expiresAtUtc};
+      return {status:'PUBLIC_SOURCE_RETAINED',candidate_id:'',sourceLocator:loc,no_send:true,effect_eligible:false,modelAuthority:false,send_eligible:false};
+    }
+    function prepareLocked(c,handle,sourceLocator){
+      if(sourceLocator){hold(same(handle,{row:sourceLocator.row,leadId:sourceLocator.leadId}),'exact staged source locator required');sourceLocator=fernainNativeSourceLocator('FERNAIN_SOURCE_V1:'+JSON.stringify(sourceLocator));}
+
+      FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_SNAPSHOT';var x=snapshot(c,handle||null);requireRoundCapacity(x,480,'PREPARE');FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_CANDIDATES';var list=candidates(c,x);FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_HANDLE';if(handle&&(handle.row>x.Prospects.rowCount||!eligible(x,handle.row))){var err=new Error('HOLD: explicit listed candidate changed/ineligible');err.code='CURRENT_SALES_VALIDATION_HOLD';err.nativeScope='CANDIDATE';throw err;}if(list.length===0)return {status:'EMPTY_POOL',candidate_ids:[],capture_id:'',source_context_json:'{}',no_send:true,effect_eligible:false};
+      FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_HANDLE';var diagnosticHandleKey;handle=handle||list[0];if(!actionFrame.registeredHandles||!actionFrame.registeredHandles[(diagnosticHandleKey=handle.row+'|'+handle.leadId)]){var unregistered=new Error('native source candidate unregistered');unregistered.code='CURRENT_SALES_VALIDATION_HOLD';unregistered.nativeScope='CANDIDATE';throw unregistered;}if(!actionFrame.preparationSupportedHandles||!actionFrame.preparationSupportedHandles[diagnosticHandleKey]){var unsupported=new Error('native source classification/layout preparation unsupported');unsupported.code='CURRENT_SALES_VALIDATION_HOLD';unsupported.nativeScope='CANDIDATE';throw unsupported;}actionFrame.candidateHandle={row:Number(diagnosticHandleKey.split('|')[0]),leadId:diagnosticHandleKey.split('|')[1]};FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_PACING';paced();FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_CUTOVER';exclusive(c);
+      if(!x.Prospects.target)x=snapshot(c,{row:handle.row,leadId:handle.leadId});x=BackofficeNativeSemanticSnapshotV2.hydrate(x,handle,s);latestSnapshot=x;var coverage=actionFrame.registrationCoverage;actionFrame.sourcePreparation={schema:'BackofficeNativeSourcePreparationAttempt/v1',handle:copy(actionFrame.candidateHandle),registryContentSha256:coverage.registryContentSha256,canonicalQueueSha256:coverage.canonicalQueueSha256,typedRowSha256:hash(BackofficeNativeSemanticSnapshotV2.target(x,actionFrame.candidateHandle.row)),checkedAt:iso(),modelAuthority:false,effect_eligible:false,no_send:true};
+      store(SOURCE_CURSOR,{schema:'BackofficeNativeSourcePreparationCursor/v1',handle:copy(actionFrame.candidateHandle),registryContentSha256:coverage.registryContentSha256,canonicalQueueSha256:coverage.canonicalQueueSha256,checkedAt:iso(),no_send:true,effect_eligible:false});var bound;try{bound=nativeEntry(c,handle,x,sourceLocator);}catch(e){if(e.nativeScope!=='GLOBAL')e.nativeScope='CANDIDATE';throw e;}FERN_NATIVE_VALIDATION_PHASE_V1='PREPARE_EVIDENCE_ALLOCATION';var skip=reservedRows(x);var finalRow=freeRow(x,skip);
+      bound.entry.packet.canonical.evidenceRow=finalRow;
+      x=bound.canonicalSnapshot;bound.entry.packet.canonical.evidenceRow=freeRow(x,reservedRows(x));var fresh=sourceAndPolicy(c,bound,x,null),id=s.newId();
+      FERN_NATIVE_VALIDATION_PHASE_V1='USAGE_RETENTION';var prepareBasis=retainUsageBasis(c,fresh.nativeUsageBasis,fresh.prepared.binding.leadId,[]);
+      FERN_NATIVE_VALIDATION_PHASE_V1='CAPTURE_RECORD';var capture={schema:'BackofficeNativeCapture/v1',id:id,sourceId:bound.sourceId,sourceRow:bound.evidenceRow,sourceHash:bound.evidenceHash,handle:handle,bindingHash:hash(fresh.prepared.binding),bodySha256:hash(fresh.prepared.body),typedHash:hash(fresh.typed),preparedUsageBasisRef:prepareBasis,expiresAt:new Date(now()+FERN_FRESH_MS).toISOString(),consumed:false};store(CAP+id,capture);
+      return {status:'SOURCE_READY',capture_id:id,source_context_json:JSON.stringify({capture_id:id,proposal:Object.assign({},fresh.prepared.binding,{body:fresh.prepared.body}),sourceRefs:fresh.prepared.binding.sourceRefs,sourceHash:bound.evidenceHash,sourceTextIsUntrustedData:true,modelAuthority:false}),no_send:true,effect_eligible:false};
+    }
+    function claimRow(doc){var row=blank(26);[doc.id,doc.binding.company,doc.status,JSON.stringify(doc),'Native exclusive canonical writer',doc.ownerEffectScopeRef,doc.checkedAt].forEach(function(v,i){row[i]=str(v);});return row;}
+    function readClaim(p,c,recover,observed){
+      exclusive(c);var before=observed||sync(s.readRow('Evidence',p.claimRow,26)),v=raw(before),d=parse(v[3],45000);
+      hold(d.schema==='BackofficeNativeClaim/v1'&&d.id===p.packet.claim.id&&d.writerId===c.writerId&&d.packetId===p.packet.packetId&&same(d.binding,p.prepared.binding)&&d.ownerEffectScopeRef===p.packet.owner.effectScopeRef&&d.finalRow===p.packet.canonical.evidenceRow&&d.status==='ACTIVE','exclusive canonical claim changed');
+      if(Date.parse(d.leaseUntil)<=now()){
+        hold(recover===true,'exclusive claim lease expired');d.leaseUntil=new Date(now()+FERN_FRESH_MS).toISOString();d.checkedAt=iso();
+        var ack=sync(s.casWrites([{sheet:'Evidence',row:p.claimRow,expected:before,after:claimRow(d)}]));hold(ack.acknowledged&&ack.verified,'recovery claim renewal unverified');
+      }
+      var claim=Object.assign({},d,{ref:'Evidence!A'+p.claimRow+':Z'+p.claimRow,checkedAt:iso(),complete:true});validateCurrentSalesClaim(claim,p.packet,now());return {doc:d,row:claimRow(d)};
+    }
+    function closeClaim(p,c){var observed=sync(s.readRow('Evidence',p.claimRow,26)),d=parse(raw(observed)[3],45000);if(d.status==='CLOSED'){hold(d.schema==='BackofficeNativeClaim/v1'&&d.id===p.packet.claim.id&&d.writerId===c.writerId&&same(d.binding,p.prepared.binding),'closed claim identity mismatch');return;}var current=readClaim(p,c,true,observed);current.doc.status='CLOSED';current.doc.checkedAt=iso();var ack=sync(s.casWrites([{sheet:'Evidence',row:p.claimRow,expected:current.row,after:claimRow(current.doc)}]));hold(ack.acknowledged&&ack.verified,'claim closure unverified');}
+    // Compact actual model-review provenance is acknowledged before any claim or send.
+    // Its hashes identify evidence; authority remains the separately bound human scope.
+    function consumePreEffectReview(c,capture,bound,fresh){
+      var input=actionFrame.consumerModelInput,n=actionFrame.consumerNormalization,reason='Gem proposal differs from independently approved exact content/source/route';
+      hold(input&&input.representation==='ACTUAL_NATIVE_CONSUMER_MODEL_RAW_STRING'&&input.bounded===true&&Number.isInteger(input.characters)&&input.characters>0&&input.characters<=12000&&n&&n.schema==='BackofficeConsumeBoundLinkNormalization/v1'&&n.modelAuthority===false&&n.comparisonSemantics==='EXACT_FRESH_PREPARED_BINDING'&&n.rawNativeInputSha256===input.sha256&&n.expectedBindingSha256===hash(fresh.prepared.binding),reason);
+      hold([input.sha256,n.rawProposalSha256,n.normalizedProposalSha256,n.expectedBindingSha256,bound.evidenceHash,capture.typedHash,capture.bodySha256].every(function(h){return typeof h==='string'&&/^[a-f0-9]{64}$/.test(h);}),reason);
+      var review={schema:'BackofficeNativePreEffectConsumerReview/v1',decision:'SEND',modelAuthority:false,servedModel:'UNKNOWN_NOT_ATTESTED',checkedAt:iso(),traceId:actionFrame.traceId,priorTraceId:capture.traceId,captureId:capture.id,sourceVersionSha256:bound.evidenceHash,bindingSha256:n.expectedBindingSha256,bodySha256:capture.bodySha256,typedRowSha256:capture.typedHash,humanAuthorityRef:c.ownerAuthority.ref,nativeInput:copy(input),normalization:copy(n)};
+      hold(JSON.stringify(review).length<=2400,reason);return review;
+    }
+    function consumerReviewFields(p){
+      var present=Object.prototype.hasOwnProperty.call(p,'consumerReview')||Object.prototype.hasOwnProperty.call(p,'consumerReviewSha256');
+      if(!present)return {consumerReview:null,consumerReviewSha256:null};
+      var r=p.consumerReview;hold(r&&r.schema==='BackofficeNativePreEffectConsumerReview/v1'&&r.decision==='SEND'&&r.modelAuthority===false&&r.traceId===p.traceId&&r.priorTraceId===p.priorTraceId&&r.captureId===p.captureId&&r.sourceVersionSha256===p.sourceVersionSha256&&r.bindingSha256===hash(p.prepared.binding)&&r.bodySha256===hash(p.prepared.body)&&r.typedRowSha256===hash(p.typed)&&typeof p.consumerReviewSha256==='string'&&/^[a-f0-9]{64}$/.test(p.consumerReviewSha256)&&hash(r)===p.consumerReviewSha256,'pending native Evidence binding invalid');return {consumerReview:copy(r),consumerReviewSha256:p.consumerReviewSha256};
+    }
+    function marker(p,state,extra){var old=prop(key(p.prepared.binding.leadId));hold(!old||old.bindingHash===hash(p.prepared.binding)&&old.bodySha256===hash(p.prepared.body),'permanent lead route/body binding conflict');
+      var review=consumerReviewFields(p);hold(!old||!Object.prototype.hasOwnProperty.call(old,'consumerReview')||same(old.consumerReview,review.consumerReview)&&old.consumerReviewSha256===review.consumerReviewSha256,'pending native Evidence binding invalid');
+      var value=Object.assign({},old||{schema:'BackofficeNativeNoResend/v1',leadId:p.prepared.binding.leadId,bindingHash:hash(p.prepared.binding),bodySha256:hash(p.prepared.body),attemptId:p.attemptId,claimRow:p.claimRow,finalRow:p.packet.canonical.evidenceRow,pendingRow:p.pendingRow,rfcMessageId:p.rfcMessageId},extra||{},review,{state:state,noResend:true,checkedAt:iso()});return store(key(value.leadId),value);}
+    function journal(c,p,kind,value){return evidenceEvent(c,kind,Object.assign({leadId:p.prepared.binding.leadId,attemptId:p.attemptId,traceId:p.traceId,priorTraceId:p.priorTraceId,captureId:p.captureId,sourceVersionSha256:p.sourceVersionSha256,humanAuthorityRef:c.ownerAuthority.ref,stage:kind},value,consumerReviewFields(p)),[p.packet.canonical.evidenceRow]);}
+    function finish(c,p,id,recovery){
+      hold(typeof id==='string'&&id&&REPLAY_IDS.indexOf(id)<0,'exact nonhistorical receipt identity unavailable');readClaim(p,c,recovery);
+      var receipt=sync(s.full(id)),sentAt=receipt&&receipt.structuredContent&&Number(receipt.structuredContent.internal_date);
+      // The accepted receipt freshness validator sees the original attempt window
+      // during recovery; exact native timestamp is additionally bound to pending.
+      var attemptAt=Date.parse(p.attemptedAt);hold(Number.isFinite(attemptAt)&&Number.isFinite(sentAt)&&sentAt>=attemptAt-5000&&sentAt<=attemptAt+FERN_FRESH_MS,'receipt outside reserved attempt window');
+      var message=verifyCurrentSalesReceipt(receipt,p.prepared,id,recovery?sentAt:now());hold(fernHeader(message,'message-id')==='<'+p.rfcMessageId+'>','exact attempt RFC Message-ID mismatch');
+      var receiptRef=journal(c,p,'native-receipt',{receipt:receipt,args:p.args,noResend:true});
+      marker(p,'RECEIPT_PERSISTED_NO_RESEND',{receiptId:id,threadId:message.thread_id,receiptRow:receiptRef.row});
+      var labels=message.label_ids.slice().sort();if(labels.indexOf('Label_5')<0){journal(c,p,'label-pending',{id:id,labelsBefore:labels});sync(s.label(id));}
+      var minimal=sync(s.minimal(id)),native=minimal&&minimal.structuredContent;hold(native&&native.id===id&&same((native.label_ids||[]).slice().sort(),Array.from(new Set(labels.concat(['Label_5']))).sort()),'label/other-label/read-state preservation mismatch');
+      journal(c,p,'label-readback',{receiptId:id,minimal:minimal});
+      var log=renderCurrentSalesLog(p.prepared,p.packet,message,Date.parse(p.attemptedAt)),expected=copy(p.typed);expected[11]=str('Sent');log.values.forEach(function(v,i){expected[17+i]=str(v);});
+      var evidence=blank(26);log.evidence.forEach(function(v,i){evidence[i]=str(v);});
+      var pair=readBundle(c,{evidenceRows:[p.packet.canonical.evidenceRow],prospectRows:[p.prepared.binding.row],sourceReferences:[]},function(){return [sync(s.readRow('Prospects',p.prepared.binding.row,27)),sync(s.readRow('Evidence',p.packet.canonical.evidenceRow,26))];}),current=pair[0],destination=pair[1];
+      if(!same(current,expected)||!same(destination,evidence)){
+        hold(same(current,p.typed)&&isBlank(destination),'confirmed receipt canonical CAS changed; retain receipt');readClaim(p,c,true);
+        journal(c,p,'canonical-write-pending',{receiptId:id,prospectHash:hash(expected),evidenceHash:hash(evidence)});
+        var ack=sync(s.casWrites([{sheet:'Prospects',row:p.prepared.binding.row,expected:p.typed,after:expected},{sheet:'Evidence',row:p.packet.canonical.evidenceRow,expected:blank(26),after:evidence}]));hold(ack.acknowledged&&ack.verified,'canonical acknowledged write/readback missing');
+      }
+      var finalPair=readBundle(c,{evidenceRows:[p.packet.canonical.evidenceRow],prospectRows:[p.prepared.binding.row],sourceReferences:[]},function(){return [sync(s.readRow('Prospects',p.prepared.binding.row,27)),sync(s.readRow('Evidence',p.packet.canonical.evidenceRow,26))];});hold(same(finalPair[0],expected)&&same(finalPair[1],evidence),'canonical full27/full26 readback mismatch');
+      journal(c,p,'confirmed',{receiptId:id,threadId:message.thread_id,finalRow:p.packet.canonical.evidenceRow,noResend:true});
+      marker(p,'CONFIRMED_CLAIM_PENDING_NO_RESEND',{receiptId:id,threadId:message.thread_id});closeClaim(p,c);marker(p,'CONFIRMED_NO_RESEND',{receiptId:id,threadId:message.thread_id});
+      return {status:'CONFIRMED_NO_RESEND',leadId:p.prepared.binding.leadId,id:id,thread:message.thread_id,evidenceRow:p.packet.canonical.evidenceRow,noResend:true,sendAttempted:!recovery,claimClosed:true};
+    }
+    function consumeOwnDiagnosticValue(value,key){var d=value&&typeof value==='object'&&Object.getOwnPropertyDescriptor(value,key);return d&&Object.prototype.hasOwnProperty.call(d,'value')?d.value:undefined;}
+    function consumeCaptureDiagnostic(capture,captureId){
+      try{var v=consumeOwnDiagnosticValue,h=v(capture,'handle'),id=v(capture,'id'),sourceId=v(capture,'sourceId'),sourceRow=v(capture,'sourceRow'),leadId=v(h,'leadId'),row=v(h,'row'),priorTraceId=v(capture,'traceId'),priorTraceRow=v(capture,'traceRow'),out={captureId:id,sourceId:sourceId,sourceRow:sourceRow,leadId:leadId,row:row,priorTraceId:priorTraceId,priorTraceRow:priorTraceRow,preparationTracePreimageEqual:true,preparationUsageManifestPreimageEqual:true};
+        if(v(capture,'schema')!=='BackofficeNativeCapture/v1'||id!==captureId||typeof id!=='string'||! /^[A-Za-z0-9_-]{16,128}$/.test(id)||typeof sourceId!=='string'||! /^NATIVE-SOURCE-[A-Za-z0-9_-]{1,100}$/.test(sourceId)||typeof leadId!=='string'||! /^[A-Za-z0-9_-]{1,128}$/.test(leadId)||typeof priorTraceId!=='string'||! /^NATIVE-TRACE-[A-Za-z0-9_-]{1,100}$/.test(priorTraceId)||[row,sourceRow,priorTraceRow].some(function(n){return !Number.isSafeInteger(n)||n<6||n>10000000;}))return;
+        var keys=['sourceHash','bindingHash','bodySha256','typedHash','traceRowSha256'];for(var i=0;i<keys.length;i++){var x=v(capture,keys[i]);if(typeof x!=='string'||! /^[a-f0-9]{64}$/.test(x))return;out[keys[i]]=x;}actionFrame.consumerCapture=out;
+      }catch(ignore){}
+    }
+    function consumeModelInputDiagnostic(modelRaw){
+      try{var out={representation:'ACTUAL_NATIVE_CONSUMER_MODEL_RAW_STRING',bounded:typeof modelRaw==='string'&&modelRaw.length<=12000};if(out.bounded){var digest=hash(modelRaw);if(typeof digest!=='string'||! /^[a-f0-9]{64}$/.test(digest))return;out.sha256=digest;out.characters=modelRaw.length;}actionFrame.consumerModelInput=out;}catch(ignore){}
+    }
+    function consumeComparisonDiagnostic(model,fresh,capture){
+      try{var v=consumeOwnDiagnosticValue,prepared=v(fresh,'prepared'),binding=v(prepared,'binding'),body=v(prepared,'body'),typed=v(fresh,'typed'),proposal=v(model,'proposal'),out={comparisonSemantics:'RAW_PARSED_PROPOSAL_FIELDS',fieldMismatches:[],proposalObject:!!proposal&&typeof proposal==='object'&&!Array.isArray(proposal)},keys=['row','leadId','product','to','name','first','company','role','organizationKey','subject','observation','sourceRefs'],safeBinding={},links={schema:'BackofficeConsumeLinkTransportDiagnostic/v1',diagnosticOnly:true};
+        function refs(value,limit){var length=v(value,'length');if(!Array.isArray(value)||!Number.isInteger(length)||length<0||length>limit||Object.getOwnPropertySymbols(value).length||Object.getOwnPropertyNames(value).length!==length+1)return null;var a=[];for(var n=0;n<length;n++){var x=v(value,String(n));if(typeof x!=='string'||x.length>12000)return null;a.push(x);}return a;}
+        function link(expected,observed,email,allow){
+          var bounded=typeof observed==='string'&&observed.length<=12000,known=typeof expected==='string'&&expected.length>0&&expected.length<=1000,record={form:'UNKNOWN',expectedCharacters:known?expected.length:null,expectedSha256:null,observedCharacters:bounded?observed.length:null,observedSha256:null,observedBounded:bounded,hasC0OrDEL:null,hasWhitespace:null,hasAngleSyntax:null,hasMarkdownSyntax:null,hasPercentEncoding:null,hasMailtoSyntax:null,hasWorkflowsGooglePrefix:null,hasNonAscii:null,hasCommonFormatCodepoint:null,hasUnpairedSurrogate:null},matches=[];
+          function digest(x){try{var d=hash(x);return typeof d==='string'&&/^[a-f0-9]{64}$/.test(d)?d:null;}catch(ignore){return null;}}
+          if(known)record.expectedSha256=digest(expected);if(!bounded)return record;record.observedSha256=digest(observed);record.hasC0OrDEL=/[\x00-\x1f\x7f]/.test(observed);record.hasWhitespace=/\s/.test(observed);record.hasAngleSyntax=/[<>]/.test(observed);record.hasMarkdownSyntax=/[\[\]()]/.test(observed);record.hasPercentEncoding=/%[a-fA-F0-9]{2}/.test(observed);record.hasMailtoSyntax=observed.indexOf('mailto:')>=0;record.hasWorkflowsGooglePrefix=observed.indexOf('https://example.org/url?q=')>=0;record.hasNonAscii=/[^\x00-\x7f]/.test(observed);record.hasCommonFormatCodepoint=/[\u00ad\u034f\u061c\u180e\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/.test(observed);record.hasUnpairedSurrogate=false;for(var p=0;p<observed.length;p++){var unit=observed.charCodeAt(p);if(unit>=55296&&unit<=56319){var next=observed.charCodeAt(p+1);if(next>=56320&&next<=57343)p++;else record.hasUnpairedSurrogate=true;}else if(unit>=56320&&unit<=57343)record.hasUnpairedSurrogate=true;}
+          if(!known||!allow||/[\s<>\[\]()\\\x00-\x1f\x7f]/.test(expected))return record;
+          function destination(x,form){if(observed===x)matches.push(form);if(observed==='<'+x+'>')matches.push(form+'_ANGLE');if(observed==='['+expected+']('+x+')')matches.push(form+(x===expected?'_MARKDOWN_SAME_LABEL_DESTINATION':'_MARKDOWN_EXPECTED_LABEL'));if(x!==expected&&observed==='['+x+']('+x+')')matches.push(form+'_MARKDOWN_SAME_LABEL_DESTINATION');if(observed==='<a href="'+x+'">'+expected+'</a>')matches.push(form+'_HTML_ANCHOR_DOUBLE_QUOTE_'+(x===expected?'SAME_LABEL_DESTINATION':'EXPECTED_LABEL')+'_DIAGNOSTIC_ONLY');if(observed==="<a href='"+x+"'>"+expected+'</a>')matches.push(form+'_HTML_ANCHOR_SINGLE_QUOTE_'+(x===expected?'SAME_LABEL_DESTINATION':'EXPECTED_LABEL')+'_DIAGNOSTIC_ONLY');if(x!==expected&&observed==='<a href="'+x+'">'+x+'</a>')matches.push(form+'_HTML_ANCHOR_DOUBLE_QUOTE_SAME_LABEL_DESTINATION_DIAGNOSTIC_ONLY');if(x!==expected&&observed==="<a href='"+x+"'>"+x+'</a>')matches.push(form+'_HTML_ANCHOR_SINGLE_QUOTE_SAME_LABEL_DESTINATION_DIAGNOSTIC_ONLY');}
+          destination(expected,'PLAIN');if(email)destination('mailto:'+expected,'MAILTO');else if(/^https:\/\/[^?#&%]+$/.test(expected)){
+            var prefix='https://example.org/url?q=',suffix='&sa=E&source=workflows',raw=prefix+expected+suffix,canonical=prefix+encodeURIComponent(expected)+suffix;
+            destination(raw,'GOOGLE_WORKFLOWS_SINGLE_RAW');destination(canonical,'GOOGLE_WORKFLOWS_SINGLE_CANONICAL');
+            destination(prefix+'https://example.org/url?q%3D'+expected+'%26sa%3DE%26source%3Dworkflows'+suffix,'GOOGLE_WORKFLOWS_DOUBLE_RAW_DELIMITER_ENCODED_DIAGNOSTIC_ONLY');
+            destination(prefix+encodeURIComponent(raw)+suffix,'GOOGLE_WORKFLOWS_DOUBLE_RAW_CANONICAL_DIAGNOSTIC_ONLY');
+            destination(prefix+'https://example.org/url?q%3D'+encodeURIComponent(expected)+'%26sa%3DE%26source%3Dworkflows'+suffix,'GOOGLE_WORKFLOWS_DOUBLE_CANONICAL_DELIMITER_ENCODED_DIAGNOSTIC_ONLY');
+            destination(prefix+encodeURIComponent(canonical)+suffix,'GOOGLE_WORKFLOWS_DOUBLE_CANONICAL_CANONICAL_DIAGNOSTIC_ONLY');
+          }
+          if(matches.length===1)record.form=matches[0];return record;
+        }
+        if(!binding||typeof body!=='string'||body.length>12000||!Array.isArray(typed)||typed.length!==27)return;
+        for(var i=0;i<keys.length;i++){var k=keys[i],expected=v(binding,k),observed=v(proposal,k);if(k==='sourceRefs'){var a=refs(expected,8),b=refs(observed,32);if(!a||a.some(function(x){return x.length>1000;})||new Set(a).size!==a.length)return;var length=v(observed,'length'),observedCount=Array.isArray(observed)&&Number.isInteger(length)&&length>=0&&length<=32?length:null,duplicate=!!b&&new Set(b).size!==b.length,refLinks=[];for(var j=0;j<Math.max(a.length,observedCount===null?0:observedCount);j++)refLinks.push(link(a[j],observedCount===null?undefined:v(observed,String(j)),false,!!b&&!duplicate&&j<a.length));links.sourceRefs={expectedCount:a.length,observedCount:observedCount,observedDenseBounded:!!b,observedDuplicateValues:duplicate,fields:refLinks};safeBinding[k]=a;if(!b||JSON.stringify(a)!==JSON.stringify(b))out.fieldMismatches.push(k);}else{if(k==='row'?!Number.isSafeInteger(expected):typeof expected!=='string')return;safeBinding[k]=expected;if(observed!==expected)out.fieldMismatches.push(k);if(k==='to')links.to=link(expected,observed,true,true);}}
+        out.proposalExtraFields=out.proposalObject&&Object.keys(proposal).some(function(k){return keys.concat(['body']).indexOf(k)<0;});
+        var safeTyped=[];for(var at=0;at<27;at++){var cell=v(typed,String(at));if(!cell||typeof cell!=='object'||Array.isArray(cell))return;var names=Object.getOwnPropertyNames(cell),entry={};if(Object.getOwnPropertySymbols(cell).length||names.length>1)return;for(var n=0;n<names.length;n++){var name=names[n],value=v(cell,name);if(['stringValue','formulaValue','numberValue','boolValue'].indexOf(name)<0||!(typeof value==='string'||typeof value==='boolean'||typeof value==='number'&&Number.isFinite(value)))return;entry[name]=value;}safeTyped.push(entry);}
+        var bindingHash=hash(safeBinding),bodyHash=hash(body),typedHash=hash(safeTyped);if([bindingHash,bodyHash,typedHash].some(function(x){return typeof x!=='string'||! /^[a-f0-9]{64}$/.test(x);}))return;out.captureBindingHashEqual=bindingHash===v(capture,'bindingHash');out.captureBodyHashEqual=bodyHash===v(capture,'bodySha256');out.captureTypedHashEqual=typedHash===v(capture,'typedHash');out.proposalBodyEqual=v(proposal,'body')===body;out.linkTransport=links;actionFrame.consumerComparison=out;
+      }catch(ignore){}
+    }
+    function consumeNormalizeBoundLinks(proposal,prepared){
+      var v=consumeOwnDiagnosticValue,keys=['row','leadId','product','to','name','first','company','role','organizationKey','subject','observation','sourceRefs'],reason='Gem proposal differs from independently approved exact content/source/route';
+      function data(o,names,extra){
+        hold(o&&typeof o==='object'&&!Array.isArray(o),'advisory proposal missing');var own=Object.getOwnPropertyNames(o);
+        hold(!Object.getOwnPropertySymbols(o).length&&own.every(function(k){return names.indexOf(k)>=0;}),extra||reason);hold(own.length===names.length,reason);var out={};
+        own.forEach(function(k){var d=Object.getOwnPropertyDescriptor(o,k);hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable,reason);out[k]=d.value;});return out;
+      }
+      function refs(a,max){
+        var n=v(a,'length');hold(Array.isArray(a)&&Number.isInteger(n)&&n>0&&n<=8&&!Object.getOwnPropertySymbols(a).length&&Object.getOwnPropertyNames(a).length===n+1,reason);var out=[];
+        for(var i=0;i<n;i++){var d=Object.getOwnPropertyDescriptor(a,String(i));hold(d&&Object.prototype.hasOwnProperty.call(d,'value')&&d.enumerable&&typeof d.value==='string'&&d.value.length>0&&d.value.length<=max,reason);out.push(d.value);}return out;
+      }
+      var expected=data(v(prepared,'binding'),keys),raw=data(proposal,keys.concat(['body']),'proposal contains extra effects/authority');
+      keys.concat(['body']).forEach(function(k){if(k==='sourceRefs')return;hold(k==='row'?Number.isSafeInteger(raw[k]):typeof raw[k]==='string'&&raw[k].length<=12000,reason);if(k!=='body')hold(k==='row'?Number.isSafeInteger(expected[k]):typeof expected[k]==='string'&&expected[k].length<=12000,reason);});
+      expected.sourceRefs=refs(expected.sourceRefs,1000);raw.sourceRefs=refs(raw.sourceRefs,12000);hold(expected.sourceRefs.length===raw.sourceRefs.length&&new Set(expected.sourceRefs).size===expected.sourceRefs.length,reason);
+      var out={},forms={to:'UNKNOWN',sourceRefs:[]},changed=0;Object.keys(raw).forEach(function(k){out[k]=raw[k];});out.sourceRefs=raw.sourceRefs.slice();
+      if(raw.to===expected.to)forms.to='PLAIN';else if(expected.to.length<=254&&/^[A-Za-z0-9._+-]+@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(expected.to)&&raw.to==='mailto:'+expected.to){forms.to='MAILTO';out.to=expected.to;changed++;}
+      for(var j=0;j<expected.sourceRefs.length;j++){
+        var e=expected.sourceRefs[j],o=raw.sourceRefs[j],form='UNKNOWN';if(o===e)form='PLAIN';else if(/^https:\/\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}\/[A-Za-z0-9._~\/-]*$/.test(e)&&o==='https://example.org/url?q='+e+'&sa=E&source=workflows'){form='GOOGLE_WORKFLOWS_SINGLE_RAW';out.sourceRefs[j]=e;changed++;}forms.sourceRefs.push(form);
+      }
+      var rawHash=hash(raw),normalizedHash=hash(out),expectedHash=hash(expected),inputHash=v(v(actionFrame,'consumerModelInput'),'sha256');hold([rawHash,normalizedHash,expectedHash,inputHash].every(function(h){return typeof h==='string'&&/^[a-f0-9]{64}$/.test(h);}),reason);
+      actionFrame.consumerNormalization={schema:'BackofficeConsumeBoundLinkNormalization/v1',modelAuthority:false,comparisonSemantics:'EXACT_FRESH_PREPARED_BINDING',rawNativeInputSha256:inputHash,rawProposalSha256:rawHash,normalizedProposalSha256:normalizedHash,expectedBindingSha256:expectedHash,fields:forms,normalizedFieldCount:changed};hold(forms.to!=='UNKNOWN'&&forms.sourceRefs.every(function(f){return f!=='UNKNOWN';}),reason);return out;
+    }
+    function consumeSourceLocator(c,capture,traceRow){
+      // A locator is selected only from the exact acknowledged preparation trace.
+      // It is not model-supplied authority; nativeEntry re-reads the capture trace,
+      // metadata, registry and retained source originals before any effect.
+      var d=parse(raw(traceRow)[3],45000),t=d.value&&d.value.trace;
+      hold(d.schema==='BackofficeNativeJournal/v1'&&d.kind==='action-trace'&&d.value.noSend===true&&t&&t.schema==='BackofficeNativeActionTrace/v1'&&t.traceId===capture.traceId&&t.operation==='PREPARE_SOURCE'&&t.outcome==='SOURCE_READY'&&t.projectId===s.projectId&&t.writerId===c.writerId&&t.humanAuthorityRef===c.ownerAuthority.ref&&t.noSend===true&&t.modelAuthority===false&&t.captureId===capture.id&&same(t.handle,capture.handle)&&t.sourceId===capture.sourceId&&t.sourceVersionSha256===capture.sourceHash&&t.bodySha256===capture.bodySha256&&t.beforeTypedRowSha256===capture.typedHash&&same(t.preparedUsageBasisRef,capture.preparedUsageBasisRef)&&Number.isFinite(Date.parse(t.finishedAt))&&Date.parse(t.finishedAt)<=now()+5000,'exact retained preparation trace required');
+      if(!Object.prototype.hasOwnProperty.call(t,'priorSourceCapture'))return null;
+      var loc=fernainNativeSourceLocator('FERNAIN_SOURCE_V1:'+JSON.stringify(t.priorSourceCapture));
+      hold(same(capture.handle,{row:loc.row,leadId:loc.leadId})&&loc.sourceId===capture.sourceId&&loc.evidenceRow===capture.sourceRow&&loc.evidenceHash===capture.sourceHash,'exact staged source locator capture binding required');return loc;
+    }
+    function consumeLocked(c,captureId,modelRaw){
+      var p=null,reserved=false;
+      try{
+        FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_CAPTURE';
+        hold(typeof captureId==='string'&&/^[A-Za-z0-9_-]{16,128}$/.test(captureId),'capture ID missing');var capture=prop(CAP+captureId);hold(capture&&capture.id===captureId&&!capture.consumed&&Date.parse(capture.expiresAt)>now()&&capture.traceId&&capture.traceRow&&capture.preparedUsageBasisRef,'capture expired/consumed/missing or preparation trace/archive unacknowledged');var traceSnapshot=snapshot(c,capture.handle),selection={evidenceRows:[capture.traceRow,capture.preparedUsageBasisRef.manifestRow,capture.sourceRow],prospectRows:[capture.handle.row],sourceReferences:[]},selectorDoc=parse(raw(traceSnapshot.Evidence.rows[capture.traceRow-1])[3],45000),priorSelector=selectorDoc.value&&selectorDoc.value.trace&&selectorDoc.value.trace.priorSourceCapture;if(priorSelector&&Number.isInteger(priorSelector.traceRow))selection.evidenceRows.push(priorSelector.traceRow);
+        var initialRead=readBundle(c,selection,function(){var traceRow=BackofficeNativeSemanticSnapshotV2.logical(s,traceSnapshot,capture.traceRow,capture.traceRowSha256,'PREPARATION_TRACE');hold(hash(traceRow)===capture.traceRowSha256,'preparation trace raw preimage changed');var sourceLocator=consumeSourceLocator(c,capture,traceRow);hold(hash(BackofficeNativeSemanticSnapshotV2.logical(s,traceSnapshot,capture.preparedUsageBasisRef.manifestRow,capture.preparedUsageBasisRef.manifestRowSha256,'USAGE_BASIS'))===capture.preparedUsageBasisRef.manifestRowSha256,'preparation provider/usage archive manifest changed');
+        consumeCaptureDiagnostic(capture,captureId);FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_MODEL_INPUT';consumeModelInputDiagnostic(modelRaw);
+        var model=parse(modelRaw,12000);FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_ENVELOPE';hold(shape(model,['decision','capture_id','proposal'])&&model.capture_id===captureId&&['SEND','HALT'].indexOf(model.decision)>=0,'Gemini exact advisory envelope required');
+        if(model.decision==='HALT')return {model:model,halt:true};
+        paced();exclusive(c);hold(active&&latestSnapshot===traceSnapshot&&typeof s.lock.hasLock==='function'&&s.lock.hasLock()===true,'held project lock required for source snapshot reuse');fernFresh(traceSnapshot,now(),'full native canonical snapshot');var x=traceSnapshot,bound=nativeEntry(c,capture.handle,x,sourceLocator);FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_SOURCE_PREIMAGE';hold(bound.sourceId===capture.sourceId&&bound.evidenceHash===capture.sourceHash,'native source changed since Ask Gemini preparation');
+return {model:model,bound:bound};});
+        var model=initialRead.model;if(initialRead.halt){store(HALT,{schema:'BackofficeNativeHalt/v1',reason:'GEMINI_ADVISORY_HALT',checkedAt:iso()});capture.consumed=true;store(CAP+captureId,capture);return {status:'HALTED',no_send:true,effect_eligible:false};}var x=traceSnapshot,bound=initialRead.bound;
+        x=bound.canonicalSnapshot;requireRoundCapacity(x,320,'CONSUME_BEFORE_RESERVATION');var skip=reservedRows(x),claimAt=freeRow(x,skip);skip.push(claimAt);var finalAt=freeRow(x,skip);bound.entry.packet.canonical.evidenceRow=finalAt;
+        var fresh=sourceAndPolicy(c,bound,x,null);FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_CAPTURE_HASHES';consumeComparisonDiagnostic(model,fresh,capture);hold(hash(fresh.prepared.binding)===capture.bindingHash&&hash(fresh.prepared.body)===capture.bodySha256&&hash(fresh.typed)===capture.typedHash,'source/body/full typed canonical changed');FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_PROPOSAL';model.proposal=consumeNormalizeBoundLinks(model.proposal,fresh.prepared);validateCurrentSalesProposal(model.proposal,fresh.prepared);
+        var consumerReview=consumePreEffectReview(c,capture,bound,fresh);
+        FERN_NATIVE_VALIDATION_PHASE_V1='CONSUME_PRE_EFFECT_BUDGET';
+        if(s.checkBudget)s.checkBudget(60000);fresh.packet.usage.nativeBasisRef=retainUsageBasis(c,fresh.nativeUsageBasis,fresh.prepared.binding.leadId,[claimAt,finalAt]);capture.consumed=true;store(CAP+captureId,capture);
+        var attemptId=s.newId(),doc={schema:'BackofficeNativeClaim/v1',id:'NATIVE-'+attemptId,writerId:c.writerId,writerType:'existing-canonical-sole-writer',status:'ACTIVE',packetId:fresh.packet.packetId,binding:fresh.prepared.binding,ownerEffectScopeRef:fresh.packet.owner.effectScopeRef,finalRow:finalAt,checkedAt:iso(),leaseUntil:new Date(now()+FERN_FRESH_MS).toISOString()};
+        fresh.packet.claim={id:doc.id,writerId:c.writerId};
+        p={schema:'BackofficeNativePending/v1',consumerReview:consumerReview,consumerReviewSha256:hash(consumerReview),traceId:actionFrame.traceId,priorTraceId:capture.traceId,captureId:captureId,sourceVersionSha256:bound.evidenceHash,attemptId:attemptId,packet:fresh.packet,prepared:fresh.prepared,typed:fresh.typed,claimRow:claimAt,pendingRow:null,attemptedAt:iso(),rfcMessageId:'fernain.'+attemptId+'@example.com',args:{from_address:FERN_FROM,to:fresh.prepared.binding.to,subject:fresh.prepared.binding.subject,payload:{mime_type:'text/plain',charset:'UTF-8',body:{content:fresh.prepared.body}}}};
+        // Permanent marker precedes every potentially uncertain reservation/send.
+        if(s.checkBudget)s.checkBudget(60000);paced();store(LAST,{schema:'BackofficeNativePacing/v1',state:'UNSETTLED',attemptId:p.attemptId,attemptedAt:p.attemptedAt});reserved=true;marker(p,'RESERVED_NO_RESEND');
+        var ack=sync(s.casWrites([{sheet:'Evidence',row:claimAt,expected:x.Evidence.rows[claimAt-1],after:claimRow(doc)}]));hold(ack.acknowledged&&ack.verified,'native claim acknowledgement/readback missing');x.Evidence.rows[claimAt-1]=claimRow(doc);
+        var pending=journal(c,p,'pending',{pending:p,noResend:true});p.pendingRow=pending.row;marker(p,'PENDING_NO_RESEND',{pendingRow:pending.row});readClaim(p,c,false);
+        // Re-read independent truth and usage after acknowledged reservation. The
+        // reviewer excludes only this exact claim, never unrelated reservations.
+        var current=snapshot(c,{row:p.prepared.binding.row,leadId:p.prepared.binding.leadId});hold(hash(BackofficeNativeSemanticSnapshotV2.logical(s,current,bound.evidenceRow,bound.evidenceHash,'SOURCE_METADATA'))===bound.evidenceHash,'native source Evidence changed at final preflight');var again=sourceAndPolicyAfterReservation(c,bound,current,p);
+        validateCurrentSalesProposal(model.proposal,again.prepared);hold(same(again.typed,p.typed)&&same(again.prepared.binding,p.prepared.binding)&&again.prepared.body===p.prepared.body,'final pre-send binding changed');
+        again.packet.usage.nativeBasisRef=retainUsageBasis(c,again.nativeUsageBasis,p.prepared.binding.leadId,[p.claimRow,p.packet.canonical.evidenceRow]);p.packet=again.packet;p.prepared=again.prepared;p.attemptedAt=iso();
+        if(s.checkBudget){s.checkBudget(30000);s.checkBudget(45000);}var boundary=journal(c,p,'attempt-boundary',{attemptedAt:p.attemptedAt,packet:p.packet,prepared:p.prepared,noResend:true});marker(p,'SEND_ATTEMPTED_NO_RESEND',{attemptedAt:p.attemptedAt,attemptRow:boundary.row,attemptRowSha256:boundary.hash});readClaim(p,c,false);nativePreflight(p.packet);
+        // A durable unresolved fence survives interruption. Settle only after
+        // the synchronous send returns/throws, while the same ScriptLock is held.
+        // Completion time bounds actual attempt time despite preflight/jitter.
+        p.sendAttempted=true;var outcome;
+        try{outcome=sync(s.send(p.args,p.rfcMessageId));}catch(sendError){if(typeof s.sendBudgetHeldBeforeDispatch==='function'&&s.sendBudgetHeldBeforeDispatch(sendError)===true)p.sendAttempted=false;throw sendError;} // THE ONLY send invocation.
+        finally{settlePacing(p);}
+        hold(outcome&&typeof outcome.id==='string'&&outcome.id,'native send outcome uncertain');
+        marker(p,'SENT_RECEIPT_PENDING_NO_RESEND',{receiptId:outcome.id,threadId:outcome.thread_id||null});journal(c,p,'send-outcome',{outcome:outcome,noResend:true});
+        return finish(c,p,outcome.id,false);
+      }catch(e){if(reserved&&p){if(p.sendAttempted!==true){try{settlePacing(p);}catch(pacingHold){/* Failed writes preserve unresolved state; a persisted settlement is still conservative. */}}try{journal(c,p,'hold',{reasonCode:e&&e.code==='CURRENT_SALES_VALIDATION_HOLD'?'NATIVE_VALIDATION_HOLD':'NATIVE_RUNTIME_EXCEPTION',noResend:true});}catch(ignore){}return {status:'PENDING_NO_RESEND',reasonCode:'NATIVE_ATTEMPT_HOLD',stage:'PERMANENT_NO_RESEND',sendAttempted:p.sendAttempted===true,leadId:p.prepared.binding.leadId,noResend:true};}throw e;}
+    }
+    function sourceAndPolicyAfterReservation(c,bound,x,p){
+      var own=prop(key(p.prepared.binding.leadId));
+      hold(own&&own.attemptId===p.attemptId&&own.state==='PENDING_NO_RESEND','own final preflight reservation missing');
+      return sourceAndPolicy(c,bound,x,p.packet.claim,p.attemptId);
+    }
+    function recoverLocked(c){
+      exclusive(c);var names=Object.keys(s.props.getProperties()).filter(function(k){return k.indexOf(MARK)===0;}),results=[];
+      names.forEach(function(k){var m=prop(k);if(!m||m.state==='CONFIRMED_NO_RESEND')return;
+        try{
+          hold(m.pendingRow,'reservation has no acknowledged pending evidence; never resend');var row=sync(s.readRow('Evidence',m.pendingRow,26)),record=parse(raw(row)[3],45000),p=record.value&&record.value.pending;
+          hold(record.schema==='BackofficeNativeJournal/v1'&&record.kind==='pending'&&p&&p.attemptId===m.attemptId&&p.prepared.binding.leadId===m.leadId&&hash(p.prepared.binding)===m.bindingHash&&hash(p.prepared.body)===m.bodySha256,'pending native Evidence binding invalid');p.pendingRow=m.pendingRow;var review=consumerReviewFields(p);hold(same(record.value.consumerReview===undefined?null:record.value.consumerReview,review.consumerReview)&&(record.value.consumerReviewSha256===undefined?null:record.value.consumerReviewSha256)===review.consumerReviewSha256&&same(m.consumerReview===undefined?null:m.consumerReview,review.consumerReview)&&(m.consumerReviewSha256===undefined?null:m.consumerReviewSha256)===review.consumerReviewSha256,'pending native Evidence binding invalid');
+          if(m.attemptRow){var boundaryRow=sync(s.readRow('Evidence',m.attemptRow,26));hold(hash(boundaryRow)===m.attemptRowSha256,'exact native attempt boundary preimage changed');var boundary=parse(raw(boundaryRow)[3],45000);hold(boundary.schema==='BackofficeNativeJournal/v1'&&boundary.kind==='attempt-boundary'&&boundary.value.attemptId===p.attemptId&&boundary.value.packet.packetId===p.packet.packetId&&hash(boundary.value.prepared.binding)===m.bindingHash&&hash(boundary.value.prepared.body)===m.bodySha256,'native final preflight/usage boundary mismatch');hold(same(boundary.value.consumerReview===undefined?null:boundary.value.consumerReview,review.consumerReview)&&(boundary.value.consumerReviewSha256===undefined?null:boundary.value.consumerReviewSha256)===review.consumerReviewSha256,'pending native Evidence binding invalid');p.packet=boundary.value.packet;p.prepared=boundary.value.prepared;}p.attemptedAt=m.attemptedAt||p.attemptedAt;var id=m.receiptId;
+          if(m.state==='CONFIRMED_CLAIM_PENDING_NO_RESEND'){closeClaim(p,c);marker(p,'CONFIRMED_NO_RESEND',{receiptId:id});results.push({status:'CONFIRMED_NO_RESEND',leadId:m.leadId,id:id,claimClosed:true,noResend:true});return;}
+          if(!id){var found=sync(s.searchAll('in:anywhere rfc822msgid:'+p.rfcMessageId,2));hold(found.complete&&found.ids.length===1,'uncertain attempt not uniquely reconciled; never resend');id=found.ids[0];}
+          results.push(finish(c,p,id,true));
+        }catch(e){results.push({status:'PENDING_NO_RESEND',leadId:m.leadId,reasonCode:'NATIVE_RECOVERY_HOLD',stage:'RECOVERY',noResend:true});}
+      });return {status:'RECONCILED',results:results,no_send:true};
+    }
+    return Object.freeze({
+      listCandidates:function(){return locked(function(c){var x=snapshot(c),ids=candidates(c,x).map(JSON.stringify);return {status:'CANDIDATE_HANDLES',candidate_ids:ids,registrationCoverage:copy(actionFrame.registrationCoverage),no_send:true,effect_eligible:false};},false,'LIST_CANDIDATES');},
+      capturePublicSource:function(handle){return locked(function(c){return capturePublicSourceLocked(c,handle);},false,'CAPTURE_PUBLIC_SOURCE',handle);},
+      prepareSource:function(handle,sourceLocator){return locked(function(c){return prepareLocked(c,handle,sourceLocator);},false,'PREPARE_SOURCE');},
+      consumeGemini:function(id,json){return locked(function(c){return consumeLocked(c,id,json);},false,'CONSUME_GEMINI');},
+      reconcilePending:function(){return locked(recoverLocked,true,'RECONCILE_PENDING');},
+      invalidInput:function(){return locked(function(){return {status:'HOLD',reasonCode:'NATIVE_STUDIO_INPUT_HOLD',scope:'CANDIDATE',stage:'INPUT',no_send:true,effect_eligible:false};},true,'INVALID_STUDIO_INPUT');},
+      readStatus:function(){return locked(function(c){var markers=[];Object.keys(s.props.getProperties()).filter(function(k){return k.indexOf(MARK)===0;}).forEach(function(k){var m=prop(k);markers.push({leadId:m.leadId,state:m.state,noResend:true,receiptId:m.receiptId||null});});return {status:'NATIVE_STATUS',halted:!!prop(HALT),markers:markers,installedConfiguration:true,liveVerified:false};},true,'READ_STATUS');},
+      halt:function(reason){return locked(function(){store(HALT,{schema:'BackofficeNativeHalt/v1',reason:String(reason||'OWNER_HALT').slice(0,200),checkedAt:iso()});return {status:'HALTED',no_send:true};},true,'HALT');}
+    });
+  }
+  return {withNativeContext:function(ctx,fn){hold(nativeContext===null&&ctx&&ctx.services&&ctx.config&&ctx.services.projectId===ctx.config.projectId&&ctx.config.schema==='BackofficeNativeConfig/v1'&&ctx.services.lock&&typeof ctx.services.lock.hasLock==='function'&&ctx.services.lock.hasLock()===true&&typeof fn==='function','trusted held-lock native context required');nativeContext=ctx;try{return sync(fn());}finally{nativeContext=null;}},nativeContext:function(){hold(nativeContext,'native adapter context requires held runtime lock');return nativeContext;},create:create,configProperty:CFG,markerPrefix:MARK,capturePrefix:CAP,haltProperty:HALT,lastAttemptProperty:LAST,semanticFlags:FLAGS.slice()};
+}());
+function fernainNativeRuntime(actionBudget){return BackofficeNativeRuntimeV1.create(fernainNativeServices(actionBudget));}
+function fernainNativeListCandidates(){return fernainNativeRuntime().listCandidates();}
+function fernainNativeCapturePublicSource(handle){return fernainNativeRuntime().capturePublicSource(handle);}
+function fernainNativePrepareSource(handle,sourceLocator){return fernainNativeRuntime().prepareSource(handle,sourceLocator);}
+function fernainNativeConsumeGemini(captureId,modelJson){return fernainNativeRuntime().consumeGemini(captureId,modelJson);}
+function fernainNativeReconcilePending(){return fernainNativeRuntime().reconcilePending();}
+function fernainNativeReadStatus(){return fernainNativeRuntime().readStatus();}
+/* Bounded read-only diagnosis. No Gmail, fetch, CAS, property writes or sends. */
+/* Temporary observation only. Four fixed official resolver requests. No inputs,
+ * source fetch, canonical read/write, permissions, eligibility, or raw logging. */
+var BackofficeFixedNativeDnsShapeProbeV1=(function(){
+ 'use strict';
+ var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k);};
+ function reject(){throw Error('PROBE_HOLD');}
+ function need(ok){if(!ok)reject();}
+ function object(o){need(o&&typeof o==='object'&&!Array.isArray(o)&&(Object.getPrototypeOf(o)===Object.prototype||Object.getPrototypeOf(o)===null)&&Object.getOwnPropertySymbols(o).length===0);Object.getOwnPropertyNames(o).forEach(function(k){var d=Object.getOwnPropertyDescriptor(o,k);need(d&&own(d,'value')&&d.enumerable&&!['__proto__','constructor','prototype'].includes(k));});return o;}
+ function dense(a,max){need(Array.isArray(a)&&Object.getPrototypeOf(a)===Array.prototype&&a.length<=max&&Object.getOwnPropertySymbols(a).length===0&&Object.getOwnPropertyNames(a).length===a.length+1);for(var i=0;i<a.length;i++){var d=Object.getOwnPropertyDescriptor(a,String(i));need(d&&own(d,'value')&&d.enumerable);}return a;}
+ function name(s){need(typeof s==='string'&&s.length<=254);s=s.toLowerCase();if(s.endsWith('.'))s=s.slice(0,-1);need(/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(s)&&!/(?:^|\.)(?:localhost|local|internal|home|test|invalid|example|onion)$/.test(s));return s;}
+ function ancestor(zone,terminal){return terminal===zone||terminal.endsWith('.'+zone);}
+ function soa(r,terminal){need(r.type===6);var z=name(r.name),v=typeof r.data==='string'?r.data.split(' '):[];need(v.length===7&&v.every(function(x){return x.length>0;})&&ancestor(z,terminal));name(v[0]);name(v[1]);for(var i=2;i<7;i++)need(/^(?:0|[1-9]\d{0,9})$/.test(v[i])&&Number(v[i])<=4294967295);return z;}
+ function base(label,type){return {schema:'BackofficeFixedNativeDnsShapeProbe/v1',hostSlot:label,queryType:type===1?'A':'AAAA',transport:'HOLD',httpStatus:null,rawSha256:null,byteLength:null,dnsStatus:'UNKNOWN',truncated:'UNKNOWN',dnssecAD:'UNKNOWN',checkingDisabled:'UNKNOWN',questionMatch:false,answerCount:null,authorityCount:null,additionalCount:null,answerTypes:null,authorityTypes:null,additionalTypes:null,typedRecordsValid:false,cname:'UNKNOWN',soa:'UNKNOWN',publicAddresses:'UNKNOWN',publicAddressCount:0,shape:'UNKNOWN_HOLD',record_authorized:false,effect_eligible:false,send_eligible:false};}
+ function types(rows){var c={A:0,AAAA:0,CNAME:0,SOA:0,NS:0,OTHER:0};rows.forEach(function(r){object(r);need(Object.keys(r).sort().join('|')==='TTL|data|name|type'&&Number.isInteger(r.type)&&r.type>=1&&r.type<=65535&&Number.isInteger(r.TTL)&&r.TTL>0&&r.TTL<=86400&&typeof r.data==='string'&&r.data.length<=2048);name(r.name);c[r.type===1?'A':r.type===28?'AAAA':r.type===5?'CNAME':r.type===6?'SOA':r.type===2?'NS':'OTHER']++;});return c;}
+ function summarize(text,host,type,out){
+  var p=object(BackofficeSalesEvidenceV1.strictJSON(text));
+  need(Object.keys(p).every(function(k){return ['Status','TC','RD','RA','AD','CD','Question','Answer','Authority','Additional','Comment','edns_client_subnet'].includes(k);}));
+  out.dnsStatus=p.Status===0?'NOERROR':p.Status===3?'NXDOMAIN':p.Status===2?'SERVFAIL':'OTHER';out.truncated=p.TC===true?'TRUE':p.TC===false?'FALSE':'UNKNOWN';out.dnssecAD=p.AD===true?'TRUE':p.AD===false?'FALSE':'UNKNOWN';out.checkingDisabled=p.CD===true?'TRUE':p.CD===false?'FALSE':'UNKNOWN';
+  var q=dense(p.Question,1);need(q.length===1);object(q[0]);out.questionMatch=Object.keys(q[0]).sort().join('|')==='name|type'&&name(q[0].name)===host&&q[0].type===type;
+  var a=own(p,'Answer')?dense(p.Answer,32):[],u=own(p,'Authority')?dense(p.Authority,8):[],x=own(p,'Additional')?dense(p.Additional,8):[];
+  out.answerCount=a.length;out.authorityCount=u.length;out.additionalCount=x.length;
+  out.answerTypes=types(a);out.authorityTypes=types(u);out.additionalTypes=types(x);out.typedRecordsValid=true;
+  var owners=Object.create(null),seen=Object.create(null),allPublic=true,addressCount=0;
+  a.forEach(function(r){need(r.type===5||r.type===type);var n=name(r.name),d=r.type===5?name(r.data):r.data,id=n+'|'+r.type+'|'+d;need(!seen[id]);seen[id]=true;if(!owners[n])owners[n]={cname:null,addresses:[]};if(r.type===5){need(owners[n].cname===null&&owners[n].addresses.length===0);owners[n].cname=d;}else{need(owners[n].cname===null);var isPublic=type===1?BackofficeNativePublicSourceV1.pure.publicIPv4(d):BackofficeNativePublicSourceV1.pure.publicIPv6(d);allPublic=allPublic&&isPublic;addressCount++;owners[n].addresses.push(d);}});
+  var current=host,walked=Object.create(null),depth=0,terminalAddresses=[];
+  while(true){if(walked[current]){out.cname='LOOP';reject();}need(depth<=4);walked[current]=true;var o=owners[current];if(!o)break;if(o.cname!==null){current=o.cname;depth++;continue;}terminalAddresses=o.addresses;break;}
+  need(Object.keys(owners).every(function(n){return walked[n];}));out.cname=depth?'VALID_CHAIN':'NONE';out.publicAddressCount=allPublic?addressCount:0;out.publicAddresses=addressCount?(allPublic?'PUBLIC_ONLY':'NONPUBLIC_OR_UNKNOWN'):'NONE';
+  if(u.length===0)out.soa='NONE';else if(u.length===1&&u[0].type===6){try{soa(u[0],current);out.soa='VALID_RELATED';}catch(ignored){out.soa='INVALID_OR_UNRELATED';}}
+  else out.soa='OTHER_OR_MIXED';
+  need(p.Status===0&&p.TC===false&&p.RD===true&&p.RA===true&&typeof p.AD==='boolean'&&typeof p.CD==='boolean'&&out.questionMatch&&(!own(p,'edns_client_subnet')||p.edns_client_subnet==='0.0.0.0/0')&&x.length===0&&allPublic);
+  if(terminalAddresses.length&&u.length===0)out.shape='POSITIVE_PUBLIC';
+  else if(!terminalAddresses.length&&out.soa==='VALID_RELATED')out.shape='NODATA_SOA';
+  else if(!terminalAddresses.length&&u.length===0&&depth>0)out.shape='CNAME_CONTINUATION';
+  return out;
+ }
+ function run(s){var hosts=[{label:'STAFF',host:'example.org'},{label:'WORKFLOW',host:'business.example.org'}],results=[],start=s.clock();
+  hosts.forEach(function(h){[1,28].forEach(function(type){var out=base(h.label,type);try{need(s.clock()-start>=0&&s.clock()-start<300000);var url='https://dns.google/resolve?name='+encodeURIComponent(h.host)+'&type='+type+'&edns_client_subnet=0.0.0.0%2F0',response=s.fetch(url,{method:'get',validateHttpsCertificates:true,followRedirects:false,muteHttpExceptions:true,headers:{Accept:'application/dns-json','Accept-Encoding':'identity'}});var status=response.getResponseCode();out.httpStatus=Number.isInteger(status)&&status>=100&&status<=599?status:null;need(status===200);var material=BackofficeNativePublicSourceV1.pure.responseMaterial(response,'dns',{hashBytes:s.hashBytes});out.rawSha256=material.sha256;out.byteLength=material.byteLength;out.transport='OK';summarize(material.text,h.host,type,out);need(s.clock()-start>=0&&s.clock()-start<300000);}catch(ignored){out.shape='UNKNOWN_HOLD';}results.push(out);});});
+  return {schema:'BackofficeFixedNativeDnsShapeProbeRun/v1',fixedQueryCount:4,results:results,observationOnly:true,record_authorized:false,effect_eligible:false,send_eligible:false};
+ }
+ return Object.freeze({run:run,summarize:summarize});
+}());
+function fernainProbeFixedNativeDnsShapeV1(){
+ if(arguments.length) return {schema:'BackofficeFixedNativeDnsShapeProbeRun/v1',shape:'UNEXPECTED_INPUT_HOLD',observationOnly:true,record_authorized:false,effect_eligible:false,send_eligible:false};
+ var result;try{result=BackofficeFixedNativeDnsShapeProbeV1.run({clock:function(){return Date.now();},fetch:function(url,options){return UrlFetchApp.fetch(url,options);},hashBytes:function(bytes){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,bytes).map(function(x){return ('0'+((x+256)%256).toString(16)).slice(-2);}).join('');}});}catch(ignored){result={schema:'BackofficeFixedNativeDnsShapeProbeRun/v1',shape:'PROBE_HOLD',observationOnly:true,record_authorized:false,effect_eligible:false,send_eligible:false};}
+ try{Logger.log('FERNAIN_FIXED_NATIVE_DNS_SHAPE_V1:'+JSON.stringify(result));}catch(ignored){}return result;
+}
+
+function fernainNativeRuntimeDiagnosticV1(){
+ var out={schema:'BackofficeNativeRuntimeDiagnostic/v1',checkedAt:new Date().toISOString(),sendAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,checks:{},adapterDescriptors:{},failedStage:null,failureCategory:null},s=null,got=false,stage='SERVICES';
+ var names=['fernainNativeCutoverCheck','fernainNativePersistedSourceProducer','fernainNativePersistedSourceProof','fernainNativeSemanticReview','fernainNativeApprovedProviderPolicy','fernainNativeRegisteredSourceHandles'];
+ var faults={
+  'HOLD: strict independent native-adapter function identifier required':'ADAPTER_NAME',
+  'HOLD: native adapter must return synchronous evidence':'ADAPTER_RETURN',
+  'HOLD: native Sheets response own native fields missing':'SHEETS_FIELDS',
+  'HOLD: native typed chunk physical sheet mismatch':'SHEETS_IDENTITY',
+  'HOLD: native typed chunk coordinates mismatch':'SHEETS_COORDINATES',
+  'HOLD: native typed chunk rows incomplete/invalid':'SHEETS_ROWS',
+  'HOLD: native typed chunk width invalid':'SHEETS_WIDTH',
+  'HOLD: native RowData invalid':'SHEETS_ROW_TYPE',
+  'HOLD: native CellData invalid':'SHEETS_CELL_TYPE',
+  'HOLD: copy native data contains unsupported values':'COPY_UNSUPPORTED_TYPE',
+  'HOLD: copy native accessor field prohibited':'COPY_ACCESSOR',
+  'HOLD: native Sheets response native data contains unsupported values':'SHEETS_UNSUPPORTED_TYPE',
+  'HOLD: native Sheets response native accessor field prohibited':'SHEETS_ACCESSOR',
+  'HOLD: bounded fresh project lock attempt required':'LOCK_ARGUMENT',
+  'HOLD: read/write requires this project lock':'LOCK_NOT_HELD',
+  "HOLD: Sheets metadata native data exceeds structural budget":"METADATA_STRUCTURE",
+  "HOLD: Sheets metadata native number is non-finite":"METADATA_NUMBER",
+  "HOLD: Sheets metadata native data contains unsupported values":"METADATA_TYPE",
+  "HOLD: Sheets metadata native data contains symbol fields":"METADATA_SYMBOL",
+  "HOLD: Sheets metadata native array is sparse":"METADATA_SPARSE",
+  "HOLD: Sheets metadata native accessor field prohibited":"METADATA_ACCESSOR",
+  "HOLD: Sheets metadata synchronous native result missing":"METADATA_SYNC",
+  "HOLD: Sheets metadata inherited native field prohibited":"METADATA_INHERITED",
+  "HOLD: Sheets metadata native error":"METADATA_ERROR",
+  "HOLD: Sheets typed chunk native data exceeds structural budget":"TYPED_CHUNK_STRUCTURE",
+  "HOLD: Sheets typed chunk native number is non-finite":"TYPED_CHUNK_NUMBER",
+  "HOLD: Sheets typed chunk native data contains unsupported values":"TYPED_CHUNK_TYPE",
+  "HOLD: Sheets typed chunk native data contains symbol fields":"TYPED_CHUNK_SYMBOL",
+  "HOLD: Sheets typed chunk native array is sparse":"TYPED_CHUNK_SPARSE",
+  "HOLD: Sheets typed chunk native accessor field prohibited":"TYPED_CHUNK_ACCESSOR",
+  "HOLD: Sheets typed chunk synchronous native result missing":"TYPED_CHUNK_SYNC",
+  "HOLD: Sheets typed chunk inherited native field prohibited":"TYPED_CHUNK_INHERITED",
+  "HOLD: Sheets typed chunk native error":"TYPED_CHUNK_ERROR",
+  "HOLD: copy native data exceeds structural budget":"COPY_STRUCTURE",
+  "HOLD: copy native number is non-finite":"COPY_NUMBER",
+  "HOLD: copy native data contains symbol fields":"COPY_SYMBOL",
+  "HOLD: copy native array is sparse":"COPY_SPARSE",
+  "HOLD: native thenable accessor prohibited":"NATIVE_THENABLE_ACCESSOR",
+  "HOLD: native prototype depth exceeds budget":"NATIVE_PROTOTYPE_DEPTH",
+  "HOLD: native run budget exhausted or insufficient remaining time":"NATIVE_RUN_BUDGET",
+  "HOLD: UTF-8 text required":"HASH_TEXT_TYPE",
+  "HOLD: well-formed Unicode text required":"HASH_UNICODE",
+  "HOLD: canonical physical sheet/width required":"CANONICAL_SHEET_WIDTH",
+  "HOLD: canonical workbook own native fields missing":"METADATA_WORKBOOK_FIELDS",
+  "HOLD: canonical workbook identity missing":"METADATA_WORKBOOK_IDENTITY",
+  "HOLD: native metadata sheet own native fields missing":"METADATA_SHEET_FIELDS",
+  "HOLD: native metadata properties own native fields missing":"METADATA_PROPERTIES_FIELDS",
+  "HOLD: native row exceeds physical bounds":"CANONICAL_ROW_BOUNDS",
+  "HOLD: bounded 500-row native chunk required":"TYPED_CHUNK_REQUEST",
+  "HOLD: native typed chunk own native fields missing":"TYPED_CHUNK_FIELDS",
+  "HOLD: native typed chunk workbook/coverage mismatch":"TYPED_CHUNK_WORKBOOK_COVERAGE",
+  "HOLD: native typed sheet own native fields missing":"TYPED_SHEET_FIELDS",
+  "HOLD: native typed sheet properties own native fields missing":"TYPED_SHEET_PROPERTIES",
+  "HOLD: native typed cell union required":"TYPED_CELL_RECORD",
+  "HOLD: native typed cell union has multiple fields":"TYPED_CELL_MULTIPLE",
+  "HOLD: unsupported native typed cell union":"TYPED_CELL_UNSUPPORTED",
+  "HOLD: native formatted cell must be a string":"FORMATTED_CELL_TYPE",
+  "HOLD: Prospects physical sheet identity ambiguous":"PROSPECTS_IDENTITY",
+  "HOLD: Prospects sheet own native fields missing":"PROSPECTS_SHEET_FIELDS",
+  "HOLD: Prospects properties own native fields missing":"PROSPECTS_PROPERTIES_FIELDS",
+  "HOLD: Prospects grid own native fields missing":"PROSPECTS_GRID_FIELDS",
+  "HOLD: Prospects physical bounds/gid mismatch":"PROSPECTS_GRID_IDENTITY_BOUNDS",
+  "HOLD: Evidence physical sheet identity ambiguous":"EVIDENCE_IDENTITY",
+  "HOLD: Evidence sheet own native fields missing":"EVIDENCE_SHEET_FIELDS",
+  "HOLD: Evidence properties own native fields missing":"EVIDENCE_PROPERTIES_FIELDS",
+  "HOLD: Evidence grid own native fields missing":"EVIDENCE_GRID_FIELDS",
+  "HOLD: Evidence physical bounds/gid mismatch":"EVIDENCE_GRID_IDENTITY_BOUNDS",
+  "HOLD: native grid inherited native field prohibited":"TYPED_GRID_INHERITED",
+  "HOLD: native RowData inherited native field prohibited":"TYPED_ROW_INHERITED",
+  "HOLD: native cell inherited native field prohibited":"TYPED_CELL_INHERITED"
+ };
+ try{
+  s=fernainNativeServices();out.checks.servicesCreated=true;
+  stage='CONFIG';var text=s.props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1'),c=JSON.parse(text||'null');fernHold(c&&c.schema==='BackofficeNativeConfig/v1'&&c.projectId===s.projectId,'diagnostic exact configuration missing');out.checks.configurationPresent=true;out.checks.projectMatches=true;
+  stage='HASH';out.checks.hashShape=/^[a-f0-9]{64}$/.test(s.sha('FERNAIN_NATIVE_DIAGNOSTIC_FIXED_INPUT'));
+  stage='DESCRIPTORS';names.forEach(function(n){var d=Object.getOwnPropertyDescriptor(globalThis,n);out.adapterDescriptors[n]=!d?'ABSENT':Object.prototype.hasOwnProperty.call(d,'value')?(typeof d.value==='function'?'OWN_FUNCTION':'OWN_OTHER'):'ACCESSOR';});
+  stage='LOCK';got=s.lock.tryLock(0);if(!got){out.failedStage='LOCK';out.failureCategory='LOCK_BUSY';return out;}out.checks.lockHeld=s.lock.hasLock()===true;
+  stage='CUTOVER';BackofficeNativeRuntimeV1.withNativeContext({services:s,config:c,deadlineUtc:new Date(Date.now()+110000).toISOString()},function(){var r=s.invoke('fernainNativeCutoverCheck',{projectId:c.projectId,writerId:c.writerId,cutoverRef:c.soleWriter.cutoverRef});out.checks.cutover=r&&r.complete===true&&r.exclusive===true;});
+  stage='HEADERS';var headers=s.readRow('Prospects',5,27);out.checks.exactTypedHeaders=JSON.stringify(headers)===JSON.stringify(c.prospectsHeaders);
+  stage='BASELINE';var p=c.historicalClaimBaseline,baseline=s.readRow('Evidence',p.evidenceRow,26);out.checks.exactTypedBaseline=s.sha(JSON.stringify(baseline))===p.typedRowSha256;
+  stage='FULL_SNAPSHOT';Logger.log('FERNAIN_SNAPSHOT_PHASE:DIAGNOSTIC_BEGIN');var full=s.fullSnapshotDiagnostic(c);out.checks.exactFullSnapshot=full&&full.spreadsheetId===c.spreadsheetId&&full.Prospects.sheetId===901&&full.Evidence.sheetId===903&&full.Prospects.width===27&&full.Evidence.width===26&&full.Prospects.rows.length===full.Prospects.rowCount&&full.Evidence.rows.length===full.Evidence.rowCount&&JSON.stringify(full.Prospects.rows[4])===JSON.stringify(c.prospectsHeaders)&&JSON.stringify(full.Evidence.rows[4])===JSON.stringify(c.evidenceHeaders);Logger.log('FERNAIN_SNAPSHOT_PHASE:DIAGNOSTIC_RETURN');
+  stage='COMPLETE';out.checks.complete=out.checks.hashShape&&out.checks.lockHeld&&out.checks.cutover&&out.checks.exactTypedHeaders&&out.checks.exactTypedBaseline&&out.checks.exactFullSnapshot===true;
+ }catch(e){out.failedStage=stage;var d=e&&typeof e==='object'&&Object.getOwnPropertyDescriptor(e,'message'),m=d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='string'?d.value:null,cd=e&&typeof e==='object'&&Object.getOwnPropertyDescriptor(e,'code');out.failureCategory=m&&Object.prototype.hasOwnProperty.call(faults,m)?faults[m]:m&&names.some(function(n){return m==='HOLD: registered project native adapter unavailable: '+n;})?'ADAPTER_RESOLUTION':cd&&Object.prototype.hasOwnProperty.call(cd,'value')&&cd.value==='CURRENT_SALES_VALIDATION_HOLD'?'OTHER_VALIDATION_HOLD':'NATIVE_OR_PROVIDER_EXCEPTION';
+  var td=e&&typeof e==='object'&&Object.getOwnPropertyDescriptor(e,'nativeTypedDtoDiagnostic');
+  if(td){var tv=Object.prototype.hasOwnProperty.call(td,'value')?td.value:null,tk=['node','field','type'],ta={
+   node:['WORKBOOK','PROPERTIES','GRID','ROW','CELL','UNION','ARRAY','UNKNOWN'],
+   field:['spreadsheetId','sheets','properties','sheetId','title','data','startRow','startColumn','rowData','values','userEnteredValue','formattedValue','stringValue','numberValue','boolValue','formulaValue','errorValue','OTHER','UNKNOWN'],
+   type:['UNDEFINED','FUNCTION','SYMBOL','OBJECT','ARRAY','STRING','NUMBER','BOOLEAN','NULL','UNKNOWN']};
+   var ts=tv&&typeof tv==='object'&&!Array.isArray(tv)&&Object.getOwnPropertySymbols(tv).length===0&&Object.getOwnPropertyNames(tv).length===3&&tk.every(function(k){var q=Object.getOwnPropertyDescriptor(tv,k);return q&&Object.prototype.hasOwnProperty.call(q,'value');});
+   out.nativeTypedDtoDiagnostic={};tk.forEach(function(k){var q=ts&&Object.getOwnPropertyDescriptor(tv,k),v=q&&q.value;out.nativeTypedDtoDiagnostic[k]=typeof v==='string'&&ta[k].indexOf(v)>=0?v:'UNKNOWN';});
+  }
+ }
+ finally{fernainNativeQuotaProbeFinalizeV1_(out,s,got);Logger.log(JSON.stringify(out));}
+ return out;
+}
+/* Fixed source-canonical boundary probe. Read-only; no source fetch, mail,
+ * canonical mutations, property writes, token output, new token paths, or permission changes. */
+function fernainNativeSourceCanonicalDiagnosticV1(){
+ var out={schema:'BackofficeSourceCanonicalDiagnostic/v1',checkedAtUtc:new Date().toISOString(),checks:{},failedStage:null,failureCategory:null,sendAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sourceFetchAttempted:false},s=null,got=false,stage='SERVICES';
+ function ownValue(o,k){var d=o&&typeof o==='object'&&Object.getOwnPropertyDescriptor(o,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')?d.value:undefined;}
+ function category(e){return fernainNativeFiniteErrorCategoryV1(e);}
+ function typedDiagnostic(e){
+  var t=ownValue(e,'nativeTypedDtoDiagnostic'),allowed={node:['WORKBOOK','PROPERTIES','GRID','ROW','CELL','UNION','ARRAY','UNKNOWN'],field:['spreadsheetId','sheets','properties','sheetId','title','data','startRow','startColumn','rowData','values','userEnteredValue','formattedValue','stringValue','numberValue','boolValue','formulaValue','errorValue','OTHER','UNKNOWN'],type:['UNDEFINED','FUNCTION','SYMBOL','OBJECT','ARRAY','STRING','NUMBER','BOOLEAN','NULL','UNKNOWN']};
+  if(!t)return null;var result={};Object.keys(allowed).forEach(function(k){var v=ownValue(t,k);result[k]=typeof v==='string'&&allowed[k].indexOf(v)>=0?v:'UNKNOWN';});return result;
+ }
+ try{
+  s=fernainNativeServices();s.startBudget(110000);out.checks.servicesCreated=true;
+  stage='CONFIG';var c=JSON.parse(s.props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1')||'null');fernHold(c&&c.schema==='BackofficeNativeConfig/v1'&&c.projectId===s.projectId,'diagnostic exact configuration missing');out.checks.exactConfiguration=true;
+  stage='LOCK';got=s.lock.tryLock(0);fernHold(got&&s.lock.hasLock()===true,'diagnostic lock unavailable');out.checks.lockHeld=true;
+  stage='FULL_SNAPSHOT';var full=s.fullSnapshotDiagnostic(c);fernHold(full&&full.spreadsheetId===c.spreadsheetId&&full.Prospects.width===27&&full.Evidence.width===26&&full.Prospects.rows.length===full.Prospects.rowCount&&full.Evidence.rows.length===full.Evidence.rowCount,'diagnostic full snapshot unavailable');out.checks.fullSnapshot=true;
+  stage='ROW_CAPTURE';var row=s.readRowCapture('Prospects',10,27);fernHold(row&&row.typedRow&&row.typedRow.length===27&&row.typedRow[14]&&row.typedRow[14].stringValue==='EXAMPLE-LEAD-001'&&JSON.stringify(row.typedRow)===JSON.stringify(full.Prospects.rows[9]),'diagnostic current target changed');out.checks.rowCapture=true;
+  stage='CANONICAL_DIGEST';var canonical={capturedAtUtc:row.checkedAt,result:row.result},canonicalText=JSON.stringify(canonical);out.canonicalCharacters=canonicalText.length;out.checks.canonicalDigest=/^[a-f0-9]{64}$/.test(s.sha(canonicalText));fernHold(out.checks.canonicalDigest,'diagnostic canonical digest unavailable');canonicalText=null;
+  stage='LEDGER_DIGEST';out.fullSnapshotCharacters=JSON.stringify(full).length;var ledger=fernainNativeSourcePolicyLedgerSnapshot(full,s);out.checks.ledgerDigest=ledger&&/^[a-f0-9]{64}$/.test(ledger.fullNativeSnapshotSha256)&&/^[a-f0-9]{64}$/.test(ledger.Prospects.typedRowsSha256)&&/^[a-f0-9]{64}$/.test(ledger.Prospects.displayRowsSha256)&&/^[a-f0-9]{64}$/.test(ledger.Evidence.typedRowsSha256)&&/^[a-f0-9]{64}$/.test(ledger.Evidence.displayRowsSha256);fernHold(out.checks.ledgerDigest,'diagnostic ledger digest unavailable');
+  stage='COMPLETE';out.checks.complete=true;
+ }catch(e){out.failedStage=stage;out.failureCategory=category(e);var t=typedDiagnostic(e);if(t)out.nativeTypedDtoDiagnostic=t;}
+ finally{fernainNativeQuotaProbeFinalizeV1_(out,s,got);Logger.log('FERNAIN_SOURCE_CANONICAL_DIAGNOSTIC_V1:'+JSON.stringify(out));}
+ return out;
+}
+
+/* Fixed read-only SDK boundary probe. No source fetch, mail effect, canonical
+ * write, property mutation or grants. Logs types/counts only, never values. */
+/* One fresh current-ledger timing proof. No source/usage or effect admission. */
+function fernainNativeImmutablePreflightDiagnosticV1(){
+ 'use strict';var started=Date.now(),s=null,got=false,scope=null,next=null,stage='SERVICES',out={schema:'BackofficeNativeImmutablePreflightDiagnostic/v1',complete:false,sendAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sourceFetchAttempted:false,effectEligible:false,heapUsage:'UNKNOWN_NOT_EXPOSED',checks:{},timingMs:{},hashCalls:{}};
+ try{
+  s=fernainNativeServices();s.startBudget(110000);fernHold(s.projectId==='{{CONFIGURE_GOOGLE_ID_036}}','immutable diagnostic exact project required');
+  stage='CONFIG';var c=JSON.parse(s.props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1')||'null');fernHold(c&&c.schema==='BackofficeNativeConfig/v1'&&c.projectId===s.projectId&&c.spreadsheetId==='{{CONFIGURE_GOOGLE_ID_030}}','immutable diagnostic exact configuration required');
+  stage='LOCK';got=s.lock.tryLock(0);fernHold(got&&s.lock.hasLock()===true,'immutable diagnostic held lock required');
+  stage='FRESH_SNAPSHOT';var at=Date.now(),full=s.fullSnapshotDiagnostic(c);out.timingMs.freshSnapshot=Date.now()-at;out.physicalCoverage={Prospects:{sheetId:full.Prospects.sheetId,width:full.Prospects.width,rowCount:full.Prospects.rowCount},Evidence:{sheetId:full.Evidence.sheetId,width:full.Evidence.width,rowCount:full.Evidence.rowCount}};
+  stage='LEGACY_DIGEST';at=Date.now();var legacy=fernainNativeSourcePolicyLedgerSnapshot(full,s);out.timingMs.legacyFiveDigests=Date.now()-at;
+  var count=0,tracked={projectId:s.projectId,lock:s.lock,now:s.now,checkBudget:s.checkBudget,sha:function(text){count++;return s.sha(text);}};
+  stage='IMMUTABLE_VIEW';at=Date.now();scope=BackofficeNativeImmutablePreflightV1.create(full,tracked);out.timingMs.immutableView=Date.now()-at;
+  stage='SCOPED_DIGEST';at=Date.now();var context={services:tracked,config:c,preflightSnapshotHash:scope.hash},current;
+  BackofficeNativeRuntimeV1.withNativeContext(context,function(){current=fernainNativeSourcePolicyLedgerSnapshot(scope.canonical,tracked);});out.timingMs.scopedFiveDigests=Date.now()-at;out.hashCalls.firstScope=count;out.checks.exactLegacyDigestParity=JSON.stringify(current)===JSON.stringify(legacy);fernHold(out.checks.exactLegacyDigestParity,'immutable diagnostic exact full ledger digest mismatch');
+  stage='CACHE_HIT';at=Date.now();var prior=count;BackofficeNativeRuntimeV1.withNativeContext(context,function(){fernHold(fernainNativeSourcePolicyLedgerMatches(legacy,scope.canonical,tracked),'immutable diagnostic cached ledger mismatch');});out.timingMs.cachedFiveDigests=Date.now()-at;out.hashCalls.cachedFiveDigests=count-prior;out.checks.exactFiveDigestCache=out.hashCalls.firstScope===5&&out.hashCalls.cachedFiveDigests===0;
+  stage='IMMUTABILITY';out.checks.frozenFullTypedDisplay=Object.isFrozen(scope.canonical)&&Object.isFrozen(scope.canonical.Prospects.rows)&&Object.isFrozen(scope.canonical.Evidence.rows)&&Object.isFrozen(scope.canonical.Prospects.displayRows)&&Object.isFrozen(scope.canonical.Evidence.displayRows);var rejected=false;try{Object.defineProperty(scope.canonical.Evidence.rows[5][25],'diagnosticOnly',{value:true});}catch(ignore){rejected=true;}out.checks.nestedMutationRejected=rejected;fernHold(rejected&&out.checks.frozenFullTypedDisplay,'immutable diagnostic nested mutation not rejected');
+  stage='CALL_RESET';scope.close();var closedRejected=false;try{scope.hash(scope.canonical);}catch(ignore){closedRejected=true;}out.checks.closedScopeRejected=closedRejected;prior=count;at=Date.now();next=BackofficeNativeImmutablePreflightV1.create(full,tracked);var resetHash=next.hash(next.canonical);out.timingMs.resetAndFreshDigest=Date.now()-at;out.hashCalls.resetSnapshot=count-prior;out.checks.newScopeRecomputesFullSnapshot=out.hashCalls.resetSnapshot===1&&resetHash===legacy.fullNativeSnapshotSha256;
+  fernHold(out.checks.exactFiveDigestCache&&out.checks.closedScopeRejected&&out.checks.newScopeRecomputesFullSnapshot,'immutable diagnostic call-local reset unavailable');s.checkBudget();out.complete=true;
+ }catch(e){out.failedStage=stage;out.failureCategory=fernainNativeFiniteErrorCategoryV1(e);}
+ finally{if(scope)scope.close();if(next)next.close();fernainNativeQuotaProbeFinalizeV1_(out,s,got);}
+ out.elapsedMs=Date.now()-started;Logger.log('FERNAIN_IMMUTABLE_PREFLIGHT_DIAGNOSTIC_V1:'+JSON.stringify(out));return out;
+}
+
+function fernainNativeGmailSdkShapeDiagnosticV1(){
+ 'use strict';
+ var started=Date.now(),accountVerified=false,out={schema:'BackofficeNativeGmailSdkShapeDiagnostic/v1',checkedAtUtc:new Date().toISOString(),reads:[],sendAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sourceFetchAttempted:false};
+ function need(ok){if(!ok)throw new Error('SDK_SHAPE_FINITE_BOUND');}
+ function own(o,k){return Object.prototype.hasOwnProperty.call(o,k);}
+ function type(v){return v===null?'null':Array.isArray(v)?'array':typeof v;}
+ function shape(v,expected){
+  var kinds={null:0,string:0,boolean:0,number:0,undefined:0,function:0,bigint:0,symbol:0,object:0,array:0},count=0,accessors=0,symbols=0,nonfinite=0,sparse=0,maxDepth=0;
+  function inspect(x,d){
+   need(Date.now()-started<110000&&++count<=5000&&d<=24);maxDepth=Math.max(maxDepth,d);var t=type(x);need(own(kinds,t));kinds[t]++;
+   if(t==='number'){if(!Number.isFinite(x))nonfinite++;return;}
+   if(t!=='object'&&t!=='array')return;
+   var keys=Object.getOwnPropertyNames(x);need(keys.length<=1000);symbols+=Object.getOwnPropertySymbols(x).length;
+   if(t==='array'){need(Number.isSafeInteger(x.length)&&x.length<=1000);for(var i=0;i<x.length;i++)if(!own(x,i))sparse++;}
+   keys.forEach(function(k){if(t==='array'&&k==='length')return;var desc=Object.getOwnPropertyDescriptor(x,k);need(desc);if(!own(desc,'value'))accessors++;else inspect(desc.value,d+1);});
+  }
+  inspect(v,0);var fields={};Object.keys(expected).forEach(function(k){
+   var desc=v&&typeof v==='object'?Object.getOwnPropertyDescriptor(v,k):null;
+   var state=desc?(own(desc,'value')?'OWN_DATA':'OWN_ACCESSOR'):v&&typeof v==='object'&&k in v?'INHERITED':'MISSING';
+   var t=desc&&own(desc,'value')?type(desc.value):'UNOBSERVED';
+   fields[k]={state:state,type:t,typeMatches:t===expected[k]};
+  });
+  var email=v&&typeof v==='object'?Object.getOwnPropertyDescriptor(v,'emailAddress'):null;
+  return {rootType:type(v),nodeCount:count,maxDepth:maxDepth,typeCounts:kinds,accessorCount:accessors,symbolCount:symbols,nonfiniteNumberCount:nonfinite,sparseArraySlotCount:sparse,knownFields:fields,exactAccount:email&&own(email,'value')&&typeof email.value==='string'?email.value==='operator@example.com':null};
+ }
+ var calls=[
+  {operation:'PROFILE',expected:{emailAddress:'string',messagesTotal:'number',threadsTotal:'number',historyId:'string'},read:function(){return Gmail.Users.getProfile('me');}},
+  {operation:'SEND_AS',expected:{sendAs:'array'},read:function(){return Gmail.Users.Settings.SendAs.list('me');}},
+  {operation:'VACATION',expected:{enableAutoReply:'boolean'},read:function(){return Gmail.Users.Settings.getVacation('me');}},
+  {operation:'LABELS',expected:{labels:'array'},read:function(){return Gmail.Users.Labels.list('me');}},
+  {operation:'MESSAGE_LIST',expected:{messages:'array',resultSizeEstimate:'number'},read:function(){return Gmail.Users.Messages.list('me',{q:'in:sent',maxResults:1});}}
+ ];
+ need(ScriptApp.getScriptId()==='{{CONFIGURE_GOOGLE_ID_036}}');
+ calls.forEach(function(c){need(Date.now()-started<110000);var result={operation:c.operation,status:'UNOBSERVED',shape:null,finiteCategory:null};try{if(c.operation!=='PROFILE'&&!accountVerified){result.status='HOLD';result.finiteCategory='EXACT_ACCOUNT_NOT_VERIFIED';out.reads.push(result);return;}result.shape=shape(c.read(),c.expected);if(c.operation==='PROFILE')accountVerified=result.shape.exactAccount===true;result.status='OBSERVED';}catch(e){result.status='HOLD';var d=e&&typeof e==='object'?Object.getOwnPropertyDescriptor(e,'message'):null;result.finiteCategory=d&&own(d,'value')&&d.value==='SDK_SHAPE_FINITE_BOUND'?'FINITE_SHAPE_BOUND':fernainNativeFiniteErrorCategoryV1(e);}out.reads.push(result);});
+ out.complete=out.reads.every(function(r){return r.status==='OBSERVED';});out.elapsedMs=Date.now()-started;Logger.log('FERNAIN_GMAIL_SDK_SHAPE_V1:'+JSON.stringify(out));return out;
+}
+
+/* Fixed non-sending compatibility proof. Reads the exact account, accepted
+ * Hunter receipt and existing monitored provider policy. This is not Send
+ * admission; no source, claim, journal, property or business record is written. */
+function fernainNativeGmailPolicyDiagnosticV1(){
+ 'use strict';
+ var started=Date.now(),s=null,got=false,stage='SERVICES',haltRequired=null;
+ var out={schema:'BackofficeNativeGmailPolicyDiagnostic/v1',checkedAtUtc:new Date().toISOString(),checks:{},failedStage:null,failureCategory:null,haltRequired:null,sendAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sourceFetchAttempted:false};
+ function need(ok){fernHold(ok,'Gmail policy diagnostic exact boundary unavailable');}
+ function digest(value){return s.sha(JSON.stringify(value));}
+ try{
+  s=fernainNativeServices();s.startBudget(110000);need(s.projectId==='{{CONFIGURE_GOOGLE_ID_036}}');out.checks.servicesCreated=true;
+  stage='CONFIG';var c=JSON.parse(s.props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1')||'null');need(c&&c.schema==='BackofficeNativeConfig/v1'&&c.projectId===s.projectId&&c.spreadsheetId==='{{CONFIGURE_GOOGLE_ID_030}}');out.checks.exactConfiguration=true;
+  stage='LOCK';got=s.lock.tryLock(0);need(got&&s.lock.hasLock()===true);out.checks.lockHeld=true;
+  stage='EXISTING_HALT';need(!s.props.getProperty('FERNAIN_NATIVE_HALT_V1'));out.checks.noExistingHalt=true;
+  stage='ACCOUNT_PROFILE';var p=s.accountProfile();need(p&&p.complete===true&&p.accountAddress==='operator@example.com'&&p.nativeRawRepresentation==='GMAIL_PROFILE_SDK_SEMANTIC_DTO_V1');out.checks.exactAccountProfile=true;out.accountProfileSemanticSha256=digest(p.nativeRaw);
+  stage='MESSAGE_LIST';var list=s.searchAll('in:sent after:'+Math.floor((Date.now()-60000)/1000),400);need(list&&list.complete===true&&Array.isArray(list.ids));out.checks.completeBoundedMessageList=true;out.messageListCount=list.ids.length;out.messageListSemanticSha256=digest(list);
+  stage='MINIMAL_RECEIPT';var minimal=s.minimal('1a120a4026ec26e2'),m=minimal&&minimal.structuredContent;need(minimal.isError===false&&m&&m.id==='1a120a4026ec26e2'&&m.thread_id==='1a120a4026ec26e2'&&Array.isArray(m.label_ids)&&m.label_ids.indexOf('SENT')>=0);out.checks.acceptedReceiptMinimal=true;out.minimalReceiptDecodedDtoSha256=digest(m);
+  stage='FULL_RECEIPT';var full=s.full('1a120a4026ec26e2'),f=full&&full.structuredContent;need(full.isError===false&&f&&f.id===m.id&&f.thread_id===m.thread_id&&Array.isArray(f.label_ids)&&f.label_ids.indexOf('SENT')>=0&&f.payload&&Array.isArray(f.payload.headers));var pd=Object.getOwnPropertyDescriptor(f,'payload');need(pd&&Object.prototype.hasOwnProperty.call(pd,'value')&&pd.value&&typeof pd.value==='object'&&!Array.isArray(pd.value));
+  var md=Object.getOwnPropertyDescriptor(pd.value,'mime_type'),bd=Object.getOwnPropertyDescriptor(pd.value,'body');need(md&&Object.prototype.hasOwnProperty.call(md,'value')&&md.value==='text/plain'&&bd&&Object.prototype.hasOwnProperty.call(bd,'value')&&bd.value&&typeof bd.value==='object'&&!Array.isArray(bd.value));
+  var cd=Object.getOwnPropertyDescriptor(bd.value,'content');need(cd&&Object.prototype.hasOwnProperty.call(cd,'value')&&typeof cd.value==='string'&&typeof s.byteLength==='function');s.checkBudget();out.fullReceiptBodyUtf8Sha256=s.sha(cd.value);out.decodedBodyBytes=s.byteLength(cd.value);s.checkBudget();
+  out.checks.acceptedReceiptFull=true;out.fullReceiptDecodedDtoSha256=digest(f);
+  stage='THREAD_RECEIPT';var thread=s.threadFull('1a120a4026ec26e2'),t=thread&&thread.structuredContent;need(thread.isError===false&&t&&t.id===m.thread_id&&t.complete===true&&Array.isArray(t.messages)&&t.messages.some(function(v){return v.id===m.id;})&&thread.nativeRawRepresentation==='GMAIL_THREAD_SDK_SEMANTIC_DTO_V1');out.checks.acceptedReceiptThread=true;out.threadMessageCount=t.messages.length;out.threadSemanticSha256=digest(thread.nativeRaw);
+  stage='PROVIDER_POLICY';var policyNative=s,policyStarted=Date.now(),remaining=110000-(policyStarted-started);need(policyNative.projectId===s.projectId&&policyNative.lock.hasLock()===true&&remaining>=3000);
+  function policyBudget(reserve){need(Date.now()-policyStarted<45000-(reserve||0));s.checkBudget(reserve);return policyNative.checkBudget(reserve);}
+  var policy=BackofficeNativeProviderPolicyV1.read({accountAddress:'operator@example.com'}, {
+   now:policyNative.now,sha:policyNative.sha,projectId:policyNative.projectId,config:function(){return c;},checkBudget:policyBudget,nativeSettings:policyNative.nativeSettings,
+   baselineRaw:function(pointer){need(pointer&&Number.isInteger(pointer.baselineEvidenceRow)&&pointer.baselineEvidenceRow>=6);var row=policyNative.readRow('Evidence',pointer.baselineEvidenceRow,26);need(policyNative.sha(JSON.stringify(row))===pointer.baselineEvidenceRowSha256&&row[3]&&typeof row[3].stringValue==='string');return row[3].stringValue;},
+   reportsListRepresentation:'GOOGLE_ADMIN_REPORTS_HTTP_JSON_V1',reportsList:function(options){policyBudget(1000);return fernainNativeAdminAuditHttpJsonV1(options,policyNative);},
+   onHalt:function(reason){var allowed=['ADMIN_POLICY_OR_OU_CHANGE_REQUIRES_REVIEW','UNKNOWN_ADMIN_POLICY_SCOPE_REQUIRES_REVIEW','UNKNOWN_ADMIN_EVENT_REQUIRES_REVIEW','ADMIN_AUDIT_COVERAGE_UNKNOWN'];if(!haltRequired)haltRequired=allowed.indexOf(reason)>=0?reason:'UNKNOWN_HALT_REASON';}
+  });
+  policyBudget();need(policy&&policy.complete===true&&policy.accountAddress==='operator@example.com'&&policy.audit&&policy.audit.complete===true&&policy.audit.clear===true&&policy.audit.instantPolicyAttestation===false&&!haltRequired);out.checks.monitoredProviderPolicy=true;out.providerPolicyBasisSha256=policy.nativePolicyBasisSha256;out.auditPageCount=policy.audit.pages;out.auditEventCount=policy.audit.eventCount;out.auditLagProfile=policy.audit.lagProfile;
+  stage='COMPLETE';s.checkBudget();out.checks.complete=true;
+ }catch(e){out.failedStage=stage;out.failureCategory=fernainNativeFiniteErrorCategoryV1(e);
+  var rd=e&&typeof e==='object'&&Object.getOwnPropertyDescriptor(e,'nativeGmailReceiptDtoDiagnostic');
+  if(rd&&Object.prototype.hasOwnProperty.call(rd,'value')){
+   var rv=rd.value,keys=['shape','field','expectedType','observedType'],allowed={
+    shape:['message','thread','part','body','header','classification','classificationField','UNKNOWN'],
+    field:['id','threadId','labelIds','snippet','historyId','internalDate','payload','sizeEstimate','raw','classificationLabelValues','messages','partId','mimeType','filename','headers','body','parts','attachmentId','size','data','name','value','labelId','fields','fieldId','selection','OTHER'],
+    expectedType:['STRING','SIZE','DATE','OBJECT','ARRAY','UNKNOWN'],
+    observedType:['UNDEFINED','FUNCTION','SYMBOL','BIGINT','OBJECT','ARRAY','STRING','NUMBER','BOOLEAN','NULL','UNKNOWN']};
+   var valid=rv&&typeof rv==='object'&&!Array.isArray(rv)&&Object.getOwnPropertySymbols(rv).length===0&&Object.getOwnPropertyNames(rv).length===4&&keys.every(function(k){var d=Object.getOwnPropertyDescriptor(rv,k);return d&&Object.prototype.hasOwnProperty.call(d,'value')&&typeof d.value==='string'&&allowed[k].indexOf(d.value)>=0;});
+   if(valid){out.nativeGmailReceiptDtoDiagnostic={};keys.forEach(function(k){out.nativeGmailReceiptDtoDiagnostic[k]=Object.getOwnPropertyDescriptor(rv,k).value;});}
+  }
+ }
+ finally{out.haltRequired=haltRequired;fernainNativeQuotaProbeFinalizeV1_(out,s,got);out.elapsedMs=Date.now()-started;Logger.log('FERNAIN_GMAIL_POLICY_DIAGNOSTIC_V1:'+JSON.stringify(out));}
+ return out;
+}
+
+function fernainNativeHalt(reason){return fernainNativeRuntime().halt(reason);}
+function fernainNativeInput(e,name){var inputs=e&&e.workflow&&e.workflow.actionInvocation&&e.workflow.actionInvocation.inputs,v=inputs&&inputs[name];fernHold(v&&Array.isArray(v.stringValues)&&v.stringValues.length===1&&typeof v.stringValues[0]==='string','exact native action input missing');return v.stringValues[0];}
+function fernainNativeRender(out){var fields={};Object.keys(out).forEach(function(k){var d=AddOnsResponseService.newVariableData(),v=out[k];if(typeof v==='boolean')d.addBooleanValue(v);else if(Array.isArray(v)&&k==='candidate_ids')v.forEach(function(x){d.addStringValue(x);});else d.addStringValue(typeof v==='string'?v:JSON.stringify(v));fields[k]=d;});return AddOnsResponseService.newRenderActionBuilder().setHostAppAction(AddOnsResponseService.newHostAppAction().setWorkflowAction(AddOnsResponseService.newReturnOutputVariablesAction().setVariableDataMap(fields))).build();}
+function fernainNativeCaptureSourceOnExecute(e){var enteredAtMs=Date.now();return BackofficeNativeStudioActionsV1.execute('CAPTURE_SOURCE',e,enteredAtMs);}
+function fernainNativeCandidatesOnExecute(e){return BackofficeNativeStudioActionsV1.execute('CANDIDATES',e);}
+function fernainNativePrepareOnExecute(e){return BackofficeNativeStudioActionsV1.execute('PREPARE',e);}
+function fernainNativeConsumeOnExecute(e){return BackofficeNativeStudioActionsV1.execute('CONSUME',e);}
+function fernainNativeReconcileOnExecute(e){return BackofficeNativeStudioActionsV1.execute('RECONCILE',e);}
+function fernainNativeStatusOnExecute(e){return BackofficeNativeStudioActionsV1.execute('STATUS',e);}
+function fernainNativeHaltOnExecute(e){return BackofficeNativeStudioActionsV1.execute('HALT',e);}
+
+/* END exact module native-unattended-runtime/NativeUnattendedRuntime.gs */
+
+/* BEGIN exact module native-unattended-runtime/NativeStudioActions.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Add-only Studio action interface. No configuration-time service/effect calls.
+ * All outputs are SINGLE and typed as documented; handle arrays use bounded JSON.
+ */
+var BackofficeNativeStudioActionsV1=(function(){
+ 'use strict';
+ var COMMON={status:'STRING',reasonCode:'STRING',scope:'STRING',stage:'STRING',no_send:'BOOLEAN',effect_eligible:'BOOLEAN',noResend:'BOOLEAN',send_attempt_status:'STRING',traceRecorded:'BOOLEAN',traceId:'STRING',traceRef:'STRING'};
+ var ACTIONS={
+  CANDIDATES:{id:'fernainNativeCandidatesV1',name:'List native Send candidates',config:'fernainNativeCandidatesOnConfig',execute:'fernainNativeCandidatesOnExecute',inputs:[],outputs:{candidate_ids:'STRING',candidate_count:'INTEGER',candidate_id:'STRING'}},
+  PREPARE:{id:'fernainNativePrepareV1',name:'Prepare native Send source',config:'fernainNativePrepareOnConfig',execute:'fernainNativePrepareOnExecute',inputs:['candidate_id'],outputs:{capture_id:'STRING',source_context_json:'STRING'}},
+  CONSUME:{id:'fernainNativeConsumeV1',name:'Consume Gemini initial Send',config:'fernainNativeConsumeOnConfig',execute:'fernainNativeConsumeOnExecute',inputs:['capture_id','model_json'],outputs:{leadId:'STRING',id:'STRING',thread:'STRING',evidenceRow:'INTEGER',claimClosed:'BOOLEAN'}},
+  RECONCILE:{id:'fernainNativeReconcileV1',name:'Reconcile pending Send receipts',config:'fernainNativeReconcileOnConfig',execute:'fernainNativeReconcileOnExecute',inputs:[],outputs:{results_json:'STRING',result_count:'INTEGER',results_truncated:'BOOLEAN'}},
+  STATUS:{id:'fernainNativeStatusV1',name:'Read native Send status',config:'fernainNativeStatusOnConfig',execute:'fernainNativeStatusOnExecute',inputs:[],outputs:{halted:'BOOLEAN',markers_json:'STRING',marker_count:'INTEGER',markers_truncated:'BOOLEAN',installedConfiguration:'BOOLEAN',liveVerified:'BOOLEAN'}},
+  HALT:{id:'fernainNativeHaltV1',name:'Halt native Send',config:'fernainNativeHaltOnConfig',execute:'fernainNativeHaltOnExecute',inputs:['reason'],outputs:{}}
+ };
+ ACTIONS.CAPTURE_SOURCE={id:'fernainNativeCaptureSourceV1',name:'Capture native public source',config:'fernainNativeCaptureSourceOnConfig',execute:'fernainNativeCaptureSourceOnExecute',inputs:['candidate_id'],outputs:{candidate_id:'STRING',modelAuthority:'BOOLEAN',send_eligible:'BOOLEAN'}};
+ var STATUSES=['CANDIDATE_HANDLES','EMPTY_POOL','PUBLIC_SOURCE_RETAINED','SOURCE_READY','HOLD','CONFIRMED_NO_RESEND','PENDING_NO_RESEND','PENDING_NO_RESEND_TRACE_HOLD','HALTED','RECONCILED','NATIVE_STATUS'];
+ var REASONS=['NATIVE_REENTRANT_LOCK','NATIVE_PROJECT_LOCK_BUSY','NATIVE_VALIDATION_HOLD','NATIVE_RUNTIME_EXCEPTION','NATIVE_TRACE_PERSISTENCE_HOLD','NATIVE_RESULT_RECORDED','NATIVE_ATTEMPT_HOLD','NATIVE_RECOVERY_HOLD','NATIVE_STUDIO_INPUT_HOLD','NATIVE_STUDIO_INTERFACE_HOLD','NATIVE_ARCHIVE_PRESERVATION_HOLD','NATIVE_SHEETS_GET_FINALIZATION_HOLD'];
+ var STAGES=['LOCK','INPUT','PREFLIGHT','PERMANENT_NO_RESEND','RECOVERY','ARCHIVE_PRESERVATION_FENCE','SHEETS_GET_FINALIZATION'].concat(STATUSES);
+ var MARKER_STATES=['RESERVED_NO_RESEND','PENDING_NO_RESEND','SEND_ATTEMPTED_NO_RESEND','SENT_RECEIPT_PENDING_NO_RESEND','RECEIPT_PERSISTED_NO_RESEND','CONFIRMED_CLAIM_PENDING_NO_RESEND','CONFIRMED_NO_RESEND'];
+ function need(ok){if(!ok)throw new Error('NATIVE_STUDIO_INTERFACE_HOLD');}
+ function own(x,k){return Object.prototype.hasOwnProperty.call(x,k);}
+ function data(x){need(x&&typeof x==='object'&&!Array.isArray(x)&&Object.getOwnPropertySymbols(x).length===0);Object.getOwnPropertyNames(x).forEach(function(k){var d=Object.getOwnPropertyDescriptor(x,k);need(d&&own(d,'value'));});return x;}
+ function safeText(v,n,pattern){return typeof v==='string'&&v.length<=n&&(!pattern||pattern.test(v))?v:'';}
+ function dense(v,max){need(Array.isArray(v)&&v.length<=max);for(var i=0;i<v.length;i++){var d=Object.getOwnPropertyDescriptor(v,String(i));need(d&&own(d,'value'));}return v;}
+ function types(a){need(own(ACTIONS,a));return Object.assign({},COMMON,ACTIONS[a].outputs);}
+ function input(e,name,expected){
+  var phase='EVENT_OBJECT';try{data(e);phase='WORKFLOW_OBJECT';var w=data(e.workflow);phase='INVOCATION_OBJECT';var inv=data(w.actionInvocation);phase='INPUTS_OBJECT';var inputs=data(inv.inputs);phase='INPUT_KEYS';need(JSON.stringify(Object.keys(inputs).sort())===JSON.stringify(expected.slice().sort()));phase='VALUE_OBJECT';var v=data(inputs[name]);phase='VALUE_KEYS';need(Object.keys(v).length===1);phase='STRING_ARRAY';need(Array.isArray(v.stringValues));phase='STRING_CARDINALITY';need(v.stringValues.length===1&&own(v.stringValues,0));phase='STRING_TYPE';need(typeof v.stringValues[0]==='string');var limit=name==='model_json'?12000:name==='candidate_id'?1024:200;phase='STRING_BUDGET';need(v.stringValues[0].length<=limit);return v.stringValues[0];}catch(_){try{Logger.log('FERNAIN_STUDIO_INPUT_HOLD:'+phase);}catch(ignore){}throw new Error('NATIVE_STUDIO_INTERFACE_HOLD');}
+ }
+ function candidate(v){
+  var phase='HANDLE_JSON';try{var h;if(typeof v==='string'&&v.indexOf('FERNAIN_CANDIDATE_V1:')===0){phase='HANDLE_SCALAR';var m=/^FERNAIN_CANDIDATE_V1:([1-9][0-9]{0,5}):([A-Za-z0-9_-]{1,128})$/.exec(v);need(m&&m[0]===v);h={row:Number(m[1]),leadId:m[2]};}else h=JSON.parse(v);phase='HANDLE_OBJECT';data(h);phase='HANDLE_KEYS';need(Object.keys(h).length===2&&own(h,'row')&&own(h,'leadId'));phase='HANDLE_ROW';need(Number.isInteger(h.row)&&h.row>=6);phase='HANDLE_LEAD_ID';need(/^[A-Za-z0-9_-]{1,128}$/.test(h.leadId));return {row:h.row,leadId:h.leadId};}catch(_){try{Logger.log('FERNAIN_STUDIO_INPUT_HOLD:'+phase);Logger.log('FERNAIN_HANDLE_BOUNDARY_V1:'+JSON.stringify({direction:'IN_HOLD',phase:phase,type:typeof v,length:typeof v==='string'?Math.min(v.length,1025):-1,empty:v==='',scalarPrefix:typeof v==='string'&&v.indexOf('FERNAIN_CANDIDATE_V1:')===0,jsonObjectLead:typeof v==='string'&&v.charAt(0)==='{',htmlLead:typeof v==='string'&&v.charAt(0)==='<'}));}catch(ignore){}throw new Error('NATIVE_STUDIO_INTERFACE_HOLD');}
+ }
+ function item(v){data(v);return {status:STATUSES.indexOf(v.status)>=0?v.status:'HOLD',leadId:safeText(v.leadId,128,/^[A-Za-z0-9_-]+$/),id:safeText(v.id,128,/^[A-Za-z0-9_-]+$/),state:MARKER_STATES.indexOf(v.state)>=0?v.state:'',noResend:v.noResend===true,reasonCode:REASONS.indexOf(v.reasonCode)>=0?v.reasonCode:''};}
+ function normalize(a,out){
+  data(out);var defs=types(a),v={};Object.keys(defs).forEach(function(k){v[k]=defs[k]==='BOOLEAN'?false:defs[k]==='INTEGER'?0:'';});
+  v.status=STATUSES.indexOf(out.status)>=0?out.status:'HOLD';v.reasonCode=REASONS.indexOf(out.reasonCode)>=0?out.reasonCode:out.reasonCode===undefined?'NATIVE_RESULT_RECORDED':'NATIVE_STUDIO_INTERFACE_HOLD';v.scope=out.scope==='CANDIDATE'?'CANDIDATE':'GLOBAL';v.stage=STAGES.indexOf(out.stage)>=0?out.stage:v.status;
+  v.no_send=out.no_send===true;v.effect_eligible=false;v.noResend=out.noResend===true;v.send_attempt_status=out.sendAttempted===true?'ATTEMPTED':out.no_send===true||out.sendAttempted===false?'NOT_ATTEMPTED':'UNKNOWN';
+  v.traceRecorded=out.traceRecorded===true;v.traceId=safeText(out.traceId,160,/^[A-Za-z0-9_-]+$/);v.traceRef=safeText(out.traceRef,350,/^https:\/\/docs\.google\.com\/spreadsheets\/d\/{{CONFIGURE_GOOGLE_ID_030}}\/edit#gid=903&range=A[0-9]+:Z[0-9]+$/);
+  if(a==='CANDIDATES'){v.no_send=true;v.send_attempt_status='NOT_ATTEMPTED';var handles=dense(out.candidate_ids||[],20).map(function(h){return JSON.stringify(candidate(h));});v.candidate_ids=JSON.stringify(handles);v.candidate_count=handles.length;v.candidate_id=handles.length?(function(h){return 'FERNAIN_CANDIDATE_V1:'+h.row+':'+h.leadId;})(candidate(handles[0])):'';}
+  if(a==='CAPTURE_SOURCE'){v.no_send=true;v.send_attempt_status='NOT_ATTEMPTED';var locator=safeText(out.candidate_id,1024);if(locator&&out.status==='PUBLIC_SOURCE_RETAINED'&&out.traceRecorded===true){var selected=fernainNativeSourceLocator(locator);need(selected.traceId===out.traceId);v.candidate_id=locator;}v.modelAuthority=false;v.send_eligible=false;}
+  if(a==='PREPARE'){v.capture_id=safeText(out.capture_id,128,/^[A-Za-z0-9_-]{16,128}$/);var context=safeText(out.source_context_json,20000);if(context){var parsed=JSON.parse(context);data(parsed);if(Object.keys(parsed).length){need(JSON.stringify(Object.keys(parsed).sort())===JSON.stringify(['capture_id','proposal','sourceRefs','sourceHash','sourceTextIsUntrustedData','modelAuthority'].sort())&&parsed.capture_id===v.capture_id&&/^[a-f0-9]{64}$/.test(parsed.sourceHash)&&parsed.sourceTextIsUntrustedData===true&&parsed.modelAuthority===false);data(parsed.proposal);dense(parsed.sourceRefs,8).forEach(function(ref){need(typeof ref==='string'&&ref.length<=1000&&/^https:\/\/[^\s<>]+$/.test(ref));});}v.source_context_json=JSON.stringify(parsed);}else v.source_context_json='{}';}
+  if(a==='CONSUME'){v.leadId=safeText(out.leadId,128,/^[A-Za-z0-9_-]+$/);v.id=safeText(out.id,128,/^[A-Za-z0-9_-]+$/);v.thread=safeText(out.thread,128,/^[A-Za-z0-9_-]+$/);v.evidenceRow=Number.isInteger(out.evidenceRow)&&out.evidenceRow>=6?out.evidenceRow:0;v.claimClosed=out.claimClosed===true;}
+  if(a==='RECONCILE'||a==='STATUS'){var list=dense(out[a==='RECONCILE'?'results':'markers']||[],1000);var count=list.length,limited=list.slice(0,100).map(item);if(a==='RECONCILE'){v.results_json=JSON.stringify(limited);v.result_count=count;v.results_truncated=count>100;}else{v.markers_json=JSON.stringify(limited);v.marker_count=count;v.markers_truncated=count>100;v.halted=out.halted===true;v.installedConfiguration=out.installedConfiguration===true;v.liveVerified=false;}}
+  return v;
+ }
+ function render(a,out){var v=normalize(a,out),defs=types(a),map={};if(a==='CANDIDATES')try{Logger.log('FERNAIN_HANDLE_BOUNDARY_V1:'+JSON.stringify({direction:'OUT',status:v.status,reasonCode:v.reasonCode,traceRecorded:v.traceRecorded,candidateCount:v.candidate_count,type:typeof v.candidate_id,length:typeof v.candidate_id==='string'?Math.min(v.candidate_id.length,1025):-1,empty:v.candidate_id==='',scalarPrefix:typeof v.candidate_id==='string'&&v.candidate_id.indexOf('FERNAIN_CANDIDATE_V1:')===0}));}catch(ignore){}Object.keys(defs).forEach(function(k){var d=AddOnsResponseService.newVariableData();if(defs[k]==='BOOLEAN')d.addBooleanValue(v[k]);else if(defs[k]==='INTEGER')d.addIntegerValue(v[k]);else d.addStringValue(v[k]);map[k]=d;});return AddOnsResponseService.newRenderActionBuilder().setHostAppAction(AddOnsResponseService.newHostAppAction().setWorkflowAction(AddOnsResponseService.newReturnOutputVariablesAction().setVariableDataMap(map))).build();}
+ function invalid(r){try{return r.invalidInput();}catch(_){return {status:'HOLD',reasonCode:'NATIVE_STUDIO_INPUT_HOLD',scope:'GLOBAL',stage:'INPUT',no_send:true,traceRecorded:false};}}
+ function execute(a,e,enteredAtMs){var outerEntry=enteredAtMs===undefined?Date.now():enteredAtMs;need(own(ACTIONS,a));var r,out,called=false;try{r=fernainNativeRuntime(a==='CAPTURE_SOURCE'?{operation:'CAPTURE_PUBLIC_SOURCE',entryAtMs:outerEntry,totalMs:110000,cleanupReserveMs:5000}:undefined);var keys=ACTIONS[a].inputs;if(a==='CANDIDATES'){called=true;out=r.listCandidates();}else if(a==='CAPTURE_SOURCE'){var h=candidate(input(e,'candidate_id',keys));called=true;out=r.capturePublicSource(h);}else if(a==='PREPARE'){var loc=fernainNativeSourceLocator(input(e,'candidate_id',keys));called=true;out=r.prepareSource({row:loc.row,leadId:loc.leadId},loc);}else if(a==='CONSUME'){var id=input(e,'capture_id',keys),model=input(e,'model_json',keys);called=true;out=r.consumeGemini(id,model);}else if(a==='RECONCILE'){called=true;out=r.reconcilePending();}else if(a==='STATUS'){called=true;out=r.readStatus();}else{var reason=input(e,'reason',keys);called=true;out=r.halt(reason);}}catch(_){out=called?{status:'HOLD',reasonCode:'NATIVE_RUNTIME_EXCEPTION',scope:'GLOBAL',stage:'PREFLIGHT',no_send:a!=='CONSUME',traceRecorded:false}:invalid(r);}try{return render(a,out);}catch(_){var fallback={status:'HOLD',reasonCode:'NATIVE_STUDIO_INTERFACE_HOLD',scope:'GLOBAL',stage:'INPUT',traceRecorded:false};if(out&&typeof out==='object')try{['noResend','sendAttempted','no_send'].forEach(function(k){var d=Object.getOwnPropertyDescriptor(out,k);if(d&&own(d,'value')&&typeof d.value==='boolean')fallback[k]=d.value;});}catch(_){}return render(a,fallback);}}
+ function config(a){need(own(ACTIONS,a));var s=CardService.newCardSection().addWidget(CardService.newTextParagraph().setText(ACTIONS[a].name));ACTIONS[a].inputs.forEach(function(k){s.addWidget(CardService.newTextInput().setFieldName(k).setTitle(k.replace(/_/g,' ')).setHostAppDataSource(CardService.newHostAppDataSource().setWorkflowDataSource(CardService.newWorkflowDataSource().setIncludeVariables(true))));});return CardService.newCardBuilder().addSection(s).build();}
+ function descriptors(){return Object.keys(ACTIONS).map(function(a){var d=ACTIONS[a],fields=types(a);function field(k,t){return {id:k,description:k,cardinality:'SINGLE',dataType:{basicType:t}};}return {id:d.id,state:'ACTIVE',name:d.name,description:d.name+' under deterministic native controls.',workflowAction:{inputs:d.inputs.map(function(k){return field(k,'STRING');}),outputs:Object.keys(fields).map(function(k){return field(k,fields[k]);}),onConfigFunction:d.config,onExecuteFunction:d.execute}};});}
+ return Object.freeze({config:config,execute:execute,render:render,normalize:normalize,descriptors:descriptors});
+}());
+function fernainNativeCaptureSourceOnConfig(){return BackofficeNativeStudioActionsV1.config('CAPTURE_SOURCE');}
+function fernainNativeCandidatesOnConfig(){return BackofficeNativeStudioActionsV1.config('CANDIDATES');}
+function fernainNativePrepareOnConfig(){return BackofficeNativeStudioActionsV1.config('PREPARE');}
+function fernainNativeConsumeOnConfig(){return BackofficeNativeStudioActionsV1.config('CONSUME');}
+function fernainNativeReconcileOnConfig(){return BackofficeNativeStudioActionsV1.config('RECONCILE');}
+function fernainNativeStatusOnConfig(){return BackofficeNativeStudioActionsV1.config('STATUS');}
+function fernainNativeHaltOnConfig(){return BackofficeNativeStudioActionsV1.config('HALT');}
+
+/* END exact module native-unattended-runtime/NativeStudioActions.gs */
+
+/* BEGIN exact module native-policy-integration/NativeLedgerPolicyV1.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Deterministic, source-bound native ledger policy. No top-level I/O or effects.
+ * Source flags are derived by re-validating retained native bytes/canonical,
+ * never by accepting a model's clear/eligible booleans. Unknown target/family
+ * records hold the candidate; malformed global coverage/claims halt the run.
+ */
+var BackofficeNativeLedgerPolicyV1=(function(){
+ 'use strict';
+ var SHEET='{{CONFIGURE_GOOGLE_ID_030}}';
+ var FLAGS=['namedIndividual','currentRole','verifiedRoute','noGuessedRoute','mlaExcluded','suppressionClear','aliasClear','organizationFamilyClear','duplicateClear','noReplyOrActiveConversation','ownerReply24hClear','noReferralEffects','uncertainOrInflightClear'];
+ var QUALIFICATION_TYPES=['Research provenance / current named role and literal general business email','Current career-service observations / source freshness','Public workflow / offer / limits','Full-ledger / all-folder suppression and dedup / fit inference','Current career-workflow observations / source context','Published workflow / provider / fit and unknowns','Full-ledger / all-folder dedup and suppression','Original census / current role / literal individual route','Primary-source contact and service verification','Collection qualification and dedupe','Current primary source','Primary source qualification','Current individual contact','Collection preflight; no email sent','Primary-source contact/service verification','Primary-source fact','Research-only hold or exclusion','Research-only hold/exclusion','Published fact','Fresh public source verification','Primary source verification','Fit assessment and limitations','Qualified workflow; not contacted','Fit inference and limitations','Current career workflow','Current primary-source verification','Contact and limitations','Career-service workflow and offer','Current named contact','Current career service','Verified named business contact','Collection dedupe and qualification','Qualification and duplicate check','Decision provenance / dedup','IRS research-only source / resolved organization anchor','Current exact individual business contact','Current public career-service workflow','Public board / provider observation','Full-ledger and all-folder dedupe / suppression clear','Source-qualified UNSENT / owner500gate remains'];
+ // Reviewed historical qualification is advisory only. New exact labels require
+ // their retained physical row and complete typed26 preimage; changed content holds.
+ var LEGACY_QUALIFICATION_PREIMAGES={"IRS research-only source / resolved organization anchor":{"row":10,"typedRowSha256":"0000000000000000000000000000000000000000000000000000000000000000","leadId":"EXAMPLE-LEAD-001"},"Current exact individual business contact":{"row":11,"typedRowSha256":"0000000000000000000000000000000000000000000000000000000000000000","leadId":"EXAMPLE-LEAD-001"},"Current public career-service workflow":{"row":12,"typedRowSha256":"0000000000000000000000000000000000000000000000000000000000000000","leadId":"EXAMPLE-LEAD-001"},"Public board / provider observation":{"row":13,"typedRowSha256":"0000000000000000000000000000000000000000000000000000000000000000","leadId":"EXAMPLE-LEAD-001"},"Full-ledger and all-folder dedupe / suppression clear":{"row":14,"typedRowSha256":"0000000000000000000000000000000000000000000000000000000000000000","leadId":"EXAMPLE-LEAD-001"},"Source-qualified UNSENT / owner500gate remains":{"row":15,"typedRowSha256":"0000000000000000000000000000000000000000000000000000000000000000","leadId":"EXAMPLE-LEAD-001"}};
+ function own(x,k){return Object.prototype.hasOwnProperty.call(x,k);}
+ function need(ok,code,scope){if(!ok){var e=new Error(code);e.code=code;e.nativeScope=scope||'GLOBAL';throw e;}}
+ function data(x){need(x&&typeof x==='object'&&!Array.isArray(x),'LEDGER_OBJECT_HOLD');need(Object.getOwnPropertySymbols(x).length===0,'LEDGER_SYMBOL_HOLD');Object.getOwnPropertyNames(x).forEach(function(k){var d=Object.getOwnPropertyDescriptor(x,k);need(d&&own(d,'value'),'LEDGER_ACCESSOR_HOLD');});return x;}
+ function dense(a,n){need(Array.isArray(a)&&a.length===n,'LEDGER_COMPLETE_ARRAY_HOLD');for(var i=0;i<n;i++)need(own(a,i),'LEDGER_SPARSE_ARRAY_HOLD');return a;}
+ function cell(c){data(c);var k=Object.keys(c);need(k.length<=1,'LEDGER_CELL_UNION_HOLD');if(!k.length)return '';need((k[0]==='stringValue'||k[0]==='formulaValue')&&typeof c[k[0]]==='string'||k[0]==='numberValue'&&Number.isFinite(c[k[0]])||k[0]==='boolValue'&&typeof c[k[0]]==='boolean','LEDGER_CELL_TYPE_HOLD');return c[k[0]];}
+ function raw(r,n){return dense(r,n).map(cell);}
+ function same(a,b){return JSON.stringify(a)===JSON.stringify(b);}
+ function email(v){return fernEmail(v);}
+ function text(v){return typeof v==='string'?v:'';}
+ function norm(v){return text(v).trim().replace(/[\t\r\n ]+/g,' ').toLowerCase();}
+ function route(row){var lines=text(row[3]).split(/\r?\n/);if(lines.length!==3)return null;try{return {name:lines[0],role:lines[1],email:email(lines[2])};}catch(_){return null;}}
+ function org(x,row,i){var value=row[1];if(typeof value==='string'&&value.charAt(0)==='='){var m=/^=HYPERLINK\(\s*"((?:[^"]|"")*)"\s*[,;]\s*"((?:[^"]|"")*)"\s*\)$/i.exec(value);need(m&&/^https?:\/\/[^\s<>]+$/.test(m[1].replace(/""/g,'"'))&&BackofficeNativeSemanticSnapshotV2.display(x,i+1,1)===m[2].replace(/""/g,'"'),'LEDGER_ORGANIZATION_FORMULA_HOLD','CANDIDATE');return m[2].replace(/""/g,'"');}need(typeof value==='string'&&BackofficeNativeSemanticSnapshotV2.display(x,i+1,1)===value,'LEDGER_ORGANIZATION_DISPLAY_HOLD','CANDIDATE');return value;}
+ function create(s){
+  function hash(v){return typeof s.snapshotHash==='function'?s.snapshotHash(v):s.sha(typeof v==='string'?v:JSON.stringify(v));}
+  function at(){return new Date(s.now()).toISOString();}
+  function fresh(t){var n=Date.parse(t);need(Number.isFinite(n)&&n<=s.now()+5000&&s.now()-n<300000,'LEDGER_FRESHNESS_HOLD');}
+  function snapshot(x){if(x&&x.schema===BackofficeNativeSemanticSnapshotV2.schema)return BackofficeNativeSemanticSnapshotV2.validate(x,s);data(x);fresh(x.checkedAt);need(x.spreadsheetId===SHEET&&x.Prospects&&x.Evidence,'LEDGER_WORKBOOK_HOLD');[['Prospects',27,901],['Evidence',26,903]].forEach(function(a){var q=data(x[a[0]]);need(q.sheetId===a[2]&&q.width===a[1]&&Number.isInteger(q.rowCount)&&q.rowCount>=6,'LEDGER_PHYSICAL_COVERAGE_HOLD');dense(q.rows,q.rowCount);dense(q.displayRows,q.rowCount);q.rows.forEach(function(r){raw(r,a[1]);});q.displayRows.forEach(function(r){dense(r,a[1]);});});return x;}
+  function review(args,kind){
+   data(args);var x=snapshot(args.canonical),b=args.binding||args.target,r=s.registry();need(b&&Number.isInteger(b.row)&&b.row>=6&&typeof b.leadId==='string','LEDGER_TARGET_HOLD','CANDIDATE');
+   var matches=Object.keys(r).filter(function(k){return r[k].row===b.row&&r[k].leadId===b.leadId;});need(matches.length===1,'LEDGER_REGISTERED_TARGET_HOLD','CANDIDATE');var def=r[matches[0]],v=raw(BackofficeNativeSemanticSnapshotV2.target(x,b.row),27),contact=route(v);
+   need(v[14]===def.leadId&&v[26]==='Jobs'&&org(x,v,b.row-1)===def.organization&&contact&&contact.name===def.person&&contact.role===def.role&&contact.email===email(def.email),'LEDGER_CANONICAL_IDENTITY_HOLD','CANDIDATE');
+   var source=s.boundSource(args,def,kind);need(source&&source.sourceVerificationPassed===true&&source.source_context&&source.source_context.liveCaptureVerified===true,'LEDGER_INDEPENDENT_NATIVE_SOURCE_HOLD','CANDIDATE');
+   var q=source.source_context.candidate;need(q&&q.person===def.person&&q.current_role===def.role&&email(q.email)===email(def.email)&&q.organization===def.organization&&q.organization_key===def.organizationKey&&q.organization_type===def.organizationType&&same(source.source_context.sourceRefs,[def.staffUrl,def.workflowUrl]),'LEDGER_SOURCE_IDENTITY_HOLD','CANDIDATE');
+   need(source.evidence&&typeof source.evidence.bindingSha256==='string'&&source.evidence.binding&&source.evidence.binding.registrySha256===hash(def)&&source.evidence.fullCanonicalPreimage,'LEDGER_SOURCE_RAW_EVIDENCE_HOLD','CANDIDATE');
+   var sourceCells=source.evidence.fullCanonicalPreimage.result.structuredContent.sheets[0].data[0].rowData[0].values.map(function(c){return c.userEnteredValue||{};});need(same(sourceCells,BackofficeNativeSemanticSnapshotV2.target(x,b.row)),'LEDGER_SOURCE_FULL27_CHANGED_HOLD','CANDIDATE');
+   var flags={};FLAGS.forEach(function(k){flags[k]=true;});
+   flags.namedIndividual=def.person.split(' ').length>=2&&!/^(?:info|support|admin|office|contact|jobs?|careers?|employment|hr|listserv|members?|membership|submissions?|noreply|no-reply|hello|sales|team|enquiries|inquiries)(?:[._+-]|@)/i.test(def.email);
+   flags.mlaExcluded=!/\b(?:medical library association|massachusetts library association|modern language association|mla)\b/i.test(def.organization+' '+def.role);
+   flags.noReferralEffects=!/\b(?:referral only|restricted referral|referred contact)\b/i.test(v[11]);
+   var family=s.family(def);need(family&&Array.isArray(family.domains)&&family.domains.indexOf(def.email.split('@')[1].toLowerCase())>=0&&Array.isArray(family.organizations)&&family.organizations.indexOf(def.organization)>=0,'LEDGER_REVIEWED_FAMILY_BINDING_HOLD','CANDIDATE');
+   var names=[norm(def.person)],emails=[email(def.email)],orgs=family.organizations.map(norm),domains=family.domains.map(function(d){need(/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/.test(d),'LEDGER_FAMILY_DOMAIN_HOLD');return d;});
+   var matchedRows=[],prospectConflicts=[];
+   BackofficeNativeSemanticSnapshotV2.scan(x,function(p,i){if(i<5)return;if(BackofficeNativeSemanticSnapshotV2.columns.every(function(c){return p[c]==='';}))return;var cr=route(p),display=text(BackofficeNativeSemanticSnapshotV2.display(x,i+1,1)),identity=cr&&(emails.indexOf(cr.email)>=0||names.indexOf(norm(cr.name))>=0||domains.indexOf(cr.email.split('@')[1])>=0)||orgs.indexOf(norm(display))>=0||p[14]===def.leadId;
+    if(!identity)return;matchedRows.push(i+1);if(i+1===b.row)return;
+    // A second named route in the same buying family cannot be promoted into
+    // a second initial email. Noncontact census aliases are retained/held.
+    if(cr||BackofficeNativeSemanticSnapshotV2.receiptValues(p).some(function(z){return z!=='';})||/sent|replied|uncertain|pending|in.?flight|opt.?out|do.?not|suppress|bounce|depart|denied|cancel/i.test(text(p[11]))){prospectConflicts.push(i+1);flags.organizationFamilyClear=false;flags.duplicateClear=false;}
+   });
+   if(v.slice(17,23).some(function(z){return z!=='';})){flags.duplicateClear=false;flags.noReplyOrActiveConversation=false;}
+   if(/opt.?out|do.?not|suppress|bounce|depart|denied|cancel|uncertain|pending|in.?flight|referr/i.test(text(v[11]))){flags.suppressionClear=false;flags.uncertainOrInflightClear=false;}
+   var evidenceConflicts=[],matchedEvidence=[],active=[],ownClaim=args.ownClaimId||null,knownClaims={};
+   // Native claims close in place. An unrelated release document never hides
+   // an ACTIVE row. Duplicate identities and unproved CLOSED lineage halt.
+   x.Evidence.rows.forEach(function(row,i){if(i<5)return;var z=raw(row,26),d;try{d=JSON.parse(text(z[3]));}catch(_){return;}if(!d||d.schema!=='BackofficeNativeClaim/v1')return;
+    need(typeof d.id==='string'&&d.id&&typeof d.writerId==='string'&&d.binding&&Number.isFinite(Date.parse(d.checkedAt))&&['ACTIVE','CLOSED'].indexOf(d.status)>=0,'LEDGER_UNKNOWN_NATIVE_CLAIM_HOLD');
+    need(!own(knownClaims,d.id),'LEDGER_DUPLICATE_NATIVE_CLAIM_ID_HOLD');knownClaims[d.id]={row:i+1,status:d.status};
+    if(d.status==='CLOSED'||d.id===ownClaim)need(typeof s.nativeClaimKnown==='function'&&s.nativeClaimKnown({row:i+1,document:d,fullTypedRow:row,canonical:x,ownClaimId:ownClaim,ownAttemptId:args.ownAttemptId||null})===true,'LEDGER_UNPROVEN_NATIVE_CLAIM_LINEAGE_HOLD');
+    if(d.status==='ACTIVE'&&d.id!==ownClaim)active.push({id:d.id,leadId:d.binding.leadId,checkedAt:d.checkedAt});
+   });
+   Object.keys(LEGACY_QUALIFICATION_PREIMAGES).forEach(function(k){var p=LEGACY_QUALIFICATION_PREIMAGES[k];if(p.leadId===def.leadId)need(p.row<=x.Evidence.rowCount,'LEDGER_PHYSICAL_COVERAGE_HOLD','CANDIDATE');});
+   var archiveBatch=x.schema===BackofficeNativeSemanticSnapshotV2.schema&&typeof s.validateArchiveSummaries==='function'&&typeof s.validateArchiveReadBoundary==='function';if(archiveBatch)need(s.validateArchiveSummaries(x.Evidence.rows,x.Evidence.archiveSummaries,email(def.email))===true,'LEDGER_UNVERIFIED_ARCHIVE_SUMMARY_HOLD');
+   x.Evidence.rows.forEach(function(row,i){if(i<5)return;var z=raw(row,26),known=Object.keys(LEGACY_QUALIFICATION_PREIMAGES).filter(function(k){var p=LEGACY_QUALIFICATION_PREIMAGES[k];return p.row===i+1&&p.leadId===def.leadId;})[0];
+    if(known!==undefined&&LEGACY_QUALIFICATION_PREIMAGES[known].typedRowSha256!==hash(row)){matchedEvidence.push(i+1);evidenceConflicts.push(i+1);flags.suppressionClear=false;flags.duplicateClear=false;flags.uncertainOrInflightClear=false;return;}
+    if(z.every(function(t){return t==='';}))return;var archived=BackofficeNativeSemanticSnapshotV2.summary(x,i+1);if(archived){need(archiveBatch||typeof s.validateArchiveSummary==='function'&&s.validateArchiveSummary(row,archived,email(def.email))===true,'LEDGER_UNVERIFIED_ARCHIVE_SUMMARY_HOLD');need(archived.noResend===false&&archived.claim===false&&archived.incoming===false&&Array.isArray(archived.matchedEmails),'LEDGER_UNKNOWN_ARCHIVE_SEMANTICS_HOLD');if(z[0]===def.leadId||orgs.indexOf(norm(z[1]))>=0||archived.matchedEmails.indexOf(email(def.email))>=0)matchedEvidence.push(i+1);return;}var d=null;try{d=JSON.parse(text(z[3]));}catch(_){}
+    var isTarget=z[0]===def.leadId||orgs.indexOf(norm(z[1]))>=0||emails.some(function(e){return new RegExp('(?:^|[^A-Za-z0-9.!#$%&\x27*+/=?^_`{|}~-])'+e.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:$|[^A-Za-z0-9.-]|[.]+(?=$|[^A-Za-z0-9.-]))').test(text(z[3]));});if(!isTarget)return;matchedEvidence.push(i+1);
+    if(own(LEGACY_QUALIFICATION_PREIMAGES,z[2])&&(LEGACY_QUALIFICATION_PREIMAGES[z[2]].row!==i+1||LEGACY_QUALIFICATION_PREIMAGES[z[2]].typedRowSha256!==hash(row))){evidenceConflicts.push(i+1);flags.suppressionClear=false;flags.duplicateClear=false;flags.uncertainOrInflightClear=false;return;}
+    if(d&&(d.schema==='BackofficeNativeSource/v1'||d.schema==='BackofficeNativeSourceChunk/v1'))return;
+    if(d&&d.schema==='FERNAIN_SCRIPT_OWNED_PRIMARY_SOURCE_REGISTRY_V1'){need(typeof s.registryRecordKnown==='function'&&s.registryRecordKnown({row:i+1,document:d,fullTypedRow:row,canonical:x})===true,'LEDGER_UNPROVEN_SOURCE_REGISTRY_RECORD_HOLD','CANDIDATE');return;}
+    if(d&&d.schema==='BackofficeNativeJournal/v1'){if(d.value&&d.value.noResend===true&&!(args.ownAttemptId&&d.kind==='pending'&&d.value.attemptId===args.ownAttemptId&&d.value.leadId===def.leadId)){flags.duplicateClear=false;flags.uncertainOrInflightClear=false;evidenceConflicts.push(i+1);}return;}
+    if(d&&d.schema==='BackofficeNativePoolJournal/v1'){if(d.kind==='native-incoming-factual-reconciled'){flags.noReplyOrActiveConversation=false;flags.ownerReply24hClear=false;evidenceConflicts.push(i+1);}return;}
+    if(d&&d.schema==='BackofficeNativeClaim/v1'){if(d.status==='ACTIVE'&&d.id!==ownClaim){flags.uncertainOrInflightClear=false;evidenceConflicts.push(i+1);}return;}
+    if(QUALIFICATION_TYPES.indexOf(z[2])<0){evidenceConflicts.push(i+1);flags.suppressionClear=false;flags.duplicateClear=false;flags.uncertainOrInflightClear=false;}
+   });
+   need(active.length===0,'LEDGER_OTHER_ACTIVE_CANONICAL_CLAIM_HOLD');
+   if(archiveBatch)need(s.validateArchiveReadBoundary()===true,'LEDGER_UNVERIFIED_ARCHIVE_SUMMARY_HOLD');
+   x.Evidence.rows.forEach(function(row,i){if(i<5)return;var z=raw(row,26);if(/claim|reservation|sole.?writer/i.test(text(z[2]))){var doc=null;try{doc=JSON.parse(text(z[3]));}catch(_){}if(doc&&/^BackofficeNative(?:Claim|Journal|PoolJournal)\/v1$/.test(doc.schema))return;var legacy={row:i+1,id:z[0],type:z[2],fullTypedRow:row,rawSha256:hash(z),canonical:x};if(typeof s.legacyRecordNonClaim==='function'&&s.legacyRecordNonClaim(legacy)===true)return;need(typeof s.legacyClaimClosed==='function'&&s.legacyClaimClosed(legacy)===true,'LEDGER_UNRECONCILED_EXTERNAL_CLAIM_HOLD');}});
+   var markers=s.properties();Object.keys(markers).forEach(function(k){if(k.indexOf('FERNAIN_NATIVE_INCOMING_BLOCK_V1:')===0&&k.endsWith(hash(email(def.email)))){flags.noReplyOrActiveConversation=false;flags.ownerReply24hClear=false;}if(k.indexOf('FERNAIN_NATIVE_NO_RESEND_V1:')===0){var m;try{m=JSON.parse(markers[k]);}catch(_){need(false,'LEDGER_MALFORMED_PERMANENT_MARKER_HOLD');}if(m.leadId===def.leadId&&!(args.ownAttemptId&&m.attemptId===args.ownAttemptId&&m.state==='PENDING_NO_RESEND')){flags.duplicateClear=false;flags.uncertainOrInflightClear=false;}}});
+   var stamp=at(),ref='native-ledger-policy:'+s.projectId+':'+hash({prospects:x.Prospects,evidence:x.Evidence,target:b}),out={schema:'BackofficeNativeLedgerReview/v2',complete:true,modelAuthority:false,binding:args.binding||null,target:args.target||null,bodySha256:args.bodySha256||null,prospectsSha256:hash(x.Prospects),evidenceSha256:hash(x.Evidence),flags:flags,reservations:{campaign60:0,account24:0,automation24:0},ref:ref,checkedAt:stamp,sourceBindingSha256:source.evidence.bindingSha256,familySha256:hash(family),matchedProspectRows:matchedRows,matchedEvidenceRows:matchedEvidence,conflictingProspectRows:prospectConflicts,conflictingEvidenceRows:evidenceConflicts,familyTerms:Array.from(new Set(domains.concat(family.organizations))),policyExclusionsIndependentlyEvaluated:true,sourceTextIsUntrustedData:true,legacy500HoldSuperseded:true,unknownHistoricalBindings:['orgId','cohort','controlVersion','snapshotVersion'],authorityRef:s.authorityRef};
+   if(kind==='LEAD')out.nativeProviderPolicy=s.providerPolicy(args);return out;
+  }
+  return Object.freeze({review:review});
+ }
+ return Object.freeze({create:create,flags:FLAGS.slice(),qualificationTypes:QUALIFICATION_TYPES.slice()});
+}());
+
+/* END exact module native-policy-integration/NativeLedgerPolicyV1.gs */
+
+/* BEGIN exact module native-policy-integration/NativePolicyAdaptersV1.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Native implementation adapters. Script-owned configuration is separate from
+ * Gemini inputs. Source registry/family/cutover evidence is read from exact
+ * typed native records; immutable preimage hashes are verified on every read.
+ */
+function fernainNativePolicyContext(args){
+ var ctx=BackofficeNativeRuntimeV1.nativeContext();fernHold(ctx&&ctx.services&&ctx.config,'same-lock native runtime context required');
+ var s=ctx.services,c=ctx.config;fernHold(c.projectId===s.projectId&&c.ownerAuthority&&c.ownerAuthority.standing===true,'exact standing native setup/SEND authority missing');return ctx;
+}
+function fernainNativeSourcePolicyLedgerSnapshot(snapshot,s){
+ if(snapshot&&snapshot.schema===BackofficeNativeSemanticSnapshotV2.schema){BackofficeNativeSemanticSnapshotV2.validate(snapshot,s);return {schema:'BackofficeNativeSemanticLedgerDigestTransport/v2',spreadsheetId:snapshot.spreadsheetId,ref:snapshot.ref,checkedAt:snapshot.checkedAt,semanticSnapshotSha256:fernainNativePreflightSnapshotHash(snapshot,s),Prospects:{sheetId:snapshot.Prospects.sheetId,rowCount:snapshot.Prospects.rowCount,columns:snapshot.Prospects.columns,safetyRowsSha256:fernainNativePreflightSnapshotHash(snapshot.Prospects.safetyRows,s),organizationDisplaySha256:fernainNativePreflightSnapshotHash(snapshot.Prospects.organizationDisplay,s),headersSha256:fernainNativePreflightSnapshotHash(snapshot.Prospects.headers,s),targetSha256:fernainNativePreflightSnapshotHash(snapshot.Prospects.target,s)},Evidence:{sheetId:snapshot.Evidence.sheetId,rowCount:snapshot.Evidence.rowCount,width:26,liveTypedRowsSha256:fernainNativePreflightSnapshotHash(snapshot.Evidence.rows,s),liveDisplayRowsSha256:fernainNativePreflightSnapshotHash(snapshot.Evidence.displayRows,s),archiveSummariesSha256:fernainNativePreflightSnapshotHash(snapshot.Evidence.archiveSummaries,s)},unreadArchivedPayloadsFreshlyHashed:false,modelAuthority:false};}
+ var out={schema:'BackofficeNativeFullLedgerDigestTransport/v1',spreadsheetId:snapshot.spreadsheetId,ref:snapshot.ref,checkedAt:snapshot.checkedAt,fullNativeSnapshotSha256:fernainNativePreflightSnapshotHash(snapshot,s)};
+ ['Prospects','Evidence'].forEach(function(name){var q=snapshot[name];fernHold(q&&Array.isArray(q.rows)&&q.rows.length===q.rowCount&&Array.isArray(q.displayRows)&&q.displayRows.length===q.rowCount,'native source full typed/display ledger unavailable');out[name]={sheetId:q.sheetId,width:q.width,rowCount:q.rowCount,typedRowsSha256:fernainNativePreflightSnapshotHash(q.rows,s),displayRowsSha256:fernainNativePreflightSnapshotHash(q.displayRows,s)};});return out;
+}
+function fernainNativeSourcePolicyLedgerMatches(ledger,snapshot,s){
+ if(!ledger||typeof ledger!=='object'||!snapshot)return false;if(ledger.schema!=='BackofficeNativeFullLedgerDigestTransport/v1'&&ledger.schema!=='BackofficeNativeSemanticLedgerDigestTransport/v2')return JSON.stringify(ledger)===JSON.stringify(snapshot);
+ // A digest carries no semantic or effect authority. Require the independently
+ // retained current full native preimage; the original evaluator consumes it.
+ return JSON.stringify(ledger)===JSON.stringify(fernainNativeSourcePolicyLedgerSnapshot(snapshot,s));
+}
+function fernainNativeRegistryPointers(config){
+ var pointer=config.sourceRegistry;if(!pointer)return [];
+ var pages;if(pointer.schema==='BackofficeNativeRegistryPointer/v1')pages=[pointer];
+ else{fernHold(pointer.schema==='BackofficeNativeRegistrySetPointer/v1'&&Object.keys(pointer).sort().join('|')==='pages|schema'&&Array.isArray(pointer.pages)&&pointer.pages.length>0&&pointer.pages.length<=8,'bounded script-owned registry set missing');pages=pointer.pages;}
+ var seen={};pages.forEach(function(p){fernHold(p&&Object.keys(p).sort().join('|')==='evidenceRow|schema|typedRowSha256'&&p.schema==='BackofficeNativeRegistryPointer/v1'&&Number.isInteger(p.evidenceRow)&&p.evidenceRow>=6&&p.evidenceRow<=10000&&typeof p.typedRowSha256==='string'&&/^[a-f0-9]{64}$/.test(p.typedRowSha256)&&!seen[p.evidenceRow],'script-owned exact registry page pointer missing');seen[p.evidenceRow]=true;});return pages;
+}
+function fernainNativeRegistryPages(){
+ var ctx=fernainNativePolicyContext({}),s=ctx.services,pointers=fernainNativeRegistryPointers(ctx.config);
+ if(!pointers.length)return [{producer:BackofficeNativePublicSourceV1,snapshot:null,nativeReadProof:null}];
+ var identities={},count=0,pages=pointers.map(function(p){var row=s.readRow('Evidence',p.evidenceRow,26);fernHold(s.sha(JSON.stringify(row))===p.typedRowSha256&&row[3]&&typeof row[3].stringValue==='string'&&row[3].stringValue.length<=45000,'script-owned registry full26 preimage/size mismatch');
+  var read=JSON.parse(row[3].stringValue);fernHold(read.schema==='FERNAIN_SCRIPT_OWNED_PRIMARY_SOURCE_REGISTRY_V1','trusted native registry schema missing');
+  var proof={schema:'FERNAIN_TRUSTED_NATIVE_REGISTRY_READ_V1',checkedAtUtc:new Date(s.now()).toISOString(),fullRegistryReadSha256:s.sha(JSON.stringify(read))};
+  var producer=BackofficeNativePublicSourceV1.createWithScriptOwnedRegistry(function(){return read;},proof);fernHold(producer&&typeof producer.bind==='function','trusted native registry loader held');
+  var manifest=producer.registryManifest();fernHold(Object.keys(manifest).length<=128,'native finite registry page bound exceeded');Object.keys(manifest).forEach(function(k){var d=manifest[k],id=d.row+'|'+d.leadId,prior=identities[id];if(prior){fernHold(k==='EXAMPLE_ROLE_001'&&prior.key===k&&JSON.stringify(prior.definition)===JSON.stringify(d),'cross-page registry canonical identity duplicate');return;}
+   fernHold(!Object.keys(identities).some(function(z){var a=identities[z].definition;return a.row===d.row||a.leadId===d.leadId||fernEmail(a.email)===fernEmail(d.email);}), 'cross-page registry person/email duplicate');identities[id]={key:k,definition:d};fernHold(++count<=1024,'native aggregate registry handle bound exceeded');});
+  return {producer:producer,snapshot:read,nativeReadProof:proof};});return pages;
+}
+function fernainNativeRegistryRecordKnown(a,ctx){
+ if(!a||!Number.isInteger(a.row)||!a.document||a.document.schema!=='FERNAIN_SCRIPT_OWNED_PRIMARY_SOURCE_REGISTRY_V1'||!Array.isArray(a.fullTypedRow)||a.fullTypedRow.length!==26||!a.canonical||!a.canonical.Evidence||!a.canonical.Evidence.rows[a.row-1])return false;
+ var s=ctx.services,pointers=fernainNativeRegistryPointers(ctx.config),matches=pointers.filter(function(p){return p.evidenceRow===a.row;});if(matches.length!==1)return false;var p=matches[0],raw=a.fullTypedRow;
+ if(s.sha(JSON.stringify(raw))!==p.typedRowSha256||JSON.stringify(raw)!==JSON.stringify(a.canonical.Evidence.rows[a.row-1])||!raw[3]||typeof raw[3].stringValue!=='string'||raw[3].stringValue.length>45000)return false;
+ var live=s.readRow('Evidence',a.row,26);if(s.sha(JSON.stringify(live))!==p.typedRowSha256||JSON.stringify(live)!==JSON.stringify(raw))return false;
+ var read=JSON.parse(raw[3].stringValue);if(JSON.stringify(read)!==JSON.stringify(a.document))return false;var proof={schema:'FERNAIN_TRUSTED_NATIVE_REGISTRY_READ_V1',checkedAtUtc:new Date(s.now()).toISOString(),fullRegistryReadSha256:s.sha(JSON.stringify(read))};
+ var producer=BackofficeNativePublicSourceV1.createWithScriptOwnedRegistry(function(){return read;},proof);return !!(producer&&typeof producer.bind==='function'&&Object.keys(producer.registryManifest()).length<=128);
+}
+function fernainNativeRegistryPage(handle){
+ var pages=fernainNativeRegistryPages();if(!handle){fernHold(pages.length===1,'exact native source handle required for registry set');return pages[0];}
+ fernHold(Number.isInteger(handle.row)&&handle.row>=6&&typeof handle.leadId==='string','exact native source page handle missing');var matches=[];
+ pages.forEach(function(page){var manifest=page.producer.registryManifest();Object.keys(manifest).forEach(function(k){var d=manifest[k];if(d.row===handle.row&&d.leadId===handle.leadId)matches.push({key:k,page:page});});});
+ fernHold(matches.length===1||matches.length>1&&matches.every(function(m){return m.key==='EXAMPLE_ROLE_001';}),'unregistered/ambiguous exact native source candidate');return matches[0].page;
+}
+function fernainNativeSourceRegistry(args){return fernainNativeRegistryPage(args&&args.handle).producer;}
+function fernainNativeFamilyDefinition(def,ctx){
+ var families=ctx.config.sourceFamilies||{},family=families[def.leadId];
+ // Seed family is a reviewed identity relation, not a source freshness claim.
+ // Native full-ledger reads and public capture remain mandatory each attempt.
+ if(!family&&def.leadId==='EXAMPLE-LEAD-001'&&def.row===10&&def.organization==='Example Community Association'&&def.email==='contact07@example.net')family={schema:'BackofficeNativeReviewedFamily/v1',organizationKey:'example-community-association',domains:['example.org'],organizations:['Example Community Association','Example Community Fund','Example Community Group'],sourceRefs:['https://example.org/about-us/','https://business.example.org/jobs/'],reviewRef:'canonical:example:family-record; example family note',historicalBindings:'UNKNOWN'};
+ fernHold(family&&family.schema==='BackofficeNativeReviewedFamily/v1'&&family.organizationKey===def.organizationKey&&Array.isArray(family.sourceRefs)&&JSON.stringify(family.sourceRefs)===JSON.stringify([def.staffUrl,def.workflowUrl]),'reviewed exact source/family relation missing');return family;
+}
+function fernainNativeLedgerReview(args,kind){
+ var ctx=fernainNativePolicyContext(args),s=ctx.services,c=ctx.config,producer=fernainNativeSourceRegistry({handle:args.binding||args.target});
+ var evaluator=BackofficeNativeLedgerPolicyV1.create({now:s.now,sha:s.sha,projectId:s.projectId,authorityRef:c.ownerAuthority.ref,registry:producer.registryManifest,properties:s.props.getProperties,snapshotHash:function(value){return fernainNativePreflightSnapshotHash(value,s);},validateArchiveSummary:s.validateArchiveSummary,validateArchiveSummaries:s.validateArchiveSummaries,validateArchiveReadBoundary:s.validateArchiveReadBoundary,
+  family:function(d){return fernainNativeFamilyDefinition(d,ctx);},
+  registryRecordKnown:function(a){return fernainNativeRegistryRecordKnown(a,ctx);},
+  legacyClaimClosed:function(a){return fernainNativeLegacyClaimClosed(a,ctx);},
+  legacyRecordNonClaim:function(a){return fernainNativeLegacyRecordNonClaim(a,ctx);},
+  nativeClaimKnown:function(a){a.expectedBinding=args.binding||null;return fernainNativeClaimKnown(a,ctx);},
+  boundSource:function(a,d,k){
+   var proof=k==='LEAD'?{bundle:a.nativeSourceBundle,canonicalRow:a.nativeCanonicalRow,policy:a.nativePreliminaryPolicy}:a.boundSourceProof;
+   fernHold(proof&&proof.bundle&&proof.canonicalRow&&proof.policy,'full independently retained native source proof unavailable');
+   if(proof.policy.schema==='FERNAIN_NATIVE_FULL_POLICY_PACKET_V1'||proof.policy.schema==='FERNAIN_NATIVE_SEMANTIC_POLICY_PACKET_V2')fernHold(fernainNativeSourcePolicyLedgerMatches(proof.policy.ledgerPreimage,a.canonical,s),'native source full ledger transport changed');
+   var binding=(k==='LEAD'?producer.bindResearch:producer.bind)(proof.bundle,proof.canonicalRow,proof.policy,new Date(s.now()).toISOString());
+   fernHold(binding&&binding.sourceVerificationPassed===true&&binding.evidence&&binding.source_context&&binding.source_context.liveCaptureVerified===true,'independent native source revalidation held');
+   if(k==='LEAD')fernHold(a.nativeSource&&a.nativeSource.evidence&&a.nativeSource.evidence.bindingSha256===binding.evidence.bindingSha256,'native preliminary source hash mismatch');
+   if(k==='SEND')fernHold(proof.sourceEvidenceHash===a.sourceEvidenceHash,'native source record hash mismatch');return binding;
+  },
+  providerPolicy:function(a){fernHold(a.nativeProviderPolicy&&a.nativeProviderPolicy.complete===true&&a.nativeProviderPolicy.accountAddress==='operator@example.com','actual native provider policy missing');return a.nativeProviderPolicy;}
+ });return evaluator.review(args,kind);
+}
+function fernainNativeSemanticReview(args){return fernainNativeLedgerReview(fernainNativeResolvePreflightCanonicalArgs(args,'fernainNativeSemanticReview'),'SEND');}
+function fernainNativeLeadPolicy(args){return fernainNativeLedgerReview(args,'LEAD');}
+function fernainNativeCutoverCheck(args){
+ var ctx=BackofficeNativeRuntimeV1.nativeContext(),s=ctx&&ctx.services,c=ctx&&ctx.config;fernHold(s&&c&&c.soleWriter,'same-lock cutover context missing');
+ var p=c.soleWriter,approved=['/workflow/EXAMPLE_FLOW_005','/workflow/EXAMPLE_FLOW_001','/workflow/EXAMPLE_FLOW_006','/workflow/EXAMPLE_FLOW_004'];
+ fernHold(args.projectId===s.projectId&&args.writerId===c.writerId&&args.cutoverRef===p.cutoverRef&&p.externalWritersDisabled===true&&p.writerId===c.writerId&&p.connectedWriterRetired===true&&p.historicalScheduleRemovedRef==='EXAMPLE_AUTHORITY_REFERENCE'&&Number.isFinite(Date.parse(p.cutoverVerifiedAt)),'explicit verified sole native backend writer cutover missing');
+ fernHold(Array.isArray(p.nativeFlowIds)&&p.nativeFlowIds.length===approved.length&&p.nativeFlowIds.every(function(id){return typeof id==='string';})&&JSON.stringify(p.nativeFlowIds.slice().sort())===JSON.stringify(approved.slice().sort())&&p.sharedScriptProjectId===s.projectId&&p.verifiedNativeFlowSetExclusive===true&&Number.isFinite(Date.parse(p.nativeFlowSetVerifiedAt))&&typeof p.nativeFlowSetVerificationRef==='string'&&p.nativeFlowSetVerificationRef,'exact verified four-flow shared backend cutover missing');
+ // This verifies the retained four-flow operating record and sole backend,
+ // not authenticated Studio caller identity or live global scheduler state.
+ // A changed/new external writer invalidates the configured operating contract.
+ return {schema:'BackofficeNativeCutoverRead/v1',complete:true,exclusive:true,externalWritersDisabled:true,projectId:s.projectId,writerId:c.writerId,cutoverRef:p.cutoverRef,originalVerifiedAt:p.cutoverVerifiedAt,checkedAt:new Date(s.now()).toISOString(),ref:'script-owned-cutover:'+s.projectId+':'+s.sha(JSON.stringify(p)),instantGlobalSchedulerAttestation:false,authenticatedStudioCallerAttestation:false,approvedNativeFlowIds:approved.slice(),sharedScriptProjectId:s.projectId,nativeFlowSetVerifiedAt:p.nativeFlowSetVerifiedAt,nativeFlowSetVerificationRef:p.nativeFlowSetVerificationRef,authorityRef:c.ownerAuthority.ref};
+}
+
+function fernainNativeHistoricalClaimBaseline(ctx,canonical){
+ var s=ctx.services,p=ctx.config.historicalClaimBaseline;fernHold(p&&p.schema==='BackofficeNativeHistoricalClaimBaselinePointer/v1'&&Number.isInteger(p.evidenceRow)&&p.evidenceRow>=6&&typeof p.typedRowSha256==='string','verified native historical claim baseline missing');
+ // This is the same complete native snapshot already validated by the ledger
+ // in this held-lock review; no cross-invocation cache or model evidence.
+ var q=canonical&&canonical.Evidence,t=canonical&&Date.parse(canonical.checkedAt),n=s.now();
+ fernHold(canonical&&canonical.spreadsheetId===ctx.config.spreadsheetId&&Number.isFinite(t)&&t<=n+5000&&n-t<300000&&q&&q.sheetId===903&&q.width===26&&Number.isInteger(q.rowCount)&&q.rowCount>=6&&Array.isArray(q.rows)&&q.rows.length===q.rowCount&&p.evidenceRow<=q.rowCount,'fresh complete historical claim snapshot missing');
+ var row=q.rows[p.evidenceRow-1];fernHold(Array.isArray(row)&&row.length===26&&s.sha(JSON.stringify(row))===p.typedRowSha256&&row[3]&&typeof row[3].stringValue==='string','historical claim baseline native preimage changed');
+ var d=JSON.parse(row[3].stringValue);fernHold(d.schema==='BackofficeNativeHistoricalClaimBaseline/v1'&&d.canonicalSpreadsheetId===ctx.config.spreadsheetId&&d.modelAuthority===false&&d.authorityRef===ctx.config.ownerAuthority.ref&&typeof d.reviewRef==='string'&&d.reviewRef&&Number.isFinite(Date.parse(d.reviewedAt))&&d.reviewedAt===ctx.config.soleWriter.cutoverVerifiedAt&&Array.isArray(d.closedClaims)&&d.closedClaims.length<=100,'historical claim baseline authority/evidence missing');
+ return d;
+}
+function fernainNativeLegacyClaimClosed(a,ctx){
+ var s=ctx.services,d=fernainNativeHistoricalClaimBaseline(ctx,a.canonical);
+ var matches=d.closedClaims.filter(function(c){return c.row===a.row&&c.id===a.id&&c.type===a.type&&c.rawSha256===a.rawSha256;});if(matches.length!==1)return false;var m=matches[0];
+ fernHold(m.closed===true&&m.closure&&Number.isInteger(m.closure.row)&&m.closure.row>=6&&typeof m.closure.fullTypedSha256==='string'&&typeof m.closure.id==='string'&&m.closure.id&&typeof m.closure.reviewEvidenceRef==='string'&&m.closure.reviewEvidenceRef,'historical claim exact closure relation missing');
+ var closed=a.canonical.Evidence.rows[m.closure.row-1];fernHold(Array.isArray(closed)&&closed.length===26&&s.sha(JSON.stringify(closed))===m.closure.fullTypedSha256&&closed[0]&&closed[0].stringValue===m.closure.id,'historical claim independently retained closure changed');return true;
+}
+
+function fernainNativeLegacyRecordNonClaim(){return false;}
+
+function fernainNativeClaimKnown(a,ctx){
+ var s=ctx.services,c=ctx.config,d=a.document,b=d&&d.binding;
+ fernHold(d&&b&&d.writerId===c.writerId&&d.writerType==='existing-canonical-sole-writer'&&d.ownerEffectScopeRef===c.ownerAuthority.effectScopeRef&&typeof d.packetId==='string'&&d.packetId&&Number.isInteger(d.finalRow)&&d.finalRow>=6&&/^NATIVE-[A-Za-z0-9_-]{16,128}$/.test(d.id),'native claim writer/authority lineage missing');
+ fernHold(JSON.stringify(fernBinding(b))===JSON.stringify(b),'native claim exact binding malformed');
+ var attempt=d.id.slice(7),props=s.props.getProperties(),rawMarker=props['FERNAIN_NATIVE_NO_RESEND_V1:'+s.sha(b.leadId)],m;
+ try{m=JSON.parse(rawMarker);}catch(_){fernHold(false,'native claim permanent lineage unavailable');}
+ fernHold(m&&m.schema==='BackofficeNativeNoResend/v1'&&m.leadId===b.leadId&&m.attemptId===attempt&&m.bindingHash===s.sha(JSON.stringify(b))&&m.claimRow===a.row&&m.finalRow===d.finalRow&&m.noResend===true,'native claim permanent lineage mismatch');
+ fernHold(m.bodySha256===s.sha(renderCurrentSalesBody(b)),'native claim exact approved body lineage mismatch');
+ if(d.status==='ACTIVE')return d.id===a.ownClaimId&&attempt===a.ownAttemptId&&m.state==='PENDING_NO_RESEND'&&a.expectedBinding&&JSON.stringify(b)===JSON.stringify(fernBinding(a.expectedBinding));
+ fernHold(d.status==='CLOSED'&&m.state==='CONFIRMED_NO_RESEND'&&typeof m.receiptId==='string'&&typeof m.threadId==='string','native closure confirmed lineage missing');
+ var receipt=a.canonical.Evidence.rows[d.finalRow-1],prospect=BackofficeNativeSemanticSnapshotV2.safetyTyped(a.canonical,b.row);
+ // Status is mutable classification. Closure is established by the permanent
+ // confirmed attempt and preserved receipt fields, so a factual reply successor
+ // does not revive an already closed claim or remove the no-resend marker.
+ fernHold(receipt&&prospect&&receipt[0].stringValue===b.leadId&&typeof receipt[3].stringValue==='string'&&receipt[3].stringValue.indexOf('; message '+m.receiptId+'; thread '+m.threadId+'.')>=0&&receipt[3].stringValue.endsWith('Body:\n'+renderCurrentSalesBody(b))&&prospect[14].stringValue===b.leadId&&prospect[18].stringValue==='operator@example.com'&&prospect[19].stringValue===b.to&&prospect[21].stringValue===m.receiptId&&prospect[22].stringValue===m.threadId,'native closure canonical receipt readback missing');return true;
+}
+
+/* END exact module native-policy-integration/NativePolicyAdaptersV1.gs */
+
+/* BEGIN exact module native-install-package/NativeAccessProbeV1.gs; SHA256 0000000000000000000000000000000000000000000000000000000000000000 */
+/* Exact native access probe. No message reads, sends, writes, configuration,
+ * credentials or trigger installation. Google scope acceptance belongs to owner.
+ * Only finite verdict metadata is logged; raw provider data/errors stay private.
+ */
+function fernainNativeAccessProbeV1(){
+ var result={schema:'BackofficeNativeAccessProbe/v1',observedAtUtc:new Date().toISOString(),accountMatched:false,gmailProfile:false,canonicalMetadata:false,adminAudit:false,publicDns:false,complete:false,effectsAttempted:false,rawDataLogged:false,reasonCode:'PROBE_PENDING'};
+ var s=null,got=false;function stop(code){result.reasonCode=code;fernainNativeQuotaProbeFinalizeV1_(result,s,got);got=false;console.log(JSON.stringify(result));return result;}
+ try{s=fernainNativeServices();s.startBudget(110000);got=s.lock.tryLock(0);if(!got||!s.lock.hasLock())return stop('PROBE_LOCK_UNAVAILABLE');}catch(_){return stop('PROBE_SERVICES_UNAVAILABLE');}
+ try{s.checkBudget(1000);var profile=fernainNativeReadBoundaryV1_(s,function(){return Gmail.Users.getProfile('me');});if(!profile||Array.isArray(profile)||profile.emailAddress!=='operator@example.com')return stop('PROBE_ACCOUNT_MISMATCH');result.accountMatched=true;s.checkBudget();result.gmailProfile=true;}catch(_){return stop('PROBE_GMAIL_PROFILE_UNAVAILABLE');}
+ try{var book=s.readCanonicalIdentity();if(!book||Array.isArray(book)||book.spreadsheetId!=='{{CONFIGURE_GOOGLE_ID_030}}')return stop('PROBE_CANONICAL_ID_MISMATCH');result.canonicalMetadata=true;}catch(_){return stop('PROBE_SHEETS_METADATA_UNAVAILABLE');}
+ try{s.checkBudget(1000);var audit=fernainNativeReadBoundaryV1_(s,function(){return AdminReports.Activities.list('all','admin',{maxResults:1});});if(!audit||typeof audit!=='object'||Array.isArray(audit))return stop('PROBE_ADMIN_AUDIT_SHAPE');s.checkBudget();result.adminAudit=true;}catch(_){return stop('PROBE_ADMIN_AUDIT_UNAVAILABLE');}
+ try{s.checkBudget(1000);var dns=fernainNativeReadBoundaryV1_(s,function(){return UrlFetchApp.fetch('https://dns.google/resolve?name=example.org&type=A',{method:'get',followRedirects:false,validateHttpsCertificates:true,muteHttpExceptions:true});});if(dns.getResponseCode()!==200)return stop('PROBE_PUBLIC_DNS_STATUS');s.checkBudget();result.publicDns=true;}catch(_){return stop('PROBE_PUBLIC_DNS_UNAVAILABLE');}
+ result.complete=true;return stop('PROBE_ALL_REQUESTED_ACCESS_READS_PASSED');
+}
+
+/* END exact module native-install-package/NativeAccessProbeV1.gs */
+
+
+function fernainNativeSemanticReadDiagnosticV2(){
+ 'use strict';var s=null,got=false,stage='SERVICES',started=Date.now(),out={schema:'BackofficeNativeSemanticReadDiagnostic/v2',complete:false,readOnly:true,sourceFetchAttempted:false,canonicalWriteAttempted:false,propertyWriteAttempted:false,sendAttempted:false,unreadArchivedPayloadsFreshlyHashed:false,failedStage:null,failureCategory:null,timingMs:{},shaMetrics:{}};
+ function measure(name,fn){var begin=Date.now();try{return fn();}finally{out.timingMs[name]=Date.now()-begin;if(s&&typeof s.shaMetrics==='function')out.shaMetrics[name]=s.shaMetrics();}}
+ try{s=fernainNativeServices();s.startBudget(110000);stage='LOCK';got=s.lock.tryLock(0);fernHold(got&&s.lock.hasLock()===true,'semantic diagnostic lock required');stage='CONFIG';var c=JSON.parse(s.props.getProperty('FERNAIN_NATIVE_RUNTIME_CONFIG_V1')||'null');fernHold(c&&c.schema==='BackofficeNativeConfig/v1'&&c.projectId===s.projectId&&c.spreadsheetId===FERN_SALES_ID,'semantic diagnostic exact configuration missing');stage='SEMANTIC_SNAPSHOT';var handle={row:10,leadId:'EXAMPLE-LEAD-001'},x=measure('semanticSnapshot',function(){return s.snapshot(c,handle);});stage='SEMANTIC_VALIDATE';measure('semanticValidate',function(){BackofficeNativeSemanticSnapshotV2.validate(x,s);});out.snapshotSchema=x.schema;out.safetyColumns=x.Prospects.columns.slice();out.physicalProspectRows=x.Prospects.rowCount;out.physicalEvidenceRows=x.Evidence.rowCount;out.targetFull27=true;out.exactHeaders=JSON.stringify(x.Prospects.headers)===JSON.stringify(c.prospectsHeaders)&&JSON.stringify(x.Evidence.rows[4])===JSON.stringify(c.evidenceHeaders);fernHold(out.exactHeaders,'semantic diagnostic exact headers changed');out.archiveCounts={};x.Evidence.archiveSummaries.forEach(function(a){if(a)out.archiveCounts[a.kind]=(out.archiveCounts[a.kind]||0)+1;});stage='SEMANTIC_DIGEST';var digest=measure('semanticDigest',function(){return fernainNativeSourcePolicyLedgerSnapshot(x,s);});out.semanticDigest=digest.semanticSnapshotSha256;out.honestSemanticDigest=digest.schema==='BackofficeNativeSemanticLedgerDigestTransport/v2'&&digest.unreadArchivedPayloadsFreshlyHashed===false;fernHold(out.honestSemanticDigest,'semantic diagnostic digest contract missing');stage='CAPACITY';out.capacity=measure('snapshotCapacity',function(){return s.snapshotCapacity(x);});out.complete=true;}
+ catch(e){out.failedStage=stage;out.failureCategory=fernainNativeFiniteErrorCategoryV1(e);}finally{fernainNativeQuotaProbeFinalizeV1_(out,s,got);out.timingMs.total=Date.now()-started;if(s&&typeof s.shaMetrics==='function')out.shaMetrics.total=s.shaMetrics();}Logger.log('FERNAIN_SEMANTIC_READ_DIAGNOSTIC_V2:'+JSON.stringify(out));return out;
+}
