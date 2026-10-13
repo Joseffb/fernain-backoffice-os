@@ -113,6 +113,8 @@ test('configured products are read by the full portal snapshot using the actual 
   assert.equal(snapshot.state, 'ok');
   assert.equal(snapshot.sources.executive.state, 'verified');
   assert.equal(snapshot.sources.products.state, 'verified');
+  assert.equal(typeof snapshot.checkedAt, 'string');
+  assert.equal(snapshot.sources.products.checkedAt, snapshot.checkedAt);
   assert.equal(snapshot.sources.products.title, 'Products & Engineering');
   assert.equal(snapshot.sources.products.metrics[0].state, 'reported');
   assert.equal(snapshot.sources.products.metrics[0].value, 'Implemented');
