@@ -412,8 +412,8 @@
     },
     {
       "path": "tests/portal-products.test.cjs",
-      "bytes": 6195,
-      "sha256": "66f7fca45a951e03287c8c2f27387a975776aa0a16f0d9c082682c618f66aacd",
+      "bytes": 6321,
+      "sha256": "94677a5000e9fd01ecf7fff771d874d99fa831e344511538f45b5177f84d05fd",
       "kind": "test"
     }
   ]
