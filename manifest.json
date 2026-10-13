@@ -388,14 +388,14 @@
     },
     {
       "path": "sales/NativeRuntimeIntegrationV1.gs",
-      "bytes": 344392,
-      "sha256": "c37cab74a6411e6cf25608f1cc0db066453767a328f5b07dfe522a3c71b878cc",
+      "bytes": 356107,
+      "sha256": "a9238a9a727e02d8c9fbfc1ad268baf61bac430db371646b5ef290a0d8c7d9e7",
       "kind": "sanitized_source"
     },
     {
       "path": "sales/NativeServicesV1.gs",
-      "bytes": 311463,
-      "sha256": "20a264be9018e34c4627061a45af340a76e20a3873bc807e08c1921229076da2",
+      "bytes": 315953,
+      "sha256": "0b76bd0ec672b11c02f5fea219131f00c1841296ca475690265a1a3dd2ae0fe9",
       "kind": "sanitized_source"
     },
     {
@@ -409,6 +409,12 @@
       "bytes": 16460,
       "sha256": "aa8b6e1b3732f5c2c7ef882775f78c6b8257d6aebbb21dab62caf1a0d189572f",
       "kind": "sanitized_source"
+    },
+    {
+      "path": "tests/native-manual-quota.test.cjs",
+      "kind": "test",
+      "bytes": 18127,
+      "sha256": "4d5f24c50b70513be5dd440ecfc482f143b2df3fcf57a880fd0c2ec0aad01147"
     },
     {
       "path": "tests/portal-products.test.cjs",

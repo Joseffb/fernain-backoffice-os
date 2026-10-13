@@ -2298,6 +2298,11 @@ function fernainNativeServices(actionBudget) {
     safeData(binding, 'account-usage binding'); safeData(cfg, 'account-usage configuration');
     hold(record(binding) && record(cfg) && record(cfg.provider), 'independent binding/provider policy required');
     var policy = cfg.provider, started = Date.now(), checkedAt = new Date(started).toISOString();
+    var manual=cfg.manualUsage;
+    hold(record(manual)&&manual.schema==='BackofficeNativeManualQuotaEvidence/v1'&&manual.complete===true&&manual.modelAuthority===false&&manual.principal===accountAddress&&Number.isInteger(manual.evidenceRows)&&manual.evidenceRows>=6&&typeof manual.evidenceSha256==='string'&&/^[a-f0-9]{64}$/.test(manual.evidenceSha256)&&manual.evidenceSha256===cfg.evidenceSha256&&Array.isArray(manual.unknownReservations)&&Array.isArray(manual.confirmedReceipts),'fresh complete manual-counterpart quota evidence required');
+    var manualUnknownKeys=Object.create(null),manualReceiptIds=Object.create(null),manualReceiptsById=Object.create(null),manualUnknown24=[],manualUnknown60=[];
+    manual.unknownReservations.forEach(function(item){hold(record(item)&&['BackofficeManualUncertainSend/v1','BackofficeManualUnknownSendReceipt/v1'].indexOf(item.schema)>=0&&typeof item.roundId==='string'&&item.roundId&&Number.isInteger(item.claimRow)&&item.claimRow>=6&&typeof item.contactId==='string'&&item.contactId&&typeof item.recipient==='string'&&mailbox(item.recipient)===item.recipient&&typeof item.completedAtUtc==='string'&&Number.isFinite(Date.parse(item.completedAtUtc))&&Number.isInteger(item.sourceRow)&&item.sourceRow>=6&&item.sourceRow<=manual.evidenceRows&&typeof item.sourceSha256==='string'&&/^[a-f0-9]{64}$/.test(item.sourceSha256),'manual unknown reservation binding invalid');var age=started-Date.parse(item.completedAtUtc),key=JSON.stringify([item.roundId,item.claimRow,item.contactId]);hold(age>=-5000,'manual unknown reservation timestamp is in the future');hold(!own(manualUnknownKeys,key),'duplicate manual unknown reservation');manualUnknownKeys[key]=true;if(age<=86400000)manualUnknown24.push(item);if(age<=3600000)manualUnknown60.push(item);});
+    manual.confirmedReceipts.forEach(function(item){hold(record(item)&&item.schema==='BackofficeManualSendReceipt/v1'&&typeof item.messageId==='string'&&item.messageId&&typeof item.threadId==='string'&&item.threadId&&typeof item.sender==='string'&&mailbox(item.sender)===accountAddress&&typeof item.recipient==='string'&&mailbox(item.recipient)===item.recipient&&typeof item.subject==='string'&&item.subject&&typeof item.bodySha256==='string'&&/^[a-f0-9]{64}$/.test(item.bodySha256)&&typeof item.completedAtUtc==='string'&&Number.isFinite(Date.parse(item.completedAtUtc))&&Number.isInteger(item.sourceRow)&&item.sourceRow>=6&&item.sourceRow<=manual.evidenceRows&&typeof item.sourceSha256==='string'&&/^[a-f0-9]{64}$/.test(item.sourceSha256),'manual confirmed receipt binding invalid');hold(!own(manualReceiptIds,item.messageId),'duplicate manual confirmed Gmail ID');manualReceiptIds[item.messageId]=true;if(started-Date.parse(item.completedAtUtc)<=86400000){hold(started-Date.parse(item.completedAtUtc)>=-5000,'manual receipt timestamp is in the future');manualReceiptsById[item.messageId]=item;}});
     hold(Array.isArray(policy.senderAddresses) && policy.senderAddresses.length > 0 &&
       Array.isArray(policy.internalDomains) && policy.internalDomains.length > 0, 'independent sender/domain coverage required');
     var senders = policy.senderAddresses.map(mailbox);
@@ -2328,10 +2333,11 @@ function fernainNativeServices(actionBudget) {
       hold(!/["(){}\s]/.test(sender), 'sender cannot be safely bound to outbound query'); return 'from:' + sender;
     }).join(' OR ') + ') after:' + (Math.floor((started - 86400000) / 1000) - 1);
     var sent = searchAll(outboundQuery, cfg.outboundSearchBudget || 400);
+    Object.keys(manualReceiptsById).forEach(function(id){hold(sent.ids.indexOf(id)>=0,'recent manual receipt missing from complete fresh account outbound census');});
     var campaign60 = 0, automation24 = 0, unknownAutomation24 = 0, recipients = [], external = [], metadataBasis = [];
     sent.ids.forEach(function (id) {
       checkBudget(1000);
-      terminalProofReceipt=null;var native = gmailReceiptDto(nativeBoundary(function(){return Gmail.Users.Messages.get('me', id, { format: 'metadata', metadataHeaders: ['From', 'To', 'Cc', 'Bcc'] });}), 'message');
+      terminalProofReceipt=null;var native = gmailReceiptDto(nativeBoundary(function(){return Gmail.Users.Messages.get('me', id, { format: 'metadata', metadataHeaders: ['From', 'To', 'Cc', 'Bcc', 'Subject'] });}), 'message');
       var message = nativeMessage(native, 'metadata', id), date = Number(message.internal_date), labels = message.label_ids;
       hold(date <= started + 5000 && !labels.includes('DRAFT'), 'native outbound timestamp/draft coverage unknown');
       var from = addressList(message.payload.headers, 'from');
@@ -2339,6 +2345,7 @@ function fernainNativeServices(actionBudget) {
         'native outbound sender absent from independent coverage');
       var toOnly = addressList(message.payload.headers, 'to'), cc = addressList(message.payload.headers, 'cc'), bcc = addressList(message.payload.headers, 'bcc');
       var to = toOnly.concat(cc, bcc);
+      var manualReceipt=manualReceiptsById[id];if(manualReceipt){var subjects=message.payload.headers.filter(function(h){return h.name.toLowerCase()==='subject';});hold(subjects.length===1&&subjects[0].value===manualReceipt.subject&&message.thread_id===manualReceipt.threadId&&Math.abs(date-Date.parse(manualReceipt.completedAtUtc))<=300000&&from.length===1&&from[0]===manualReceipt.sender&&to.indexOf(manualReceipt.recipient)>=0,'fresh native account message does not exactly corroborate manual receipt binding');}
       metadataBasis.push({id:message.id,thread_id:message.thread_id,internal_date:message.internal_date,label_ids:message.label_ids.slice(),headers:message.payload.headers.map(function(h){return {name:h.name,value:h.value};}),nativeRawHeaders:native.payload.headers.map(function(h){return {name:h.name,value:h.value};}),nativeMetadataRepresentation:'GMAIL_MESSAGE_METADATA_SDK_SEMANTIC_DTO_V1',nativeMetadataSha256:sha(JSON.stringify({id:native.id,threadId:native.threadId,internalDate:native.internalDate,labelIds:native.labelIds,headers:native.payload.headers})),parsed:{from:from,to:toOnly,cc:cc,bcc:bcc},checkedAt:stamp()});
       hold(to.length > 0, 'native outbound recipient coverage unavailable');
       recipients = recipients.concat(to);
@@ -2349,12 +2356,15 @@ function fernainNativeServices(actionBudget) {
         automation24++; if (date >= started - 3600000) campaign60++;
       } else unknownAutomation24++;
     });
+    manualUnknown24.forEach(function(item){recipients.push(item.recipient);if(domains.indexOf(item.recipient.split('@').pop())<0)external.push(item.recipient);});
     var reservation = cfg.reservations;
     hold(record(reservation) && ['campaign60', 'account24', 'automation24'].every(function (key) {
       return integer(reservation[key], 0);
     }), 'independent current reservation counts required');
+    var reservedCampaign60=Math.max(reservation.campaign60,manualUnknown60.length),reservedAccount24=Math.max(reservation.account24,manualUnknown24.length),reservedAutomation24=Math.max(reservation.automation24,manualUnknown24.length);
+    campaign60+=manualUnknown60.length;unknownAutomation24+=manualUnknown24.length;var totalAccount24=sent.ids.length+manualUnknown24.length;
     var measured = {
-      messages24: sent.ids.length, externalUnique24: new Set(external).size, apiRecipientsPerMessage: 0,
+      messages24: totalAccount24, externalUnique24: new Set(external).size, apiRecipientsPerMessage: 0,
       recipients24: recipients.length, externalRecipients24: external.length, uniqueRecipients24: new Set(recipients).size
     };
     hold(record(policy.dimensions), 'independent applicable provider dimensions required');
@@ -2374,15 +2384,15 @@ function fernainNativeServices(actionBudget) {
       hold(own(dimensions, name) && dimensions[name].applicable === true, 'required provider dimension missing: ' + name);
     });
     var ref = 'gmail-native-account-usage:' + projectId + ':' + started;
-    var usageBasis={schema:'BackofficeNativeAccountUsageBasis/v1',accountAddress:accountAddress,checkedAt:checkedAt,windowStartUtc:new Date(started-86400000).toISOString(),windowEndUtc:checkedAt,queryWindowConservativeSeconds:1,outboundSearch:sent,historySearch:history,historyTerms:terms,senderAddresses:senders,internalDomains:domains,nativeProfile:copy(profile),nativeProfileRepresentation:'GMAIL_PROFILE_SDK_SEMANTIC_DTO_V1',nativeLabels:labels.labels.filter(function(l){return l.id===labelId;}).map(function(l){return {id:l.id,name:l.name};}),nativeLabelsRepresentation:'GMAIL_LABELS_LIST_SDK_SEMANTIC_DTO_V1',metadata:metadataBasis,classification:'LABEL_5_AND_SENT_KNOWN_AUTOMATION_OTHER_OUTBOUND_UNKNOWN_AUTOMATION',countedIds:sent.ids,recipientCount24:recipients.length,externalRecipientCount24:external.length,uniqueRecipientCount24:new Set(recipients).size,externalUniqueRecipientCount24:new Set(external).size,campaign60:campaign60,totalAccount24:sent.ids.length,automation24:automation24,unknownAutomation24:unknownAutomation24,reservations:copy(reservation)};
+    var usageBasis={schema:'BackofficeNativeAccountUsageBasis/v1',accountAddress:accountAddress,checkedAt:checkedAt,windowStartUtc:new Date(started-86400000).toISOString(),windowEndUtc:checkedAt,queryWindowConservativeSeconds:1,outboundSearch:sent,historySearch:history,historyTerms:terms,senderAddresses:senders,internalDomains:domains,nativeProfile:copy(profile),nativeProfileRepresentation:'GMAIL_PROFILE_SDK_SEMANTIC_DTO_V1',nativeLabels:labels.labels.filter(function(l){return l.id===labelId;}).map(function(l){return {id:l.id,name:l.name};}),nativeLabelsRepresentation:'GMAIL_LABELS_LIST_SDK_SEMANTIC_DTO_V1',metadata:metadataBasis,classification:'LABEL_5_AND_SENT_KNOWN_AUTOMATION_OTHER_OUTBOUND_UNKNOWN_AUTOMATION',countedIds:sent.ids,manualUnknownReservations24:manualUnknown24.map(function(x){return {schema:x.schema,roundId:x.roundId,claimRow:x.claimRow,contactId:x.contactId,recipient:x.recipient,completedAtUtc:x.completedAtUtc,sourceRow:x.sourceRow,sourceSha256:x.sourceSha256};}),manualConfirmedReceipts24:Object.keys(manualReceiptsById),recipientCount24:recipients.length,externalRecipientCount24:external.length,uniqueRecipientCount24:new Set(recipients).size,externalUniqueRecipientCount24:new Set(external).size,campaign60:campaign60,totalAccount24:totalAccount24,automation24:automation24,unknownAutomation24:unknownAutomation24,reservations:{campaign60:reservedCampaign60,account24:reservedAccount24,automation24:reservedAutomation24}};
     return {
       nativeUsageBasis:usageBasis,nativeUsageBasisSha256:sha(JSON.stringify(usageBasis)),
       account: { address: accountAddress, labelId: labelId, complete: true, checkedAt: checkedAt, ref: ref + ':account' },
       usage: { accountAddress: accountAddress, complete: true, unknownUsage: false,
-        campaign60: campaign60, totalAccount24: sent.ids.length, automation24: automation24,
+        campaign60: campaign60, totalAccount24: totalAccount24, automation24: automation24,
         unknownAutomation24: unknownAutomation24,
-        reservedCampaign60: reservation.campaign60, reservedAccount24: reservation.account24,
-        reservedAutomation24: reservation.automation24, accountSentIds: sent.ids,
+        reservedCampaign60: reservedCampaign60, reservedAccount24: reservedAccount24,
+        reservedAutomation24: reservedAutomation24, accountSentIds: sent.ids,
         recipientCount24: recipients.length, externalRecipientCount24: external.length,
         uniqueRecipientCount24: new Set(recipients).size, externalUniqueRecipientCount24: new Set(external).size,
         checkedAt: checkedAt, ref: ref + ':usage' },
