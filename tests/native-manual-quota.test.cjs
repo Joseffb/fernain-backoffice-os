@@ -284,14 +284,16 @@ function preflightPacket(reservations) {
     leadId,
     product: 'Jobs',
     recipientKind: 'named-individual',
+    copyRevision: 'first-introduction-20261013T193329Z',
+    verifiedWorkflowHeading: 'Job Search',
     to: recipient,
     name: 'Synthetic Person',
     first: 'Synthetic',
     company: 'Example Organization',
     role: 'Career Services Manager',
     organizationKey: 'example-organization',
-    subject: 'A synthetic question',
-    observation: 'We saw the public careers page.',
+    subject: 'Example Organization — Could you share your experience?',
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Job Search page.',
     sourceRefs: ['https://example.com/careers']
   };
   const binding = {
@@ -306,12 +308,17 @@ function preflightPacket(reservations) {
     organizationKey: candidate.organizationKey,
     subject: candidate.subject,
     observation: candidate.observation,
-    sourceRefs: candidate.sourceRefs
+    sourceRefs: candidate.sourceRefs,
+    copyRevision: candidate.copyRevision,
+    verifiedWorkflowHeading: candidate.verifiedWorkflowHeading
   };
-  const body = 'Hi Synthetic,\n\nI’m Backoffice, founder of Backoffice. We’re building Jobs, a career-board product for membership organizations, associations and publishers.\n\n' +
-    candidate.observation + ' How is that service working for your team and members? I’d be interested in what you’d keep and what you’d change.\n\n' +
-    'Would you be open to a brief conversation? If someone else handles the board, I’d appreciate a pointer to the right person.\n\n' +
-    'Thanks,\nBackoffice Backoffice Owner\nFounder, Example Organization\nhttps://example.com';
+  const body = 'Hi Synthetic,\n\n' +
+    "I'm Fernáin, founder of Fernain. After nine years developing technology at a national membership organization, I'm now building tools specifically for membership organizations, associations, and publishers.\n\n" +
+    "But one organization's experience isn't everyone's, and I don't want to assume I know what others need.\n\n" +
+    "I noticed Example Organization uses Job Search page. We're developing similar infrastructure and would value your perspective on what's working and what's frustrating.\n\n" +
+    "Would you be open to sharing one thing you'd change about your current system?\n\n" +
+    "Your insights would help shape what we're building.\n\n" +
+    'Thanks,\nFernáin Joseff Betancourt\nFounder, Fernain LLC\nhttps://fernain.com';
   const row = Array(27).fill('');
   row[1] = candidate.company;
   row[3] = contact;
@@ -382,6 +389,67 @@ test('ten unresolved attempts reach the rolling-20 cap and cannot admit another 
   assert.doesNotThrow(() => context.validateCurrentSalesPreflight(preflightPacket(9), now));
   assert.throws(() => context.validateCurrentSalesPreflight(preflightPacket(10), now),
     /campaign\/account\/automation rolling quota/);
+});
+
+test('first-introduction copy is versioned, exact, and fails closed outside its verified observation form', () => {
+  const { context } = loadActualGs();
+  const packet = preflightPacket(0);
+  assert.equal(packet.binding.copyRevision, 'first-introduction-20261013T193329Z');
+  assert.equal(packet.binding.subject,
+    'Example Organization — Could you share your experience?');
+  assert.equal(packet.owner.body,
+    "Hi Synthetic,\n\nI'm Fernáin, founder of Fernain. After nine years developing technology at a national membership organization, I'm now building tools specifically for membership organizations, associations, and publishers.\n\n" +
+    "But one organization's experience isn't everyone's, and I don't want to assume I know what others need.\n\n" +
+    "I noticed Example Organization uses Job Search page. We're developing similar infrastructure and would value your perspective on what's working and what's frustrating.\n\n" +
+    "Would you be open to sharing one thing you'd change about your current system?\n\n" +
+    "Your insights would help shape what we're building.\n\n" +
+    'Thanks,\nFernáin Joseff Betancourt\nFounder, Fernain LLC\nhttps://fernain.com');
+  assert.doesNotThrow(() => context.validateCurrentSalesPreflight(packet, now));
+  const prepared = { binding: context.fernBinding(packet.binding), body: packet.owner.body };
+  const proposal = { ...prepared.binding, body: prepared.body };
+  assert.doesNotThrow(() => context.validateCurrentSalesProposal(proposal, prepared));
+  const wrongCompany = { ...proposal, company: 'Unverified Other Organization',
+    subject: 'Unverified Other Organization — Could you share your experience?',
+    body: proposal.body.replace('Example Organization', 'Unverified Other Organization') };
+  assert.throws(() => context.validateCurrentSalesProposal(wrongCompany, prepared),
+    /differs from independently approved exact content/);
+  const legacyProposal = { ...proposal };
+  delete legacyProposal.copyRevision;
+  assert.throws(() => context.validateCurrentSalesProposal(legacyProposal, prepared),
+    /explicit current introductory copy revision required/);
+
+  const missingRevision = plain(packet);
+  delete missingRevision.binding.copyRevision;
+  assert.throws(() => context.validateCurrentSalesPreflight(missingRevision, now),
+    /explicit current introductory copy revision required/);
+  assert.throws(() => context.renderCurrentSalesBody({ ...packet.binding, copyRevision: 'unknown' }),
+    /unknown introductory copy revision/);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    observation: 'Example Organization uses a public Job Search page.'
+  }), /primary-source observation does not match/);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Jobs Board page.'
+  }), /independently verified workflow heading/);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    verifiedWorkflowHeading: 'Jobs Board'
+  }), /independently verified workflow heading/);
+  const jobsBoard = { ...packet.binding, verifiedWorkflowHeading: 'Jobs Board',
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Jobs Board page.' };
+  assert.match(context.renderCurrentSalesBody(jobsBoard),
+    /I noticed Example Organization uses Jobs Board page\./);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    observation: 'I noticed <Synthetic Prospect Label>’s website provides a public Job Search page.'
+  }), /observation label/);
+
+  const historical = { ...packet.binding };
+  delete historical.copyRevision;
+  historical.observation = 'We saw the public careers page.';
+  assert.equal(Object.hasOwn(context.fernBinding(historical), 'copyRevision'), false);
+  assert.match(context.renderCurrentSalesBody(historical), /I’m Backoffice, founder of Backoffice/);
 });
 
 test('actual Services accountUsage carries synthetic manual reservations into usage and provider metrics', () => {

@@ -376,8 +376,8 @@
     },
     {
       "path": "sales/NativeArchiveV2.gs",
-      "bytes": 130831,
-      "sha256": "8d89d03279c26a432d92f44fee630ea25a67a3896af9922393217cdc3a9fbc05",
+      "bytes": 131135,
+      "sha256": "1d5ad3169e59383c5c650d2972a988844d4592bdc52b384ef7cb2a00414389d7",
       "kind": "sanitized_source"
     },
     {
@@ -388,8 +388,8 @@
     },
     {
       "path": "sales/NativeRuntimeIntegrationV1.gs",
-      "bytes": 356107,
-      "sha256": "a9238a9a727e02d8c9fbfc1ad268baf61bac430db371646b5ef290a0d8c7d9e7",
+      "bytes": 356872,
+      "sha256": "10efee107bdf0b9a0ed472cc1b06cc97d597219b14888ff1a5702b5537a89b88",
       "kind": "sanitized_source"
     },
     {
@@ -406,21 +406,33 @@
     },
     {
       "path": "sales/PureSalesGuardsV1.gs",
-      "bytes": 16460,
-      "sha256": "aa8b6e1b3732f5c2c7ef882775f78c6b8257d6aebbb21dab62caf1a0d189572f",
+      "bytes": 21076,
+      "sha256": "0a636a5a2478971c6a4701d233c960bf4b0ef0c46180cba68a9669174aa26685",
       "kind": "sanitized_source"
     },
     {
       "path": "tests/native-manual-quota.test.cjs",
       "kind": "test",
-      "bytes": 18127,
-      "sha256": "4d5f24c50b70513be5dd440ecfc482f143b2df3fcf57a880fd0c2ec0aad01147"
+      "bytes": 22603,
+      "sha256": "34aeb09b9f2631f08f4c66d27c028a4a1d042d42a2b9743b659dea57938b707a"
     },
     {
       "path": "tests/portal-products.test.cjs",
       "bytes": 6321,
       "sha256": "94677a5000e9fd01ecf7fff771d874d99fa831e344511538f45b5177f84d05fd",
       "kind": "test"
+    },
+    {
+      "path": "sales/templates/README.md",
+      "bytes": 1115,
+      "sha256": "f0aa6fd297c5a5d6ed04a17acabef1df5734bcb52e688cdde1fbc23febe49754",
+      "kind": "documentation"
+    },
+    {
+      "path": "sales/templates/first-introduction-20261013T193329Z.txt",
+      "bytes": 801,
+      "sha256": "d325edaf95cc39b6b303b20543bb2cbafee0f2b23450d15ca3244f097251dcf7",
+      "kind": "documentation"
     }
   ]
 }
