@@ -285,6 +285,7 @@ function preflightPacket(reservations) {
     product: 'Jobs',
     recipientKind: 'named-individual',
     copyRevision: 'first-introduction-20261013T193329Z',
+    verifiedWorkflowHeading: 'Job Search',
     to: recipient,
     name: 'Synthetic Person',
     first: 'Synthetic',
@@ -292,7 +293,7 @@ function preflightPacket(reservations) {
     role: 'Career Services Manager',
     organizationKey: 'example-organization',
     subject: 'Example Organization — Could you share your experience?',
-    observation: 'I noticed Example Organization’s website provides a public Job Search page.',
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Job Search page.',
     sourceRefs: ['https://example.com/careers']
   };
   const binding = {
@@ -308,7 +309,8 @@ function preflightPacket(reservations) {
     subject: candidate.subject,
     observation: candidate.observation,
     sourceRefs: candidate.sourceRefs,
-    copyRevision: candidate.copyRevision
+    copyRevision: candidate.copyRevision,
+    verifiedWorkflowHeading: candidate.verifiedWorkflowHeading
   };
   const body = 'Hi Synthetic,\n\n' +
     "I'm Fernáin, founder of Fernain. After nine years developing technology at a national membership organization, I'm now building tools specifically for membership organizations, associations, and publishers.\n\n" +
@@ -406,6 +408,11 @@ test('first-introduction copy is versioned, exact, and fails closed outside its 
   const prepared = { binding: context.fernBinding(packet.binding), body: packet.owner.body };
   const proposal = { ...prepared.binding, body: prepared.body };
   assert.doesNotThrow(() => context.validateCurrentSalesProposal(proposal, prepared));
+  const wrongCompany = { ...proposal, company: 'Unverified Other Organization',
+    subject: 'Unverified Other Organization — Could you share your experience?',
+    body: proposal.body.replace('Example Organization', 'Unverified Other Organization') };
+  assert.throws(() => context.validateCurrentSalesProposal(wrongCompany, prepared),
+    /differs from independently approved exact content/);
   const legacyProposal = { ...proposal };
   delete legacyProposal.copyRevision;
   assert.throws(() => context.validateCurrentSalesProposal(legacyProposal, prepared),
@@ -421,6 +428,22 @@ test('first-introduction copy is versioned, exact, and fails closed outside its 
     ...packet.binding,
     observation: 'Example Organization uses a public Job Search page.'
   }), /primary-source observation does not match/);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Jobs Board page.'
+  }), /independently verified workflow heading/);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    verifiedWorkflowHeading: 'Jobs Board'
+  }), /independently verified workflow heading/);
+  const jobsBoard = { ...packet.binding, verifiedWorkflowHeading: 'Jobs Board',
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Jobs Board page.' };
+  assert.match(context.renderCurrentSalesBody(jobsBoard),
+    /I noticed Example Organization uses Jobs Board page\./);
+  assert.throws(() => context.renderCurrentSalesBody({
+    ...packet.binding,
+    observation: 'I noticed <Synthetic Prospect Label>’s website provides a public Job Search page.'
+  }), /observation label/);
 
   const historical = { ...packet.binding };
   delete historical.copyRevision;

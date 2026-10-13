@@ -66,7 +66,11 @@ function fernBinding(candidate) {
   if (Object.prototype.hasOwnProperty.call(candidate, "copyRevision")) {
     fernHold(candidate.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
       "unknown introductory copy revision");
+    fernHold(candidate.verifiedWorkflowHeading === "Jobs Board" ||
+      candidate.verifiedWorkflowHeading === "Job Search",
+      "independently verified workflow heading required");
     binding.copyRevision = FERN_FIRST_INTRO_COPY_REVISION;
+    binding.verifiedWorkflowHeading = candidate.verifiedWorkflowHeading;
   }
   return binding;
 }
@@ -84,15 +88,28 @@ function fernFirstIntroductionFeature(candidate) {
     candidate.company.length > 0 && candidate.company === candidate.company.trim() &&
     !/[\x00-\x1f\x7f\u0085\u2028\u2029<>]/.test(candidate.company),
     "verified organization name required for introductory observation");
-  const prefix = "I noticed " + candidate.company + "’s website provides a public ";
   const observation = candidate.observation;
+  const prefix = "I noticed ";
+  const separator = "’s website provides a public ";
   fernHold(typeof observation === "string" && observation.indexOf(prefix) === 0 &&
     observation.charAt(observation.length - 1) === ".",
     "primary-source observation does not match the verified feature form");
-  const feature = observation.slice(prefix.length, -1);
+  const separatorAt = observation.indexOf(separator, prefix.length);
+  fernHold(separatorAt > prefix.length &&
+    separatorAt === observation.lastIndexOf(separator),
+    "primary-source observation does not match the verified feature form");
+  const label = observation.slice(prefix.length, separatorAt);
+  const feature = observation.slice(separatorAt + separator.length, -1);
+  fernHold(label.length > 0 && label.length <= 120 && label === label.trim() &&
+    !/[\x00-\x1f\x7f\u0085\u2028\u2029<>.!?]/.test(label),
+    "primary-source observation label is empty, ambiguous, or outside the bounded form");
   fernHold(feature.length > 0 && feature.length <= 120 && feature === feature.trim() &&
     !/[\x00-\x1f\x7f\u0085\u2028\u2029<>.!?]/.test(feature),
     "verified feature is empty, ambiguous, or outside the bounded single-line form");
+  fernHold((candidate.verifiedWorkflowHeading === "Jobs Board" ||
+    candidate.verifiedWorkflowHeading === "Job Search") &&
+    feature === candidate.verifiedWorkflowHeading + " page",
+    "observed feature does not match the independently verified workflow heading");
   return feature;
 }
 function renderCurrentSalesBody(candidate) {
@@ -242,7 +259,8 @@ function validateCurrentSalesProposal(proposal, prepared) {
     prepared.binding.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
     "explicit current introductory copy revision required");
   const allowed = new Set(["row","leadId","product","to","name","first","company","role",
-    "organizationKey","subject","observation","sourceRefs","copyRevision","body"]);
+    "organizationKey","subject","observation","sourceRefs","copyRevision",
+    "verifiedWorkflowHeading","body"]);
   fernHold(Object.keys(proposal).every(key => allowed.has(key)), "proposal contains extra effects/authority");
   const binding = Object.assign({}, proposal);
   delete binding.body;
