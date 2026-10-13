@@ -388,8 +388,8 @@
     },
     {
       "path": "sales/NativeRuntimeIntegrationV1.gs",
-      "bytes": 373653,
-      "sha256": "d01c6a216678b080785bcdc4fcee28d943559585473ae2b16d4fe198862a8288",
+      "bytes": 375886,
+      "sha256": "9ae9dfca0a9b953c5ca4a52843375b0ac74fecc0a69c988d1d2dd684a1c7412b",
       "kind": "sanitized_source"
     },
     {
@@ -425,8 +425,8 @@
     {
       "path": "tests/native-dispatch-boundary.test.cjs",
       "kind": "test",
-      "bytes": 36879,
-      "sha256": "f281d7a38671307079871880ebe79d75d0a866802df7fc7b7355c53be0efdb8f"
+      "bytes": 42718,
+      "sha256": "93dd0cc02f477bd6bd02e75e57a75f9b014a9c95e201e0c7ea4992be5a08b2d6"
     },
     {
       "path": "tests/native-manual-quota.test.cjs",
