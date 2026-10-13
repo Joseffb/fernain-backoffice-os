@@ -125,10 +125,12 @@ function makeHarness(scenario) {
     company: organization,
     role,
     organizationKey: 'synthetic-example-association',
-    subject: 'A question about Synthetic Example Association’s career board',
-    observation: 'Your public careers page describes a member-focused job board.',
+    subject: `${organization} — Could you share your experience?`,
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Job Search page.',
     sourceRefs: [staffUrl, workflowUrl],
-    recipientKind: 'named-individual'
+    recipientKind: 'named-individual',
+    copyRevision: 'first-introduction-20261013T193329Z',
+    verifiedWorkflowHeading: 'Job Search'
   });
   const body = context.renderCurrentSalesBody(binding);
   const exactBinding = realm(context.fernBinding(binding));
@@ -496,8 +498,10 @@ function makeHarness(scenario) {
       sendCalls += 1;
       const checkedArgs = plain(args);
       assert.equal(checkedArgs.to, recipient);
-      const bindingForBody = plain(binding);
-      const sentBody = context.renderCurrentSalesBody(bindingForBody);
+      assert.equal(checkedArgs.subject, binding.subject);
+      assert.equal(checkedArgs.payload.mime_type, 'text/plain');
+      assert.equal(checkedArgs.payload.body.content, body, 'the synthetic Gmail send receives the exact reviewed body');
+      const sentBody = checkedArgs.payload.body.content;
       storedMessage = realm({
         id: 'synthetic-gmail-message-000001',
         thread_id: 'synthetic-gmail-thread-000001',
@@ -509,7 +513,7 @@ function makeHarness(scenario) {
           headers: [
             { name: 'to', value: recipient },
             { name: 'from', value: 'Backoffice Backoffice Owner <operator@example.com>' },
-            { name: 'subject', value: binding.subject },
+            { name: 'subject', value: checkedArgs.subject },
             { name: 'message-id', value: `<${rfcMessageId}>` }
           ]
         }
@@ -544,13 +548,16 @@ function makeHarness(scenario) {
       liveCaptureVerified: true,
       candidate: {
         person, current_role: role, email: recipient, organization,
-        organization_key: 'synthetic-example-association', organization_type: 'membership association'
+        first: 'Synthetic', lead_id: leadId, product: 'Jobs',
+        organization_key: 'synthetic-example-association', organization_type: 'membership association',
+        workflow: 'PUBLIC_JOB_BOARD', observation: binding.observation
       },
       sourceRefs: [staffUrl, workflowUrl]
     },
     evidence: {
       bindingSha256: sha('synthetic-source-binding'),
       binding: { registrySha256: sha(JSON.stringify(definition)) },
+      workflow: { facts: { heading: 'Job Search' } },
       fullCanonicalPreimage: { result: { structuredContent: { sheets: [{ data: [{ rowData: [{ values: sourceRawCells }] }] }] } } }
     }
   });
@@ -653,7 +660,8 @@ test('actual public consume path admits only the exact own attempt boundary and 
   assert.equal(h.semanticReviewCalls(), 3, 'initial, pending reservation, and exact attempt-boundary ledger reviews ran');
   const sentBody = h.gmailMessage().payload.body.content;
   assert.equal(sentBody, h.context.renderCurrentSalesBody(h.binding), 'the actual synthetic Gmail payload preserves the exact reviewed body');
-  assert.match(sentBody, /Hi Synthetic,\n\nI’m Backoffice/);
+  assert.match(sentBody, /^Hi Synthetic,\n\nI'm Fernáin, founder of Fernain\./);
+  assert.match(sentBody, /\n\nThanks,\nFernáin Joseff Betancourt\nFounder, Fernain LLC\nhttps:\/\/fernain\.com$/);
   const marker = Object.values(h.propsState).map(value => {
     try { return JSON.parse(value); } catch { return null; }
   }).find(value => value && value.schema === 'BackofficeNativeNoResend/v1');

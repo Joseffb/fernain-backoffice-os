@@ -425,8 +425,8 @@
     {
       "path": "tests/native-dispatch-boundary.test.cjs",
       "kind": "test",
-      "bytes": 28577,
-      "sha256": "cf06cb162ed3f59607b75828ac8ea803c9798e01ddba5e0c1ea1497393db6f2a"
+      "bytes": 29197,
+      "sha256": "48b72614ebbdd7cc801ae1a2be3ebedddfbc775ecc471ad1bef15684ed4243f3"
     },
     {
       "path": "tests/native-manual-quota.test.cjs",
