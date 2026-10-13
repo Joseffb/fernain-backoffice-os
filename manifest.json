@@ -388,8 +388,8 @@
     },
     {
       "path": "sales/NativeRuntimeIntegrationV1.gs",
-      "bytes": 356872,
-      "sha256": "10efee107bdf0b9a0ed472cc1b06cc97d597219b14888ff1a5702b5537a89b88",
+      "bytes": 367115,
+      "sha256": "f46268eeccb7be85f80e8c9f8c54c1b4e513e2c965e654e80dd2616f08816d23",
       "kind": "sanitized_source"
     },
     {
@@ -411,18 +411,6 @@
       "kind": "sanitized_source"
     },
     {
-      "path": "tests/native-manual-quota.test.cjs",
-      "kind": "test",
-      "bytes": 22603,
-      "sha256": "34aeb09b9f2631f08f4c66d27c028a4a1d042d42a2b9743b659dea57938b707a"
-    },
-    {
-      "path": "tests/portal-products.test.cjs",
-      "bytes": 6321,
-      "sha256": "94677a5000e9fd01ecf7fff771d874d99fa831e344511538f45b5177f84d05fd",
-      "kind": "test"
-    },
-    {
       "path": "sales/templates/README.md",
       "bytes": 1115,
       "sha256": "f0aa6fd297c5a5d6ed04a17acabef1df5734bcb52e688cdde1fbc23febe49754",
@@ -433,6 +421,24 @@
       "bytes": 801,
       "sha256": "d325edaf95cc39b6b303b20543bb2cbafee0f2b23450d15ca3244f097251dcf7",
       "kind": "documentation"
+    },
+    {
+      "path": "tests/native-dispatch-boundary.test.cjs",
+      "kind": "test",
+      "bytes": 28577,
+      "sha256": "cf06cb162ed3f59607b75828ac8ea803c9798e01ddba5e0c1ea1497393db6f2a"
+    },
+    {
+      "path": "tests/native-manual-quota.test.cjs",
+      "kind": "test",
+      "bytes": 22603,
+      "sha256": "34aeb09b9f2631f08f4c66d27c028a4a1d042d42a2b9743b659dea57938b707a"
+    },
+    {
+      "path": "tests/portal-products.test.cjs",
+      "bytes": 6321,
+      "sha256": "94677a5000e9fd01ecf7fff771d874d99fa831e344511538f45b5177f84d05fd",
+      "kind": "test"
     }
   ]
 }
