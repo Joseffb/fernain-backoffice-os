@@ -67,7 +67,8 @@ function fernBinding(candidate) {
     fernHold(candidate.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
       "unknown introductory copy revision");
     fernHold(candidate.verifiedWorkflowHeading === "Jobs Board" ||
-      candidate.verifiedWorkflowHeading === "Job Search",
+      candidate.verifiedWorkflowHeading === "Job Search" ||
+      candidate.verifiedWorkflowHeading === "Opportunities",
       "independently verified workflow heading required");
     binding.copyRevision = FERN_FIRST_INTRO_COPY_REVISION;
     binding.verifiedWorkflowHeading = candidate.verifiedWorkflowHeading;
@@ -107,7 +108,8 @@ function fernFirstIntroductionFeature(candidate) {
     !/[\x00-\x1f\x7f\u0085\u2028\u2029<>.!?]/.test(feature),
     "verified feature is empty, ambiguous, or outside the bounded single-line form");
   fernHold((candidate.verifiedWorkflowHeading === "Jobs Board" ||
-    candidate.verifiedWorkflowHeading === "Job Search") &&
+    candidate.verifiedWorkflowHeading === "Job Search" ||
+    candidate.verifiedWorkflowHeading === "Opportunities") &&
     feature === candidate.verifiedWorkflowHeading + " page",
     "observed feature does not match the independently verified workflow heading");
   return feature;
