@@ -334,8 +334,8 @@
     },
     {
       "path": "portal/Code.gs",
-      "bytes": 9383,
-      "sha256": "d01a06442c3cf2ff50fcb3ec5f757ef173df15d5c2093ec5d6ab8cf34bce5e25",
+      "bytes": 9399,
+      "sha256": "113a6666fb7b145b25a4eca5329735d37ccf65abfee4a0e2a48942fba84a13ba",
       "kind": "sanitized_source"
     },
     {
@@ -409,6 +409,12 @@
       "bytes": 16460,
       "sha256": "aa8b6e1b3732f5c2c7ef882775f78c6b8257d6aebbb21dab62caf1a0d189572f",
       "kind": "sanitized_source"
+    },
+    {
+      "path": "tests/portal-products.test.cjs",
+      "bytes": 6195,
+      "sha256": "66f7fca45a951e03287c8c2f27387a975776aa0a16f0d9c082682c618f66aacd",
+      "kind": "test"
     }
   ]
 }
