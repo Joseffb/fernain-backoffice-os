@@ -240,6 +240,11 @@ function makeHarness(scenario) {
   let newIdCounter = 0;
   let sendCalls = 0;
   let storedMessage = null;
+  let interruptedReceiptRead = false;
+  let interruptedMinimalRead = false;
+  let interruptedCanonicalWrite = false;
+  let interruptedClaimClosure = false;
+  let interruptedFinalMarkerWrite = false;
   let semanticReviewCalls = 0;
   let mutationApplied = false;
 
@@ -304,7 +309,19 @@ function makeHarness(scenario) {
   const props = {
     getProperty: key => Object.prototype.hasOwnProperty.call(propsState, key) ? propsState[key] : null,
     getProperties: () => realm(propsState),
-    setProperty: (key, value) => { propsState[key] = String(value); },
+    setProperty: (key, value) => {
+      if (scenario === 'legacy-closed-claim-marker-interruption' && !interruptedFinalMarkerWrite) {
+        let document;
+        try {
+          document = JSON.parse(String(value));
+        } catch (_) {}
+        if (document && document.state === 'CONFIRMED_NO_RESEND') {
+          interruptedFinalMarkerWrite = true;
+          throw new Error('Synthetic interrupted final marker write after claim closure.');
+        }
+      }
+      propsState[key] = String(value);
+    },
     deleteProperty: key => { delete propsState[key]; }
   };
   const services = {
@@ -337,7 +354,23 @@ function makeHarness(scenario) {
       checkedAt: stamp
     }),
     casWrites: writes => {
-      saveRows(writes.map(plain));
+      const checkedWrites = writes.map(plain);
+      const writesCanonicalSales = checkedWrites.some(write => write.sheet === 'Prospects' && write.after[11].stringValue === 'Sent');
+      const closesClaim = checkedWrites.some(write => {
+        try {
+          const document = JSON.parse(write.after[3].stringValue);
+          return document.schema === 'BackofficeNativeClaim/v1' && document.status === 'CLOSED';
+        } catch (_) { return false; }
+      });
+      if (scenario === 'legacy-repeat-recovery-lifecycle' && writesCanonicalSales && !interruptedCanonicalWrite) {
+        interruptedCanonicalWrite = true;
+        throw new Error('Synthetic interrupted final canonical write.');
+      }
+      if (scenario === 'legacy-repeat-recovery-lifecycle' && closesClaim && !interruptedClaimClosure) {
+        interruptedClaimClosure = true;
+        throw new Error('Synthetic interrupted claim closure.');
+      }
+      saveRows(checkedWrites);
       return realm({ acknowledged: true, verified: true });
     },
     persistArchiveEligibleRow: write => {
@@ -553,12 +586,24 @@ function makeHarness(scenario) {
       });
       return realm({ id: 'synthetic-gmail-message-000001', thread_id: 'synthetic-gmail-thread-000001' });
     },
-    full: () => realm({ structuredContent: storedMessage }),
-    minimal: () => realm({ structuredContent: {
-      id: 'synthetic-gmail-message-000001',
-      thread_id: 'synthetic-gmail-thread-000001',
-      label_ids: ['SENT', 'Label_5']
-    } }),
+    full: () => {
+      if (scenario === 'lost-receipt-read' && !interruptedReceiptRead) {
+        interruptedReceiptRead = true;
+        throw new Error('Synthetic interrupted receipt read after one fake send.');
+      }
+      return realm({ structuredContent: storedMessage });
+    },
+    minimal: () => {
+      if (scenario === 'legacy-repeat-recovery-lifecycle' && !interruptedMinimalRead) {
+        interruptedMinimalRead = true;
+        throw new Error('Synthetic interrupted label readback.');
+      }
+      return realm({ structuredContent: {
+        id: 'synthetic-gmail-message-000001',
+        thread_id: 'synthetic-gmail-thread-000001',
+        label_ids: ['SENT', 'Label_5']
+      } });
+    },
     label: () => { throw new Error('Synthetic message already has the requested label.'); }
   };
 
@@ -681,6 +726,156 @@ function makeHarness(scenario) {
     gmailMessage: () => plain(storedMessage),
     scenario
   };
+}
+
+function prepareInterruptedReceiptRecovery(variant = 'legacy', scenario = 'lost-receipt-read') {
+  const h = makeHarness(scenario);
+  const interrupted = plain(h.runtime.consumeGemini('syntheticcapture000001', h.model));
+  assert.equal(interrupted.status, 'PENDING_NO_RESEND');
+  assert.equal(interrupted.sendAttempted, true);
+  assert.equal(h.sendCalls(), 1, 'the recovery fixture begins after exactly one fake send');
+
+  const markerKey = `FERNAIN_NATIVE_NO_RESEND_V1:${sha(h.leadId)}`;
+  const marker = JSON.parse(h.propsState[markerKey]);
+  const expectedState = scenario === 'lost-receipt-read' ? 'SENT_RECEIPT_PENDING_NO_RESEND' :
+    scenario === 'legacy-closed-claim-marker-interruption' ? 'CONFIRMED_CLAIM_PENDING_NO_RESEND' : 'RECEIPT_PERSISTED_NO_RESEND';
+  assert.equal(marker.state, expectedState);
+  assert.ok(Number.isInteger(marker.pendingRow));
+  assert.ok(Number.isInteger(marker.attemptRow));
+  const boundaryRow = h.db.Evidence[marker.attemptRow - 1];
+  const boundaryDocument = JSON.parse(boundaryRow[3].stringValue);
+
+  if (variant === 'legacy') {
+    delete marker.pendingRowSha256;
+    delete boundaryDocument.value.pendingRowSha256;
+    delete boundaryDocument.value.pendingRow;
+  } else if (variant === 'marker-hash-missing') {
+    delete marker.pendingRowSha256;
+  } else if (variant === 'boundary-hash-missing') {
+    delete boundaryDocument.value.pendingRowSha256;
+  } else if (variant === 'marker-hash-malformed') {
+    marker.pendingRowSha256 = 'not-a-sha256';
+  } else if (variant === 'boundary-hash-malformed') {
+    boundaryDocument.value.pendingRowSha256 = 'not-a-sha256';
+  } else if (variant === 'pending-hash-mismatch') {
+    boundaryDocument.value.pendingRowSha256 = 'a'.repeat(64);
+  } else if (variant !== 'exact') {
+    throw new Error(`Unknown recovery fixture variant: ${variant}`);
+  }
+
+  boundaryRow[3] = { stringValue: JSON.stringify(boundaryDocument) };
+  marker.attemptRowSha256 = sha(JSON.stringify(boundaryRow));
+  h.propsState[markerKey] = JSON.stringify(marker);
+  return { h, markerKey, marker, boundaryRow, boundaryDocument, interrupted };
+}
+
+test('historical V1 receipt recovery validates the receipt without sending again or backfilling new hashes', () => {
+  const { h, markerKey, boundaryRow } = prepareInterruptedReceiptRecovery('legacy');
+  const result = plain(h.runtime.reconcilePending());
+
+  assert.equal(result.status, 'RECONCILED');
+  assert.equal(result.results.length, 1);
+  assert.equal(result.results[0].status, 'CONFIRMED_NO_RESEND');
+  assert.equal(result.results[0].sendAttempted, false);
+  assert.equal(h.sendCalls(), 1, 'recovery verifies the one existing native receipt and never sends');
+  const marker = JSON.parse(h.propsState[markerKey]);
+  const boundary = JSON.parse(boundaryRow[3].stringValue);
+  assert.equal(Object.hasOwn(marker, 'pendingRowSha256'), false, 'historical marker stays unmodified with respect to the new hash');
+  assert.equal(Object.hasOwn(boundary.value, 'pendingRowSha256'), false, 'historical attempt boundary is not backfilled');
+  assert.equal(Object.hasOwn(boundary.value, 'pendingRow'), false, 'the legacy boundary remains its original V1 shape');
+  const claim = JSON.parse(h.db.Evidence[marker.claimRow - 1][3].stringValue);
+  assert.equal(claim.status, 'CLOSED');
+});
+
+test('hashless receipt recovery resumes repeated historical receipt, canonical, and claim-close phases without sending', () => {
+  const { h, markerKey, boundaryRow } = prepareInterruptedReceiptRecovery('legacy', 'legacy-repeat-recovery-lifecycle');
+  let marker = JSON.parse(h.propsState[markerKey]);
+  assert.equal(marker.state, 'RECEIPT_PERSISTED_NO_RESEND', 'the original send stopped after durable receipt persistence');
+
+  const firstRecovery = plain(h.runtime.reconcilePending());
+  assert.equal(firstRecovery.results[0].status, 'PENDING_NO_RESEND', 'the first retry reaches the injected canonical write interruption');
+  marker = JSON.parse(h.propsState[markerKey]);
+  assert.equal(marker.state, 'RECEIPT_PERSISTED_NO_RESEND');
+
+  const secondRecovery = plain(h.runtime.reconcilePending());
+  assert.equal(secondRecovery.results[0].status, 'PENDING_NO_RESEND', 'the second retry commits canonical state and reaches claim-close interruption');
+  marker = JSON.parse(h.propsState[markerKey]);
+  assert.equal(marker.state, 'CONFIRMED_CLAIM_PENDING_NO_RESEND');
+
+  const thirdRecovery = plain(h.runtime.reconcilePending());
+  assert.equal(thirdRecovery.results[0].status, 'CONFIRMED_NO_RESEND');
+  assert.equal(thirdRecovery.results[0].claimClosed, true);
+  assert.equal(h.sendCalls(), 1, 'all recovery rounds reuse the single earlier fake send');
+  marker = JSON.parse(h.propsState[markerKey]);
+  assert.equal(marker.state, 'CONFIRMED_NO_RESEND');
+  assert.equal(Object.hasOwn(marker, 'pendingRowSha256'), false, 'the recovered legacy marker remains without a new hash');
+  const boundary = JSON.parse(boundaryRow[3].stringValue);
+  assert.equal(Object.hasOwn(boundary.value, 'pendingRowSha256'), false, 'the recovered legacy boundary remains without a new hash');
+  const claim = JSON.parse(h.db.Evidence[marker.claimRow - 1][3].stringValue);
+  assert.equal(claim.status, 'CLOSED');
+
+  const settledAgain = plain(h.runtime.reconcilePending());
+  assert.deepEqual(settledAgain.results, [], 'a completed historical recovery is stable on the next reconciliation');
+  assert.equal(h.sendCalls(), 1);
+});
+
+test('hashless later-phase recovery rejects a changed persisted native receipt', () => {
+  const { h, markerKey } = prepareInterruptedReceiptRecovery('legacy', 'legacy-repeat-recovery-lifecycle');
+  const marker = JSON.parse(h.propsState[markerKey]);
+  const receiptRow = h.db.Evidence[marker.receiptRow - 1];
+  const receiptDocument = JSON.parse(receiptRow[3].stringValue);
+  receiptDocument.value.receipt.structuredContent.payload.body.content += ' synthetic tamper';
+  receiptRow[3] = { stringValue: JSON.stringify(receiptDocument) };
+
+  const result = plain(h.runtime.reconcilePending());
+  assert.equal(result.results[0].status, 'PENDING_NO_RESEND');
+  assert.equal(result.results[0].reasonCode, 'NATIVE_RECOVERY_HOLD');
+  assert.equal(h.sendCalls(), 1, 'corrupt persisted receipt evidence cannot resume or resend');
+});
+
+test('hashless claim-pending recovery revalidates receipt and canonical state after closure before marker write interruption', () => {
+  const { h, markerKey } = prepareInterruptedReceiptRecovery('legacy', 'legacy-closed-claim-marker-interruption');
+  const pendingMarker = JSON.parse(h.propsState[markerKey]);
+  assert.equal(pendingMarker.state, 'CONFIRMED_CLAIM_PENDING_NO_RESEND');
+  const alreadyClosedClaim = JSON.parse(h.db.Evidence[pendingMarker.claimRow - 1][3].stringValue);
+  assert.equal(alreadyClosedClaim.status, 'CLOSED', 'the interrupted final marker follows a durable claim close');
+
+  const result = plain(h.runtime.reconcilePending());
+  assert.equal(result.results[0].status, 'CONFIRMED_NO_RESEND');
+  assert.equal(h.sendCalls(), 1);
+  const marker = JSON.parse(h.propsState[markerKey]);
+  assert.equal(marker.state, 'CONFIRMED_NO_RESEND');
+  assert.equal(Object.hasOwn(marker, 'pendingRowSha256'), false);
+});
+
+test('exact current pending and boundary hashes still allow receipt-only recovery', () => {
+  const { h, markerKey, boundaryRow } = prepareInterruptedReceiptRecovery('exact');
+  const result = plain(h.runtime.reconcilePending());
+
+  assert.equal(result.results[0].status, 'CONFIRMED_NO_RESEND');
+  assert.equal(h.sendCalls(), 1);
+  const marker = JSON.parse(h.propsState[markerKey]);
+  const boundary = JSON.parse(boundaryRow[3].stringValue);
+  assert.equal(boundary.value.pendingRowSha256, marker.pendingRowSha256);
+  assert.equal(sha(JSON.stringify(h.db.Evidence[marker.pendingRow - 1])), marker.pendingRowSha256);
+});
+
+for (const variant of [
+  'marker-hash-missing',
+  'boundary-hash-missing',
+  'marker-hash-malformed',
+  'boundary-hash-malformed',
+  'pending-hash-mismatch'
+]) {
+  test(`${variant} holds during receipt recovery without another send`, () => {
+    const { h } = prepareInterruptedReceiptRecovery(variant);
+    const result = plain(h.runtime.reconcilePending());
+
+    assert.equal(result.status, 'RECONCILED');
+    assert.equal(result.results[0].status, 'PENDING_NO_RESEND');
+    assert.equal(result.results[0].reasonCode, 'NATIVE_RECOVERY_HOLD');
+    assert.equal(h.sendCalls(), 1, 'a malformed or one-sided hash never authorizes retry');
+  });
 }
 
 test('actual public consume path admits only the exact own attempt boundary and sends once', () => {
