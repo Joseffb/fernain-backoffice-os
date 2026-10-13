@@ -125,10 +125,12 @@ function makeHarness(scenario) {
     company: organization,
     role,
     organizationKey: 'synthetic-example-association',
-    subject: 'A question about Synthetic Example Association’s career board',
-    observation: 'Your public careers page describes a member-focused job board.',
+    subject: `${organization} — Could you share your experience?`,
+    observation: 'I noticed Synthetic Prospect Label’s website provides a public Job Search page.',
     sourceRefs: [staffUrl, workflowUrl],
-    recipientKind: 'named-individual'
+    recipientKind: 'named-individual',
+    copyRevision: 'first-introduction-20261013T193329Z',
+    verifiedWorkflowHeading: 'Job Search'
   });
   const body = context.renderCurrentSalesBody(binding);
   const exactBinding = realm(context.fernBinding(binding));
@@ -349,19 +351,52 @@ function makeHarness(scenario) {
       } else if (scenario === 'missing-boundary' && write.after[2].stringValue === 'attempt-boundary') {
         db.Evidence[row - 1] = blankRow(26);
         mutationApplied = true;
-      } else if ((scenario === 'changed-manual-usage' || scenario === 'foreign-boundary') && write.after[2].stringValue === 'attempt-boundary') {
+      } else if (scenario === 'duplicate-own-marker-conflicting-body' && write.after[2].stringValue === 'attempt-boundary') {
+        const markerKey = `FERNAIN_NATIVE_NO_RESEND_V1:${sha(leadId)}`;
+        const duplicate = JSON.parse(propsState[markerKey]);
+        duplicate.state = 'SEND_ATTEMPTED_NO_RESEND';
+        duplicate.attemptRow = row;
+        duplicate.attemptRowSha256 = sha(JSON.stringify(write.after));
+        duplicate.bodySha256 = sha('unapproved conflicting body');
+        propsState['FERNAIN_NATIVE_NO_RESEND_V1:SYNTHETIC-DUPLICATE-MARKER-KEY'] = JSON.stringify(duplicate);
+        mutationApplied = true;
+      } else if ((scenario === 'changed-manual-usage' || scenario === 'foreign-boundary' || scenario === 'duplicate-own-pending-boundary' || scenario === 'duplicate-own-pending-wrong-content') && write.after[2].stringValue === 'attempt-boundary') {
         const extraRow = db.Evidence.findIndex((candidate, index) => index >= 8 && index !== row - 1 && candidate.every(cell => Object.keys(cell).length === 0));
         assert.notEqual(extraRow, -1, 'synthetic follow-up evidence row is available');
         if (scenario === 'changed-manual-usage') {
           db.Evidence[extraRow] = evidenceRow('synthetic-manual-unknown-001', 'Uncertain send attempt / synthetic quota hold', manualUnknownReceipt());
-        } else {
+        } else if (scenario === 'foreign-boundary') {
           db.Evidence[extraRow] = evidenceRow(leadId, 'attempt-boundary', {
             schema: 'BackofficeNativeJournal/v1',
             kind: 'attempt-boundary',
             checkedAt: stamp,
             value: { leadId, attemptId: 'NATIVE-FOREIGN-ATTEMPT-000001', noResend: true }
           });
+        } else {
+          const boundary = JSON.parse(write.after[3].stringValue);
+          const pendingRow = db.Evidence[boundary.value.pendingRow - 1];
+          const duplicate = plain(pendingRow);
+          if (scenario === 'duplicate-own-pending-wrong-content') {
+            const pending = JSON.parse(duplicate[3].stringValue);
+            pending.value.sourceVersionSha256 = 'f'.repeat(64);
+            pending.value.pending.sourceVersionSha256 = 'f'.repeat(64);
+            pending.value.pending.prepared.body += ' tampered';
+            duplicate[3] = { stringValue: JSON.stringify(pending) };
+          }
+          db.Evidence[extraRow] = duplicate;
         }
+        mutationApplied = true;
+      } else if (scenario === 'duplicate-own-pending-preboundary' && write.after[2].stringValue === 'pending') {
+        const extraRow = db.Evidence.findIndex((candidate, index) => index >= 8 && index !== row - 1 && candidate.every(cell => Object.keys(cell).length === 0));
+        assert.notEqual(extraRow, -1, 'synthetic follow-up evidence row is available');
+        db.Evidence[extraRow] = plain(write.after);
+        mutationApplied = true;
+      } else if (scenario === 'tampered-own-pending-after-boundary' && write.after[2].stringValue === 'attempt-boundary') {
+        const boundary = JSON.parse(write.after[3].stringValue);
+        const pendingRow = boundary.value.pendingRow - 1;
+        const pending = JSON.parse(db.Evidence[pendingRow][3].stringValue);
+        pending.value.pending.sourceVersionSha256 = 'e'.repeat(64);
+        db.Evidence[pendingRow][3] = { stringValue: JSON.stringify(pending) };
         mutationApplied = true;
       }
       const logical = plain(write.after);
@@ -496,8 +531,10 @@ function makeHarness(scenario) {
       sendCalls += 1;
       const checkedArgs = plain(args);
       assert.equal(checkedArgs.to, recipient);
-      const bindingForBody = plain(binding);
-      const sentBody = context.renderCurrentSalesBody(bindingForBody);
+      assert.equal(checkedArgs.subject, binding.subject);
+      assert.equal(checkedArgs.payload.mime_type, 'text/plain');
+      assert.equal(checkedArgs.payload.body.content, body, 'the synthetic Gmail send receives the exact reviewed body');
+      const sentBody = checkedArgs.payload.body.content;
       storedMessage = realm({
         id: 'synthetic-gmail-message-000001',
         thread_id: 'synthetic-gmail-thread-000001',
@@ -509,7 +546,7 @@ function makeHarness(scenario) {
           headers: [
             { name: 'to', value: recipient },
             { name: 'from', value: 'Backoffice Backoffice Owner <operator@example.com>' },
-            { name: 'subject', value: binding.subject },
+            { name: 'subject', value: checkedArgs.subject },
             { name: 'message-id', value: `<${rfcMessageId}>` }
           ]
         }
@@ -544,13 +581,16 @@ function makeHarness(scenario) {
       liveCaptureVerified: true,
       candidate: {
         person, current_role: role, email: recipient, organization,
-        organization_key: 'synthetic-example-association', organization_type: 'membership association'
+        first: 'Synthetic', lead_id: leadId, product: 'Jobs',
+        organization_key: 'synthetic-example-association', organization_type: 'membership association',
+        workflow: 'PUBLIC_JOB_BOARD', observation: binding.observation
       },
       sourceRefs: [staffUrl, workflowUrl]
     },
     evidence: {
       bindingSha256: sha('synthetic-source-binding'),
       binding: { registrySha256: sha(JSON.stringify(definition)) },
+      workflow: { facts: { heading: 'Job Search' } },
       fullCanonicalPreimage: { result: { structuredContent: { sheets: [{ data: [{ rowData: [{ values: sourceRawCells }] }] }] } } }
     }
   });
@@ -653,7 +693,8 @@ test('actual public consume path admits only the exact own attempt boundary and 
   assert.equal(h.semanticReviewCalls(), 3, 'initial, pending reservation, and exact attempt-boundary ledger reviews ran');
   const sentBody = h.gmailMessage().payload.body.content;
   assert.equal(sentBody, h.context.renderCurrentSalesBody(h.binding), 'the actual synthetic Gmail payload preserves the exact reviewed body');
-  assert.match(sentBody, /Hi Synthetic,\n\nI’m Backoffice/);
+  assert.match(sentBody, /^Hi Synthetic,\n\nI'm Fernáin, founder of Fernain\./);
+  assert.match(sentBody, /\n\nThanks,\nFernáin Joseff Betancourt\nFounder, Fernain LLC\nhttps:\/\/fernain\.com$/);
   const marker = Object.values(h.propsState).map(value => {
     try { return JSON.parse(value); } catch { return null; }
   }).find(value => value && value.schema === 'BackofficeNativeNoResend/v1');
@@ -685,6 +726,20 @@ test('a foreign no-resend attempt-boundary journal remains a conflict', () => {
   assert.equal(h.sendCalls(), 0);
   assert.equal(h.semanticReviewCalls(), 3, 'the actual ledger saw the foreign journal at dispatch');
 });
+
+for (const scenario of ['duplicate-own-pending-boundary', 'duplicate-own-pending-wrong-content', 'duplicate-own-pending-preboundary', 'tampered-own-pending-after-boundary', 'duplicate-own-marker-conflicting-body']) {
+test(`${scenario} remains a conflict`, () => {
+  const h = makeHarness(scenario);
+  const result = plain(h.runtime.consumeGemini('syntheticcapture000001', h.model));
+
+  assert.equal(h.mutationApplied(), true);
+  assert.equal(result.status, 'PENDING_NO_RESEND');
+  assert.equal(result.sendAttempted, false);
+  assert.equal(result.noResend, true);
+  assert.equal(h.sendCalls(), 0);
+  assert.ok(h.semanticReviewCalls() >= 2, 'the actual ledger reviewed the pending journal before any send');
+});
+}
 
 for (const scenario of ['tampered-boundary', 'missing-boundary']) {
   test(`${scenario} fails closed without a retryable send`, () => {

@@ -17,7 +17,7 @@ var BackofficeNativePublicSourceV1 = (function makeProducer(registryLoader, trus
     staffUrl:'https://example.org/about-us/',
     workflowUrl:'https://business.example.org/jobs/',
     staffSection:'Leadership', personHeadingLevel:3, workflowHeading:'Opportunities',
-    observation:'The sample source announces open opportunities.'
+    observation:'I noticed Example Community Association’s website provides a public Opportunities page.'
   })});
   var RANGES = ['Prospects!A1:AA1000','Prospects!A1001:AA2000',
     'Evidence!A1:Z1800','Evidence!A1801:Z3600','Evidence!A3601:Z5400',
@@ -361,7 +361,7 @@ var BackofficeNativePublicSourceV1 = (function makeProducer(registryLoader, trus
   }
   function ancestor(n,predicate){while(n&&n.tag!=='root'){if(predicate(n))return n;n=n.parent;}return null;}
   function workflowFacts(text,r){var tree=htmlTree(text),heading=tree.nodes.filter(function(n){return !n.blocked&&/^h[1-6]$/.test(n.tag)&&textOf(n)===r.workflowHeading;});
-    need(['Jobs Board','Opportunities'].includes(r.workflowHeading)&&heading.length===1,'EXACT_WORKFLOW_HEADING_HOLD');safeEvidence(heading[0]);
+    need(['Job Search','Jobs Board','Opportunities'].includes(r.workflowHeading)&&heading.length===1,'EXACT_WORKFLOW_HEADING_HOLD');safeEvidence(heading[0]);
     var containers=tree.nodes.filter(function(n){return !n.blocked&&n.tag==='div'&&
       (/(?:^|\s)gzns(?:\s|$)/.test(n.attrs.class||'')||n.attrs.id==='gzns');});
     need(containers.length===1&&containers[0].start>=heading[0].end,'SUPPORTED_WORKFLOW_CONTAINER_HOLD');
@@ -439,7 +439,7 @@ var BackofficeNativePublicSourceV1 = (function makeProducer(registryLoader, trus
         var facts=staffFacts(staff.text,d);[facts.section,facts.name,facts.roleSpan,facts.mailto].forEach(function(span){strictDerivedAtom(staffTree,span);});matches.push({definition:d,facts:facts});
       }catch(unsupportedSection){/* A section is usable only after the old parser accepts it. */}
     });need(matches.length===1,'EXACT_UNIQUE_PERSON_HEADING_HOLD');var resolved=matches[0].definition;
-    var workflowTree=htmlTree(workflow.text),allowed=workflowTree.nodes.filter(function(n){return !n.blocked&&/^h[1-6]$/.test(n.tag)&&['Opportunities','Jobs Board'].includes(textOf(n));});
+    var workflowTree=htmlTree(workflow.text),allowed=workflowTree.nodes.filter(function(n){return !n.blocked&&/^h[1-6]$/.test(n.tag)&&['Job Search','Jobs Board','Opportunities'].includes(textOf(n));});
     need(allowed.length===1,'EXACT_WORKFLOW_HEADING_HOLD');safeEvidence(allowed[0]);resolved.workflowHeading=textOf(allowed[0]);
     if(base.workflowHeading!==null)need(base.workflowHeading===resolved.workflowHeading,'EXACT_WORKFLOW_HEADING_HOLD');var career=workflowFacts(workflow.text,resolved);[career.headingSpan,career.category,career.employer,career.search].forEach(function(span){strictDerivedAtom(workflowTree,span,true);});strictDerivedWorkflowForms(workflowTree,career,resolved.workflowUrl);
     if(base.observation===null)resolved.observation='I noticed '+base.organization+'’s website provides a public '+resolved.workflowHeading+' page.';
@@ -496,7 +496,7 @@ var BackofficeNativePublicSourceV1 = (function makeProducer(registryLoader, trus
         !/[\x00-\x1f<>]/.test(d.organization)&&['COMMUNITY_ORGANIZATION','ASSOCIATION','PUBLICATION'].includes(d.organizationType)&&
         typeof d.organizationKey==='string'&&/^[a-z0-9-]{1,150}$/.test(d.organizationKey)&&typeof d.staffSection==='string'&&
         d.staffSection.trim()===d.staffSection&&/^[\x20-\x7e]{1,100}$/.test(d.staffSection)&&d.personHeadingLevel===3&&
-        ['Jobs Board','Opportunities'].includes(d.workflowHeading)&&typeof d.observation==='string'&&d.observation.trim()===d.observation&&
+        ['Job Search','Jobs Board','Opportunities'].includes(d.workflowHeading)&&typeof d.observation==='string'&&d.observation.trim()===d.observation&&
         d.observation.length>0&&d.observation.length<=300&&!/[\x00-\x1f<>]/.test(d.observation),'SCRIPT_OWNED_REGISTRY_DEFINITION_HOLD');
       var a=urlHost(d.staffUrl),b=urlHost(d.workflowUrl);need(a!==b||d.staffUrl!==d.workflowUrl,'REGISTRY_SOURCE_PAIR_DISTINCT_HOLD');
   }
@@ -521,7 +521,7 @@ var BackofficeNativePublicSourceV1 = (function makeProducer(registryLoader, trus
         !/[\x00-\x1f<>]/.test(d.organization)&&typeof d.organizationKey==='string'&&/^[a-z0-9-]{1,150}$/.test(d.organizationKey)&&
         (d.organizationType===null||['COMMUNITY_ORGANIZATION','ASSOCIATION','PUBLICATION'].includes(d.organizationType))&&
         (d.staffSection===null||typeof d.staffSection==='string'&&d.staffSection.length>0&&d.staffSection.length<=100&&!/[\x00-\x1f<>]/.test(d.staffSection))&&
-        (d.personHeadingLevel===null||d.personHeadingLevel===3)&&(d.workflowHeading===null||['Jobs Board','Opportunities'].includes(d.workflowHeading))&&
+        (d.personHeadingLevel===null||d.personHeadingLevel===3)&&(d.workflowHeading===null||['Job Search','Jobs Board','Opportunities'].includes(d.workflowHeading))&&
         (d.observation===null||typeof d.observation==='string'&&d.observation.length>0&&d.observation.length<=300&&!/[\x00-\x1f<>]/.test(d.observation))&&
         typeof d.staffUrl==='string'&&d.staffUrl.length>0&&d.staffUrl.length<=1000&&!/[\x00-\x20<>]/.test(d.staffUrl)&&
         typeof d.workflowUrl==='string'&&d.workflowUrl.length>0&&d.workflowUrl.length<=1000&&!/[\x00-\x20<>]/.test(d.workflowUrl),

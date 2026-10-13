@@ -376,20 +376,20 @@
     },
     {
       "path": "sales/NativeArchiveV2.gs",
-      "bytes": 131135,
-      "sha256": "1d5ad3169e59383c5c650d2972a988844d4592bdc52b384ef7cb2a00414389d7",
+      "bytes": 131151,
+      "sha256": "dba9c1d45a966aeeb1b8a8830cf358f8684dd45455c71b284e832cc1555dd469",
       "kind": "sanitized_source"
     },
     {
       "path": "sales/NativePublicSourceV1.gs",
-      "bytes": 85533,
-      "sha256": "2f941e7d7617e6420bfa5ec473713561a5c1bf9153304953d2819560643d448a",
+      "bytes": 85627,
+      "sha256": "273d9fbdf13d4a3e4cdf821fe8c846e6b4d7b14efd6335ab447385de59c45502",
       "kind": "sanitized_source"
     },
     {
       "path": "sales/NativeRuntimeIntegrationV1.gs",
-      "bytes": 367115,
-      "sha256": "f46268eeccb7be85f80e8c9f8c54c1b4e513e2c965e654e80dd2616f08816d23",
+      "bytes": 371346,
+      "sha256": "81f57dec9faed46bd9ac2e462afa000c05a4bdebf2a96671053ab9ffb801daad",
       "kind": "sanitized_source"
     },
     {
@@ -406,8 +406,8 @@
     },
     {
       "path": "sales/PureSalesGuardsV1.gs",
-      "bytes": 21076,
-      "sha256": "0a636a5a2478971c6a4701d233c960bf4b0ef0c46180cba68a9669174aa26685",
+      "bytes": 21200,
+      "sha256": "4467890fd75263c5237f5cce09a8d66f06a37c43796cafb5bddc6730774369fd",
       "kind": "sanitized_source"
     },
     {
@@ -425,14 +425,20 @@
     {
       "path": "tests/native-dispatch-boundary.test.cjs",
       "kind": "test",
-      "bytes": 28577,
-      "sha256": "cf06cb162ed3f59607b75828ac8ea803c9798e01ddba5e0c1ea1497393db6f2a"
+      "bytes": 32292,
+      "sha256": "5ec85d9642fb4045e5a8093815bef82272c002e1dd14702c89d70f05dcbc1dbd"
     },
     {
       "path": "tests/native-manual-quota.test.cjs",
       "kind": "test",
       "bytes": 22603,
       "sha256": "34aeb09b9f2631f08f4c66d27c028a4a1d042d42a2b9743b659dea57938b707a"
+    },
+    {
+      "path": "tests/native-source-heading.test.cjs",
+      "bytes": 16871,
+      "sha256": "cff1f214ead7661f23d38e8e65cd0788270dd67e4dd97f2dc1945cb3b24d4d88",
+      "kind": "test"
     },
     {
       "path": "tests/portal-products.test.cjs",
