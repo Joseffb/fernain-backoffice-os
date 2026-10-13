@@ -11,6 +11,7 @@ const FERN_SALES_ID = "{{CONFIGURE_GOOGLE_ID_030}}";
 const FERN_PROSPECTS_SHEET = 901;
 const FERN_EVIDENCE_SHEET = 903;
 const FERN_FROM = "Backoffice Backoffice Owner <operator@example.com>";
+const FERN_FIRST_INTRO_COPY_REVISION = "first-introduction-20261013T193329Z";
 const FERN_FRESH_MS = 300000;
 const FERN_PROVIDER_LIMITS = Object.freeze({
   messages24: 500, externalUnique24: 500, apiRecipientsPerMessage: 500,
@@ -55,15 +56,58 @@ function fernCount(value, what) {
   return value;
 }
 function fernBinding(candidate) {
-  return {
+  const binding = {
     row:candidate.row, leadId:candidate.leadId, product:candidate.product,
     to:fernEmail(candidate.to), name:candidate.name, first:candidate.first,
     company:candidate.company, role:candidate.role,
     organizationKey:candidate.organizationKey, subject:candidate.subject,
     observation:candidate.observation, sourceRefs:candidate.sourceRefs
   };
+  if (Object.prototype.hasOwnProperty.call(candidate, "copyRevision")) {
+    fernHold(candidate.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
+      "unknown introductory copy revision");
+    binding.copyRevision = FERN_FIRST_INTRO_COPY_REVISION;
+  }
+  return binding;
+}
+function fernFirstIntroductionSubject(candidate) {
+  fernHold(candidate && candidate.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
+    "explicit current introductory copy revision required");
+  fernHold(typeof candidate.company === "string" && candidate.company.length > 0 &&
+    candidate.company === candidate.company.trim() &&
+    !/[\x00-\x1f\x7f\u0085\u2028\u2029<>]/.test(candidate.company),
+    "verified organization name required for introductory subject");
+  return candidate.company + " — Could you share your experience?";
+}
+function fernFirstIntroductionFeature(candidate) {
+  fernHold(candidate && typeof candidate.company === "string" &&
+    candidate.company.length > 0 && candidate.company === candidate.company.trim() &&
+    !/[\x00-\x1f\x7f\u0085\u2028\u2029<>]/.test(candidate.company),
+    "verified organization name required for introductory observation");
+  const prefix = "I noticed " + candidate.company + "’s website provides a public ";
+  const observation = candidate.observation;
+  fernHold(typeof observation === "string" && observation.indexOf(prefix) === 0 &&
+    observation.charAt(observation.length - 1) === ".",
+    "primary-source observation does not match the verified feature form");
+  const feature = observation.slice(prefix.length, -1);
+  fernHold(feature.length > 0 && feature.length <= 120 && feature === feature.trim() &&
+    !/[\x00-\x1f\x7f\u0085\u2028\u2029<>.!?]/.test(feature),
+    "verified feature is empty, ambiguous, or outside the bounded single-line form");
+  return feature;
 }
 function renderCurrentSalesBody(candidate) {
+  if (Object.prototype.hasOwnProperty.call(candidate, "copyRevision")) {
+    fernHold(candidate.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
+      "unknown introductory copy revision");
+    const feature = fernFirstIntroductionFeature(candidate);
+    return "Hi " + candidate.first + ",\n\n" +
+      "I'm Fernáin, founder of Fernain. After nine years developing technology at a national membership organization, I'm now building tools specifically for membership organizations, associations, and publishers.\n\n" +
+      "But one organization's experience isn't everyone's, and I don't want to assume I know what others need.\n\n" +
+      "I noticed " + candidate.company + " uses " + feature + ". We're developing similar infrastructure and would value your perspective on what's working and what's frustrating.\n\n" +
+      "Would you be open to sharing one thing you'd change about your current system?\n\n" +
+      "Your insights would help shape what we're building.\n\n" +
+      "Thanks,\nFernáin Joseff Betancourt\nFounder, Fernain LLC\nhttps://fernain.com";
+  }
   return "Hi " + candidate.first + ",\n\n" +
     "I’m Backoffice, founder of Backoffice. We’re building Jobs, a career-board product for membership organizations, associations and publishers.\n\n" +
     candidate.observation + " How is that service working for your team and members? I’d be interested in what you’d keep and what you’d change.\n\n" +
@@ -81,6 +125,8 @@ function validateCurrentSalesPreflight(packet, now) {
     packet.account.address === "operator@example.com" && packet.account.labelId === "Label_5",
     "exact connected Gmail account/Label_5 binding required");
   const candidate = packet.binding;
+  fernHold(candidate && candidate.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
+    "explicit current introductory copy revision required");
   fernHold(candidate && Number.isSafeInteger(candidate.row) && candidate.row > 1 &&
     /^[A-Za-z0-9_-]+$/.test(candidate.leadId || "") &&
     candidate.product === "Jobs" && candidate.recipientKind === "named-individual",
@@ -90,6 +136,8 @@ function validateCurrentSalesPreflight(packet, now) {
       "trusted " + key + " missing");
   fernHold(!/[\r\n]/.test(candidate.subject) && !/[\r\n]/.test(candidate.first),
     "header/greeting injection");
+  fernHold(candidate.subject === fernFirstIntroductionSubject(candidate),
+    "exact owner-approved introductory subject required");
   fernHold(Array.isArray(candidate.sourceRefs) && candidate.sourceRefs.length > 0 &&
     candidate.sourceRefs.every(ref => typeof ref === "string" && /^https:\/\//.test(ref)),
     "exact independently verified source required");
@@ -189,8 +237,12 @@ function validateCurrentSalesClaim(claim, packet, now) {
 }
 function validateCurrentSalesProposal(proposal, prepared) {
   fernHold(proposal && typeof proposal === "object", "advisory proposal missing");
+  fernHold(proposal.copyRevision === FERN_FIRST_INTRO_COPY_REVISION &&
+    prepared && prepared.binding &&
+    prepared.binding.copyRevision === FERN_FIRST_INTRO_COPY_REVISION,
+    "explicit current introductory copy revision required");
   const allowed = new Set(["row","leadId","product","to","name","first","company","role",
-    "organizationKey","subject","observation","sourceRefs","body"]);
+    "organizationKey","subject","observation","sourceRefs","copyRevision","body"]);
   fernHold(Object.keys(proposal).every(key => allowed.has(key)), "proposal contains extra effects/authority");
   const binding = Object.assign({}, proposal);
   delete binding.body;
