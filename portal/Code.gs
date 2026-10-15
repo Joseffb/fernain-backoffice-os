@@ -45,7 +45,7 @@ function getPortalSnapshot() {
   sources.finance=permitted('finance')?readFinanceDashboard_(config.finance,checkedAt):denied();
   sources.operations=permitted('operations')?readOperationsDashboard_(config.sales,checkedAt):denied();
   // Dated private report, served only while Owner can still read the private register.
-  sources.products=!permitted('products')?denied():sources.executive.state==='verified'?readProductReport_(checkedAt):
+  sources.products=!permitted('products')?denied():sources.executive.state==='verified'?readProductReport_(config.products,checkedAt):
     (sources.executive.state==='verification_failed'?{state:'verification_failed',checkedAt:checkedAt}:denied());
   return {state:'ok', checkedAt:checkedAt, viewer:email, pollMs:config.pollMs,
     staleAfterMs:config.staleAfterMs, sources:sources, departments:[]};
